@@ -57,7 +57,7 @@
         ],
         "out": [
             {
-                "x": 1100,
+                "x": 1120,
                 "y": 80,
                 "wires": [
                     {
@@ -1038,7 +1038,7 @@
         "once": false,
         "onceDelay": "1",
         "topic": "",
-        "payload": "{\"name\":\"Test\"}",
+        "payload": "{\"name\":\"Up 1\"}",
         "payloadType": "json",
         "x": 170,
         "y": 160,
@@ -1624,7 +1624,7 @@
         "type": "function",
         "z": "3581784ff799b3aa",
         "name": "Set Commands",
-        "func": "if(msg.payload[0]!=undefined) {\n    // set commands\n    msg.commands = msg.payload[0].commands\n    \n    // set counter\n    msg.counter = 0\n    \n    // set view time. Dwell at least this long\n    msg.view_time = parseInt(msg.payload[0].delay,10)\n\n    // set command sentiment\n    const cmd_parts = msg.payload[0].name.split(\" \")\n    msg.cmd_sentiment=cmd_parts[0]\n    \n    return msg;\n    \n} else {\n    node.warn(msg.query.name + \": Not Found!\")\n}",
+        "func": "if(msg.payload[0]!=undefined) {\n    // set commands\n    msg.commands = msg.payload[0].commands\n    \n    const first_command = msg.commands[0]\n    \n    // The first command must be a device meta-command\n    if(first_command.indexOf(\"#dev\")!=0) {\n        node.warn(`First command must be a device command! Dropping ${msg.cmd_name}`)\n    } else {\n        // set counter\n        msg.counter = 0\n        \n        // set view time. Dwell at least this long\n        msg.view_time = parseInt(msg.payload[0].delay,10)\n    \n        // set command sentiment\n        const cmd_parts = msg.payload[0].name.split(\" \")\n        msg.cmd_sentiment=cmd_parts[0]\n        \n        return msg;\n    }\n    \n} else {\n    node.warn(msg.query.name + \": Not Found!\")\n}",
         "outputs": 1,
         "noerr": 0,
         "initialize": "// Code added here will be run once\n// whenever the node is started.\nflow.set(\"counter\",0)\n",
@@ -1634,7 +1634,8 @@
         "y": 120,
         "wires": [
             [
-                "fd53b402f0061831"
+                "fd53b402f0061831",
+                "f6b0e71050799ee2"
             ]
         ]
     },
@@ -1744,5 +1745,22 @@
                 "87313341488d5136"
             ]
         ]
+    },
+    {
+        "id": "f6b0e71050799ee2",
+        "type": "debug",
+        "z": "3581784ff799b3aa",
+        "name": "Set Commands",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 470,
+        "y": 280,
+        "wires": []
     }
 ]
