@@ -32,7 +32,7 @@
             "y": 60,
             "wires": [
                 {
-                    "id": "63bd1ce025351745",
+                    "id": "5a1ebb28ce1c7929",
                     "port": 0
                 }
             ]
@@ -243,7 +243,7 @@
         ],
         "out": [
             {
-                "x": 1380,
+                "x": 1360,
                 "y": 120,
                 "wires": [
                     {
@@ -864,7 +864,8 @@
         "y": 320,
         "wires": [
             [
-                "54ddcdf1a3f321fa"
+                "54ddcdf1a3f321fa",
+                "a3c08b2c4234f9d3"
             ]
         ]
     },
@@ -937,7 +938,7 @@
         "type": "function",
         "z": "a0954fe29f87ceff",
         "name": "Set Queue Len",
-        "func": "let qlen=0\nlet arr=msg.status.text.split(\" \")\nlet status=arr[0]\nif(status!=\"open\") {\n    qlen=arr[1]\n} \nflow.set(\"$parent.queue_status\",status)\nflow.set(\"$parent.queue_len\",qlen)\nmsg.payload={queue_len:qlen,queue_status:status}\nreturn msg;",
+        "func": "let qlen=0\nlet arr=msg.status.text.split(\" \")\nlet status=arr[0]\nif(status!=\"open\") {\n    qlen=arr[1]\n} \nflow.set(\"$parent.queue_status\",status)\nflow.set(\"$parent.queue_len\",qlen)\nmsg.payload=({fill:\"green\",shape:\"dot\",text:\"Queue len: \"+qlen + \" Status: \"+status});\n//msg.payload={queue_len:qlen,queue_status:status}\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -946,9 +947,7 @@
         "x": 260,
         "y": 60,
         "wires": [
-            [
-                "63bd1ce025351745"
-            ]
+            []
         ]
     },
     {
@@ -1062,8 +1061,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 780,
-        "y": 80,
+        "x": 880,
+        "y": 320,
         "wires": []
     },
     {
@@ -1157,23 +1156,6 @@
             [
                 "6b769294dec11207"
             ]
-        ]
-    },
-    {
-        "id": "63bd1ce025351745",
-        "type": "function",
-        "z": "a0954fe29f87ceff",
-        "name": "Queue Status",
-        "func": "const qlen=msg.payload.queue_len\nconst status=msg.payload.twitter_on\nmsg.payload=({fill:\"green\",shape:\"dot\",text:\"Queue len: \"+qlen});\nreturn msg",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "// Code added here will be run once\n// whenever the node is started.\nflow.set(\"queuing\",false)\nflow.set(\"queue_len\",0)",
-        "finalize": "",
-        "libs": [],
-        "x": 460,
-        "y": 60,
-        "wires": [
-            []
         ]
     },
     {
@@ -1338,7 +1320,7 @@
         "order": 1,
         "width": "14",
         "height": "8",
-        "format": "<style>\n    @import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Amita:wght@700&family=Black+Ops+One&family=Bungee+Inline&family=Chewy&family=Courier+Prime:wght@700&family=Creepster&family=Emilys+Candy&family=Freckle+Face&family=Lakki+Reddy&family=Metal+Mania&family=Mystery+Quest&family=New+Rocker&family=Oleo+Script&family=Rock+Salt&family=Rye&family=Shrikhand&family=UnifrakturCook:wght@700&display=swap');\n    /*.nr-dashboard-theme {*/\n    /*    font-family: copperplate !important;*/\n    /*}*/\n    /*.nr-dashboard-cardcontainer {*/\n    /*    height: 500px !important;*/\n    /*}*/\n    body.nr-dashboard-theme md-content {\n        background-image: url('https://www.greenlightdevelopment.com/wp-content/plugins/gld_demos/alien_landers/images/spacegame/stars.gif');\n    }\n    ui-card-panel {\n        background-color: transparent !important;\n    }\n    .nr-dashboard-theme ui-card-panel p.nr-dashboard-cardtitle {\n        color: #111;\n        font-size: 2em;\n    }\n    #toolbar {\n        display: none;\n    }\n    #the_image {\n        display: none;\n    }\n    #Greenface_Labs_Oumuamua {\n        margin-top: 35px;\n    }\n    #tweet {\n        margin: 36px;\n        min-height: 485px;\n        font-size: 3em;\n        padding: 25px;\n        transition-duration: 4s;\n        opacity: 1;\n    }\n    #tweet span {\n        text-shadow: 2px 2px #000;\n    }\n    #tweet.Down span {\n        color: #417940 !important;\n    }\n    #tweet.Up span {\n        color: #bb422f !important;\n    }\n    #tweet.Default span {\n        color: blue !important;\n        text-shadow: none;\n    }\n    #user {\n        padding-bottom: 1em;\n        position: absolute;\n        bottom: 5px;\n        width: 96%;\n    }\n    #user * {\n        float: right;\n    }\n    #user div {\n        margin-right: 1em;\n    }\n    #user_location {\n        color: #dda;\n    }\n    .Init {\n        opacity: 0 !important;\n    }\n    .Default {\n        color: #333;\n        background-color: #ddd;\n        background-image: linear-gradient(#ee0, #aaa);\n    }\n    .Up_1 {\n        background-image: linear-gradient(yellow 50%, green 90%);\n        font-family: 'Oleo Script', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_2 {\n        background-image: linear-gradient(yellow 40%, green 90%);\n        font-family: 'Shrikhand', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_3 {\n        background-image: linear-gradient(yellow 30%, green 90%);\n        font-family: 'Rock Salt', cursive !important;\n        font-size: 2em !important;\n    }\n    .Up_4 {\n        background-image: linear-gradient(yellow 20%, green 90%);\n        font-family: 'Chewy', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_5 {\n        background-image: linear-gradient(yellow 10%, green 90%);\n        font-family: 'Amita', cursive !important;\n        font-size: 2.7em !important;\n    }\n    .Up_6 {\n        background-image: linear-gradient(yellow 0%, green 90%);\n        font-family: 'Lakki Reddy', cursive !important;\n        font-size: 3em !important;\n        line-height: 1.4em !important;\n    }\n    .Up_7 {\n        background-image: linear-gradient(yellow -10%, green 90%);\n        font-family: 'Freckle Face', cursive !important;\n        font-size: 3em !important;\n        line-height: 1.5em !important;\n    }\n    .Up_8 {\n        background-image: linear-gradient(yellow -20%, green 90%);\n        font-family: 'Oleo Script', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_9 {\n        background-image: linear-gradient(yellow -30%, green 90%);\n        font-family: 'Mystery Quest', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_10 {\n        background-image: linear-gradient(yellow -40%, green 90%);\n        font-family: 'Emilys Candy', cursive !important;\n        font-size: 3.3em !important;\n    }\n    .Up {\n        color: #617;\n        background-color: #5a5;\n        /*background-image: linear-gradient(green, yellow);*/\n        /*font-family: 'Alfa Slab One', cursive !important;*/\n    }\n    .Down_1 {\n        background-image: linear-gradient(yellow 50%, red 90%);\n        font-family: 'Courier Prime', cursive !important;\n    }\n    .Down_2 {\n        background-image: linear-gradient(yellow 40%, red 90%);\n        font-family: 'Creepster', cursive !important;\n    }\n    .Down_3 {\n        background-image: linear-gradient(yellow 30%, red 90%);\n        font-family: 'Rock Salt', cursive !important;\n        font-size: 2em !important;\n    }\n    .Down_4 {\n        background-image: linear-gradient(yellow 20%, red 90%);\n        font-family: 'Metal Mania', cursive !important;\n    }\n    .Down_5 {\n        background-image: linear-gradient(yellow 10%, red 90%);\n        font-family: 'UnifrakturCook', cursive !important;\n        font-size: 3.5em !important;\n        letter-spacing: 2px;\n    }\n    .Down_6 {\n        background-image: linear-gradient(yellow 0%, red 90%);\n        font-family: 'Creepster', cursive !important;\n        line-height: 1.3em;\n    }\n    .Down_7 {\n        background-image: linear-gradient(yellow -10%, red 90%);\n        font-family: 'Rock Salt', cursive !important;\n        font-size: 2em !important;\n    }\n    .Down_8 {\n        background-image: linear-gradient(yellow -20%, red 90%);\n        font-family: 'Metal Mania', cursive !important;\n    }\n    .Down_9 {\n        background-image: linear-gradient(yellow -30%, red 90%);\n        font-family: 'Rock Salt', cursive !important;\n        font-size: 2em !important;\n    }\n    .Down_10 {\n        background-image: linear-gradient(yellow -40%, red 90%);\n        font-family: 'Metal Mania', cursive !important;\n    }\n    .Down {\n        color: black;\n        background-color: #f77;\n        /*background-image: linear-gradient(yellow 50%, red 90%);*/\n        /*font-family: 'Rock Salt', cursive;\n        font-family: 'Freckle Face', cursive;*/\n    }\n    \n</style>\n<div id=\"tweet\" ng-bind-html=\"msg.tweet.text\" class=\"{{msg.cmd_sentiment}} {{msg.tweet_class}}\"></div>\n<div><img id=\"the_image\" ng-show=\"msg.img\" ng-src=\"{{msg.img}}\" /></div>\n<div id=\"user\">\n    <img src=\"{{msg.tweet.user.profile_image_url}}\" ng-hide=\"{{msg.cmd_name==='Init'}}\" />\n    <div id=\"user_location\" ng-bind-html=\"msg.location.place\"></div>\n    <div ng-bind-html=\"msg.tweet.user.screen_name\"></div>\n</div>\n",
+        "format": "<style>\n    @import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Sigmar+One&family=Amita:wght@700&family=Black+Ops+One&family=Bungee+Inline&family=Chewy&family=Courier+Prime:wght@700&family=Creepster&family=Emilys+Candy&family=Freckle+Face&family=Lakki+Reddy&family=Metal+Mania&family=Mystery+Quest&family=New+Rocker&family=Oleo+Script&family=Rock+Salt&family=Rye&family=Shrikhand&family=UnifrakturCook:wght@700&display=swap');\n    /*.nr-dashboard-theme {*/\n    /*    font-family: copperplate !important;*/\n    /*}*/\n    /*.nr-dashboard-cardcontainer {*/\n    /*    height: 500px !important;*/\n    /*}*/\n    body.nr-dashboard-theme md-content {\n        background-image: url('https://www.greenlightdevelopment.com/wp-content/plugins/gld_demos/alien_landers/images/spacegame/stars.gif');\n    }\n    ui-card-panel, md-card {\n        background-color: transparent !important;\n        border: none !important;\n    }\n    .nr-dashboard-theme ui-card-panel p.nr-dashboard-cardtitle {\n        color: #567;\n        font-family: 'Sigmar One', cursive;\n        font-size: 3em;\n    }\n    #toolbar {\n        display: none;\n    }\n    #the_image {\n        display: none;\n    }\n    #Greenface_Labs_Oumuamua {\n        margin-top: 35px;\n    }\n    #tweet {\n        margin: 36px;\n        min-height: 485px;\n        font-size: 3em;\n        padding: 25px;\n        transition-duration: 4s;\n        opacity: 1;\n    }\n    #tweet span {\n        text-shadow: 2px 2px #000;\n    }\n    #tweet.Down span {\n        color: #417940 !important;\n    }\n    #tweet.Up span {\n        color: #bb422f !important;\n    }\n    #tweet.Default span {\n        color: blue !important;\n        text-shadow: none;\n    }\n    #user {\n        padding-bottom: 1em;\n        position: absolute;\n        bottom: 5px;\n        width: 96%;\n    }\n    #user * {\n        float: right;\n    }\n    #user div {\n        margin-right: 1em;\n    }\n    #user_location {\n        color: #dda;\n    }\n    .Init {\n        opacity: 0 !important;\n    }\n    .Test, .Default {\n        color: #333;\n        background-color: #ddd;\n        background-image: linear-gradient(#ee0, #aaa);\n    }\n    .Up_1 {\n        background-image: linear-gradient(yellow 50%, green 90%);\n        font-family: 'Oleo Script', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_2 {\n        background-image: linear-gradient(yellow 40%, green 90%);\n        font-family: 'Shrikhand', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_3 {\n        background-image: linear-gradient(yellow 30%, green 90%);\n        font-family: 'Rock Salt', cursive !important;\n        font-size: 2em !important;\n    }\n    .Up_4 {\n        background-image: linear-gradient(yellow 20%, green 90%);\n        font-family: 'Chewy', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_5 {\n        background-image: linear-gradient(yellow 10%, green 90%);\n        font-family: 'Amita', cursive !important;\n        font-size: 2.7em !important;\n    }\n    .Up_6 {\n        background-image: linear-gradient(yellow 0%, green 90%);\n        font-family: 'Lakki Reddy', cursive !important;\n        font-size: 3em !important;\n        line-height: 1.4em !important;\n    }\n    .Up_7 {\n        background-image: linear-gradient(yellow -10%, green 90%);\n        font-family: 'Freckle Face', cursive !important;\n        font-size: 3em !important;\n        line-height: 1.5em !important;\n    }\n    .Up_8 {\n        background-image: linear-gradient(yellow -20%, green 90%);\n        font-family: 'Oleo Script', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_9 {\n        background-image: linear-gradient(yellow -30%, green 90%);\n        font-family: 'Mystery Quest', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_10 {\n        background-image: linear-gradient(yellow -40%, green 90%);\n        font-family: 'Emilys Candy', cursive !important;\n        font-size: 3.3em !important;\n    }\n    .Up {\n        color: #617;\n        background-color: #5a5;\n        /*background-image: linear-gradient(green, yellow);*/\n        /*font-family: 'Alfa Slab One', cursive !important;*/\n    }\n    .Down_1 {\n        background-image: linear-gradient(yellow 50%, red 90%);\n        font-family: 'Courier Prime', cursive !important;\n    }\n    .Down_2 {\n        background-image: linear-gradient(yellow 40%, red 90%);\n        font-family: 'Creepster', cursive !important;\n    }\n    .Down_3 {\n        background-image: linear-gradient(yellow 30%, red 90%);\n        font-family: 'Rock Salt', cursive !important;\n        font-size: 2em !important;\n    }\n    .Down_4 {\n        background-image: linear-gradient(yellow 20%, red 90%);\n        font-family: 'Metal Mania', cursive !important;\n    }\n    .Down_5 {\n        background-image: linear-gradient(yellow 10%, red 90%);\n        font-family: 'UnifrakturCook', cursive !important;\n        font-size: 3.5em !important;\n        letter-spacing: 2px;\n    }\n    .Down_6 {\n        background-image: linear-gradient(yellow 0%, red 90%);\n        font-family: 'Creepster', cursive !important;\n        line-height: 1.3em;\n    }\n    .Down_7 {\n        background-image: linear-gradient(yellow -10%, red 90%);\n        font-family: 'Rock Salt', cursive !important;\n        font-size: 2em !important;\n    }\n    .Down_8 {\n        background-image: linear-gradient(yellow -20%, red 90%);\n        font-family: 'Metal Mania', cursive !important;\n    }\n    .Down_9 {\n        background-image: linear-gradient(yellow -30%, red 90%);\n        font-family: 'Rock Salt', cursive !important;\n        font-size: 2em !important;\n    }\n    .Down_10 {\n        background-image: linear-gradient(yellow -40%, red 90%);\n        font-family: 'Metal Mania', cursive !important;\n    }\n    .Down {\n        color: black;\n        background-color: #f77;\n        /*background-image: linear-gradient(yellow 50%, red 90%);*/\n        /*font-family: 'Rock Salt', cursive;\n        font-family: 'Freckle Face', cursive;*/\n    }\n    \n</style>\n<div id=\"tweet\" ng-bind-html=\"msg.tweet.text\" class=\"{{msg.cmd_sentiment}} {{msg.tweet_class}}\"></div>\n<div><img id=\"the_image\" ng-show=\"msg.img\" ng-src=\"{{msg.img}}\" /></div>\n<div id=\"user\">\n    <img src=\"{{msg.tweet.user.profile_image_url}}\" ng-hide=\"{{msg.cmd_name==='Init'}}\" />\n    <div id=\"user_location\" ng-bind-html=\"msg.location.place\"></div>\n    <div ng-bind-html=\"msg.tweet.user.screen_name\"></div>\n</div>\n",
         "storeOutMessages": true,
         "fwdInMessages": true,
         "resendOnRefresh": true,
@@ -1594,7 +1576,6 @@
         "y": 140,
         "wires": [
             [
-                "a3c08b2c4234f9d3",
                 "7857e13809b2a289",
                 "17d96389be74e6c0"
             ]
@@ -1605,7 +1586,7 @@
         "type": "function",
         "z": "3581784ff799b3aa",
         "name": "Process Command",
-        "func": "// meta-commands MUST be followed by non-meta command\nmsg.device=\"dev0\"\nconst globals = global.get(\"globals\")\nconst cmds = msg.commands\nlet ctr = msg.counter\nif(ctr<cmds.length) {\n    let cmd = cmds[ctr]\n    if(cmd>\"\") {\n        if(cmd.indexOf(\"#dev\")==0) {\n            msg.device=cmd.replace('#',\"\")\n            // check to make sure it isn't bogus\n            switch(msg.device) {\n                case \"dev0\":\n                case \"dev1\":\n                    break;\n                default:\n                    node.warn(`Replacing ${msg.device} with dev0`)\n                    msg.device=\"dev0\"\n            }\n            msg.endpoint=globals[msg.device].url\n            msg.device_enabled=globals[msg.device].enabled\n            node.warn(msg)\n            ctr++\n        }\n        if(cmd.indexOf(\"#delay\")==0) {\n            node.warn(\"Hit a delay!\")\n            const parts = cmd.split(\":\")\n            msg.script_delay=parts[1]\n            ctr++\n        } else {\n            msg.script_delay=null\n        }\n    }\n    // msg.device_enabled=true\n    // todo: check that cmds[ctr] is non-meta\n    msg.query=cmds[ctr]\n    msg.counter = ctr\n    return msg;\n} else {\n    node.warn(\"End of the line...\")\n}\n",
+        "func": "// meta-commands MUST be followed by non-meta command\nmsg.device=\"dev0\"\nconst globals = global.get(\"globals\")\nconst cmds = msg.commands\nlet ctr = msg.counter\nif(ctr<cmds.length) {\n    let cmd = cmds[ctr]\n    if(cmd>\"\") {\n        if(cmd.indexOf(\"#dev\")==0) {\n            msg.device=cmd.replace('#',\"\")\n            // check to make sure it isn't bogus\n            switch(msg.device) {\n                case \"dev0\":\n                case \"dev1\":\n                    break;\n                default:\n                    node.warn(`Replacing ${msg.device} with dev0`)\n                    msg.device=\"dev0\"\n            }\n            msg.endpoint=globals[msg.device].url\n            msg.device_enabled=globals[msg.device].enabled\n            node.warn(msg)\n            ctr++\n        }\n        if(cmd.indexOf(\"#delay\")==0) {\n            node.warn(\"Hit a delay!\")\n            const parts = cmd.split(\":\")\n            msg.script_delay=parts[1]\n            ctr++\n        } else {\n            msg.script_delay=null\n        }\n    }\n    // msg.device_enabled=true\n    // todo: check that cmds[ctr] is non-meta\n    msg.query=cmds[ctr]\n    msg.counter = ctr\n    return msg;\n} else {\n    node.warn(\"End of the line...\")\n    //return msg;\n}\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1624,7 +1605,7 @@
         "type": "function",
         "z": "3581784ff799b3aa",
         "name": "Increment CMD Counter",
-        "func": "msg.counter++\nif(msg.counter == msg.commands.length) {\n    msg.topic=\"control\"\n    msg.payload=\"trigger\"\n    // msg.counter=0\n}\nreturn msg;\n\n",
+        "func": "msg.counter++\nif(msg.counter >= msg.commands.length) {\n    msg.topic=\"control\"\n    msg.payload=\"trigger\"\n    //msg.counter=0\n}\nreturn msg;\n\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1675,7 +1656,7 @@
         "checkall": "true",
         "repair": false,
         "outputs": 2,
-        "x": 630,
+        "x": 610,
         "y": 120,
         "wires": [
             [
