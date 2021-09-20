@@ -726,7 +726,7 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "biden",
+        "payload": "god",
         "payloadType": "str",
         "x": 170,
         "y": 60,
@@ -1774,6 +1774,50 @@
             ],
             [
                 "54ddcdf1a3f321fa"
+            ]
+        ]
+    },
+    {
+        "id": "3ef298db31890e5d",
+        "type": "inject",
+        "z": "ef4cb095a7656cc5",
+        "name": "Play All",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "trigger",
+        "payloadType": "str",
+        "x": 170,
+        "y": 120,
+        "wires": [
+            [
+                "0f4b37566e66f7ea"
+            ]
+        ]
+    },
+    {
+        "id": "0f4b37566e66f7ea",
+        "type": "function",
+        "z": "ef4cb095a7656cc5",
+        "name": "Set Test Data",
+        "func": "msg.twitter_search=\"Howdy!\"\nmsg.language=\"en\"\nflow.set(\"twitter_search\",msg.twitter_search)\nfor(i=-10;i<11;i++) {\n    let sentiment = i>0 ? \"Up\":\"Down\"\n    const magnitude = Math.abs(i)\n    if(i==0) sentiment=\"Default\"\n    if(i!=0) sentiment = `${sentiment} ${magnitude}`\n    msg.payload = {name: sentiment}\n    msg.tweet = {\n        text: `Howdy ${sentiment}!`,\n        user: {}\n    }\n    node.send(msg)\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 120,
+        "wires": [
+            [
+                "6b769294dec11207"
             ]
         ]
     }
