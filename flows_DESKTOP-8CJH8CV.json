@@ -57,7 +57,7 @@
         ],
         "out": [
             {
-                "x": 1120,
+                "x": 720,
                 "y": 80,
                 "wires": [
                     {
@@ -71,8 +71,8 @@
         "meta": {},
         "color": "#DDAA99",
         "status": {
-            "x": 600,
-            "y": 220,
+            "x": 720,
+            "y": 200,
             "wires": [
                 {
                     "id": "37980c96a4b8052a",
@@ -233,9 +233,6 @@
                 "wires": [
                     {
                         "id": "fd53b402f0061831"
-                    },
-                    {
-                        "id": "f6b0e71050799ee2"
                     }
                 ]
             }
@@ -466,22 +463,6 @@
         "wires": []
     },
     {
-        "id": "245292b15afe9794",
-        "type": "mongodb in",
-        "z": "90cfb10a56fd7196",
-        "mongodb": "54588401fea63e01",
-        "name": "Get Data",
-        "collection": "sentiment_4_2",
-        "operation": "find",
-        "x": 660,
-        "y": 40,
-        "wires": [
-            [
-                "7cc11906534b4543"
-            ]
-        ]
-    },
-    {
         "id": "6b769294dec11207",
         "type": "subflow:90cfb10a56fd7196",
         "z": "ef4cb095a7656cc5",
@@ -496,82 +477,14 @@
         ]
     },
     {
-        "id": "e9b5eb687838abc6",
-        "type": "file in",
-        "z": "90cfb10a56fd7196",
-        "name": "Get File Data",
-        "filename": "C:\\Users\\Shannon\\Dropbox\\moog\\spankulator\\node-red\\docs\\sentiment_4.json",
-        "format": "utf8",
-        "chunk": false,
-        "sendError": false,
-        "encoding": "none",
-        "allProps": false,
-        "x": 530,
-        "y": 140,
-        "wires": [
-            [
-                "93c505cdf66d1892"
-            ]
-        ]
-    },
-    {
-        "id": "93c505cdf66d1892",
-        "type": "json",
-        "z": "90cfb10a56fd7196",
-        "name": "",
-        "property": "payload",
-        "action": "",
-        "pretty": false,
-        "x": 670,
-        "y": 140,
-        "wires": [
-            [
-                "cecc26fbe3db1455"
-            ]
-        ]
-    },
-    {
         "id": "6ef2c13140bffd5b",
         "type": "comment",
         "z": "ef4cb095a7656cc5",
         "name": "Spankulator command processor",
         "info": "# Spankulator Command Processor\nThe SCP runs scripts that control The Spankulator.\nThe scripts are found in either a MongoDB Atlas or in a JSON formatted text file.\nEach script contains an array of objects in the format:\n{\n    name: String,\n    commands: Array of Strings,\n    delay: msecs to delay after script is run\n}\n * The commands are sent to the Spankulator via HTTP to the endpoint specified in the Spankulator's WiFi settings.\n * Commands are sent one-by-one by the **HTTP Sender** node that waits for the Spankulator's response before sending the next command.\n * Edit the **Start** node's payload parameter to enter the name of the script that is to be executed. eg. {\"name\":\"Up\"}\n * This payload is used by the **Get Data** node which delivers the script data to the **Set Commands** node.\n * A warning will be issued to the debug panel if the script is not found.\n * If the script is found, **Set Commands** sets the flow variables _commands_ and _delay_ to the data found in the script. The payload is ignored beyond this point.\n * The **HTTP Sender** node uses flow variables to parse and send the commands.",
         "x": 230,
-        "y": 440,
+        "y": 540,
         "wires": []
-    },
-    {
-        "id": "70ed551ef77e5a0e",
-        "type": "switch",
-        "z": "90cfb10a56fd7196",
-        "name": "",
-        "property": "data_source",
-        "propertyType": "msg",
-        "rules": [
-            {
-                "t": "eq",
-                "v": "mongo",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "file",
-                "vt": "str"
-            }
-        ],
-        "checkall": "true",
-        "repair": false,
-        "outputs": 2,
-        "x": 370,
-        "y": 80,
-        "wires": [
-            [
-                "245292b15afe9794"
-            ],
-            [
-                "e9b5eb687838abc6"
-            ]
-        ]
     },
     {
         "id": "5656aa8175c7222b",
@@ -588,8 +501,8 @@
         "y": 80,
         "wires": [
             [
-                "70ed551ef77e5a0e",
-                "37980c96a4b8052a"
+                "37980c96a4b8052a",
+                "cecc26fbe3db1455"
             ]
         ]
     },
@@ -608,14 +521,14 @@
         "type": "function",
         "z": "90cfb10a56fd7196",
         "name": "Find Data",
-        "func": "function checkName(script) {\n    let search_term=msg.query.name\n    return script.name == search_term;\n}\nlet temp = msg.payload\nmsg.payload=[]\nmsg.payload[0]=temp.find(checkName)\nreturn msg;",
+        "func": "function checkName(script) {\n    let search_term=msg.query.name\n    return script.name == search_term;\n}\n//let temp = msg.payload\nlet temp = global.get(\"scripts\")\nmsg.payload=[]\nmsg.payload[0]=temp.find(checkName)\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 800,
-        "y": 140,
+        "x": 420,
+        "y": 80,
         "wires": [
             [
                 "7cc11906534b4543"
@@ -628,8 +541,8 @@
         "z": "90cfb10a56fd7196",
         "name": "",
         "info": "Sub Flow input payload contains search query object\n{ name : \"search_term\" }\n\nGet File data overwrites payload, so search object is put into msg.query\n\nReturns data object with commands and delay",
-        "x": 100,
-        "y": 360,
+        "x": 120,
+        "y": 200,
         "wires": []
     },
     {
@@ -726,7 +639,7 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "god",
+        "payload": "satan",
         "payloadType": "str",
         "x": 170,
         "y": 60,
@@ -793,23 +706,6 @@
         ]
     },
     {
-        "id": "081e66efc4682d2e",
-        "type": "debug",
-        "z": "90cfb10a56fd7196",
-        "name": "Data Payload",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 500,
-        "y": 300,
-        "wires": []
-    },
-    {
         "id": "a43740b735526d66",
         "type": "delay",
         "z": "a0954fe29f87ceff",
@@ -838,7 +734,7 @@
         "type": "function",
         "z": "a0954fe29f87ceff",
         "name": "Next Script",
-        "func": "let chk_talker_status=function(){\n    const talker_status = flow.get(\"talker_status\")\n    if(talker_status!=\"playing\" && msg.cmd_name!=\"Init\") {\n        msg.topic=\"initializing\"\n        msg.payload={name: \"Init\"}\n        msg.cmd_name=\"Init\"\n        msg.commands=global.get(\"init_commands\")\n        msg.counter=0\n        \n        // set view time. Dwell at least this long\n        msg.view_time = 5000\n    \n        msg.tweet={}\n        msg.user={}\n        msg.location={}\n        // set command sentiment ???\n        // const cmd_parts = msg.payload[0].name.split(\" \")\n        // msg.cmd_sentiment=cmd_parts[0]\n        \n        node.warn(\"Sending Init CMDs\")\n        // node.warn(msg)\n        node.send(msg)\n    } else {\n        setTimeout(chk_talker_status,500)\n    }\n}\n\nconst queue_status = global.get(\"globals\").status\nif(msg.cmd_name==\"Init\") {\n    // we're done get next message in queue\n    let qlen=flow.get(\"$parent.queue_len\")\n    if(qlen==0) {\n        flow.set(\"$parent.queuing\",false)\n    }\n    msg.payload=\"trigger\"\n    //node.warn(msg.cmd_name)\n    node.warn(\"Init received\")\n    node.warn(msg)\n    return msg;\n} else {\n    chk_talker_status()    \n}\n\n\n// msg.payload={name: \"Init\"}\n// msg.cmd_name=\"Init\"\n// msg.commands=global.get(\"init_commands\")\n// msg.counter=0\n\n",
+        "func": "let chk_talker_status=function(){\n    const talker_status = flow.get(\"talker_status\")\n    if(talker_status!=\"playing\" && msg.cmd_name!=\"Init\") {\n        msg.topic=\"initializing\"\n        msg.payload={name: \"Init\"}\n        msg.cmd_name=\"Init\"\n        msg.commands=global.get(\"init_commands\")\n        msg.counter=0\n        \n        // set view time. Dwell at least this long\n        msg.view_time = 5000\n    \n        msg.tweet={}\n        msg.user={}\n        msg.location={}\n        // set command sentiment ???\n        // const cmd_parts = msg.payload[0].name.split(\" \")\n        // msg.cmd_sentiment=cmd_parts[0]\n        \n        //node.warn(\"Sending Init CMDs\")\n        // node.warn(msg)\n        node.send(msg)\n    } else {\n        setTimeout(chk_talker_status,500)\n    }\n}\n\nconst queue_status = global.get(\"globals\").status\nif(msg.cmd_name==\"Init\") {\n    // we're done get next message in queue\n    let qlen=flow.get(\"$parent.queue_len\")\n    if(qlen==0) {\n        flow.set(\"$parent.queuing\",false)\n    }\n    msg.payload=\"trigger\"\n    //node.warn(msg.cmd_name)\n    // node.warn(\"Init received\")\n    // node.warn(msg)\n    return msg;\n} else {\n    chk_talker_status()    \n}\n\n\n// msg.payload={name: \"Init\"}\n// msg.cmd_name=\"Init\"\n// msg.commands=global.get(\"init_commands\")\n// msg.counter=0\n\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -848,8 +744,7 @@
         "y": 320,
         "wires": [
             [
-                "73d9e25da19621e7",
-                "a3c08b2c4234f9d3"
+                "73d9e25da19621e7"
             ]
         ]
     },
@@ -1147,7 +1042,7 @@
         "type": "function",
         "z": "b77158335238532e",
         "name": "Process speech",
-        "func": "if(msg.cmd_name!=\"Init\") {\n    let speech=msg.tweet.text\n    if(msg.tweet.user) {\n        if(msg.tweet.user.screen_name) {\n            speech += \". tweeted by: \" + msg.tweet.user.screen_name\n        }\n        if(msg.tweet.user.location) {\n            speech += \", \" + msg.tweet.user.location\n        }\n    }\n    msg.payload=speech\n    msg.payload=msg.payload.replace(/http(\\S+)/g,\"\")\n    msg.payload=msg.payload.replace(/_/g,\" \")\n    msg.level=global.get(\"globals\").speech_volume\n    node.warn(msg)\n    return msg;\n}\n",
+        "func": "if(msg.cmd_name!=\"Init\") {\n    let speech=msg.tweet.text\n    if(msg.tweet.user) {\n        if(msg.tweet.user.screen_name) {\n            speech += \". tweeted by: \" + msg.tweet.user.screen_name\n        }\n        if(msg.tweet.user.location) {\n            speech += \", \" + msg.tweet.user.location\n        }\n    }\n    msg.payload=speech\n    msg.payload=msg.payload.replace(/http(\\S+)/g,\"\")\n    msg.payload=msg.payload.replace(/_/g,\" \")\n    msg.level=global.get(\"globals\").speech_volume\n    // node.warn(msg)\n    return msg;\n}\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1204,13 +1099,15 @@
         "func": "// see On Start",
         "outputs": 1,
         "noerr": 0,
-        "initialize": "// Code added here will be run once\n// whenever the node is started.\nconst Globals = {\n    \"debug\": false,\n    \"data_source\" : \"file\",\n    \"speech_volume\" : 95,\n    \"dev0\" : {\n        url: \"192.168.0.115\",\n        enabled: true\n    },\n    \"dev1\" : {\n        url: \"192.168.0.105\",\n        enabled: true\n    }\n}\nglobal.set(\"globals\",Globals)",
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\nconst Globals = {\n    \"debug\": false,\n    \"data_source\" : \"file\",\n    \"speech_volume\" : 95,\n    \"dev0\" : {\n        url: \"192.168.0.115\",\n        enabled: true\n    },\n    \"dev1\" : {\n        url: \"192.168.0.105\",\n        enabled: true\n    }\n}\nglobal.set(\"globals\",Globals)\nlet msg = { data_source: Globals.data_source }\nnode.send(msg)",
         "finalize": "",
         "libs": [],
         "x": 160,
-        "y": 360,
+        "y": 400,
         "wires": [
-            []
+            [
+                "b5f09f1928bf2ccc"
+            ]
         ],
         "icon": "node-red/parser-json.svg"
     },
@@ -1498,8 +1395,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 470,
-        "y": 220,
+        "x": 590,
+        "y": 200,
         "wires": [
             []
         ]
@@ -1570,7 +1467,7 @@
         "type": "function",
         "z": "3581784ff799b3aa",
         "name": "Process Command",
-        "func": "// meta-commands MUST be followed by non-meta command\nmsg.device=\"dev0\"\nconst globals = global.get(\"globals\")\nconst cmds = msg.commands\nlet ctr = msg.counter\nif(ctr<cmds.length) {\n    let cmd = cmds[ctr]\n    if(cmd>\"\") {\n        if(cmd.indexOf(\"#dev\")==0) {\n            msg.device=cmd.replace('#',\"\")\n            // check to make sure it isn't bogus\n            switch(msg.device) {\n                case \"dev0\":\n                case \"dev1\":\n                    break;\n                default:\n                    node.warn(`Replacing ${msg.device} with dev0`)\n                    msg.device=\"dev0\"\n            }\n            msg.endpoint=globals[msg.device].url\n            msg.device_enabled=globals[msg.device].enabled\n            //node.warn(msg)\n            ctr++\n        }\n        if(cmd.indexOf(\"#delay\")==0) {\n            node.warn(\"Hit a delay!\")\n            const parts = cmd.split(\":\")\n            msg.script_delay=parts[1]\n            ctr++\n        } else {\n            msg.script_delay=null\n        }\n    }\n    // msg.device_enabled=true\n    // todo: check that cmds[ctr] is non-meta\n    msg.query=cmds[ctr]\n    msg.counter = ctr\n    return msg;\n} else {\n    node.warn(\"End of the line...\")\n    //return msg;\n}\n",
+        "func": "// meta-commands MUST be followed by non-meta command\nmsg.device=\"dev0\"\nconst globals = global.get(\"globals\")\nconst cmds = msg.commands\nlet ctr = msg.counter\nif(ctr<cmds.length) {\n    let cmd = cmds[ctr]\n    if(cmd>\"\") {\n        if(cmd.indexOf(\"#dev\")==0) {\n            msg.device=cmd.replace('#',\"\")\n            // check to make sure it isn't bogus\n            switch(msg.device) {\n                case \"dev0\":\n                case \"dev1\":\n                    break;\n                default:\n                    node.warn(`Replacing ${msg.device} with dev0`)\n                    msg.device=\"dev0\"\n            }\n            msg.endpoint=globals[msg.device].url\n            msg.device_enabled=globals[msg.device].enabled\n            //node.warn(msg)\n            ctr++\n        }\n        if(cmd.indexOf(\"#delay\")==0) {\n            node.warn(\"Hit a delay!\")\n            const parts = cmd.split(\":\")\n            msg.script_delay=parts[1]\n            ctr++\n        } else {\n            msg.script_delay=null\n        }\n    }\n    // msg.device_enabled=true\n    // todo: check that cmds[ctr] is non-meta\n    msg.query=cmds[ctr]\n    msg.counter = ctr\n    return msg;\n} else {\n    //node.warn(\"End of the line...\")\n}\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1738,7 +1635,7 @@
         "initialize": "// Code added here will be run once\n// whenever the node is started.\nflow.set(\"counter\",0)\n",
         "finalize": "",
         "libs": [],
-        "x": 980,
+        "x": 580,
         "y": 80,
         "wires": [
             []
@@ -1807,7 +1704,7 @@
         "type": "function",
         "z": "ef4cb095a7656cc5",
         "name": "Set Test Data",
-        "func": "msg.twitter_search=\"Howdy!\"\nmsg.language=\"en\"\nflow.set(\"twitter_search\",msg.twitter_search)\nfor(i=-10;i<11;i++) {\n    let sentiment = i>0 ? \"Up\":\"Down\"\n    const magnitude = Math.abs(i)\n    if(i==0) sentiment=\"Default\"\n    if(i!=0) sentiment = `${sentiment} ${magnitude}`\n    msg.payload = {name: sentiment}\n    msg.tweet = {\n        text: `Howdy ${sentiment}!`,\n        user: {}\n    }\n    node.send(msg)\n}\n",
+        "func": "msg.twitter_search=\"Howdy\"\nmsg.language=\"en\"\nflow.set(\"twitter_search\",msg.twitter_search)\nfor(i=-10;i<11;i++) {\n    let sentiment = i>0 ? \"Up\":\"Down\"\n    const magnitude = Math.abs(i)\n    if(i==0) sentiment=\"Default\"\n    if(i!=0) sentiment = `${sentiment} ${magnitude}`\n    msg.payload = {name: sentiment}\n    msg.tweet = {\n        text: `Howdy ${sentiment}!`,\n        user: {}\n    }\n    node.send(msg)\n}\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1819,6 +1716,107 @@
             [
                 "6b769294dec11207"
             ]
+        ]
+    },
+    {
+        "id": "f4d24581fa554a37",
+        "type": "mongodb in",
+        "z": "ef4cb095a7656cc5",
+        "mongodb": "54588401fea63e01",
+        "name": "Get Data",
+        "collection": "sentiment_4_2",
+        "operation": "find",
+        "x": 580,
+        "y": 360,
+        "wires": [
+            [
+                "539b1bb86df82852"
+            ]
+        ]
+    },
+    {
+        "id": "06add11047b34c37",
+        "type": "file in",
+        "z": "ef4cb095a7656cc5",
+        "name": "Get File Data",
+        "filename": "C:\\Users\\Shannon\\Dropbox\\moog\\spankulator\\node-red\\docs\\sentiment_4.json",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 510,
+        "y": 460,
+        "wires": [
+            [
+                "7718c4b15d40c5bf"
+            ]
+        ]
+    },
+    {
+        "id": "7718c4b15d40c5bf",
+        "type": "json",
+        "z": "ef4cb095a7656cc5",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 650,
+        "y": 460,
+        "wires": [
+            [
+                "539b1bb86df82852"
+            ]
+        ]
+    },
+    {
+        "id": "b5f09f1928bf2ccc",
+        "type": "switch",
+        "z": "ef4cb095a7656cc5",
+        "name": "",
+        "property": "data_source",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "mongo",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "file",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 330,
+        "y": 400,
+        "wires": [
+            [
+                "f4d24581fa554a37"
+            ],
+            [
+                "06add11047b34c37"
+            ]
+        ]
+    },
+    {
+        "id": "539b1bb86df82852",
+        "type": "function",
+        "z": "ef4cb095a7656cc5",
+        "name": "",
+        "func": "global.set(\"scripts\",msg.payload)\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 810,
+        "y": 400,
+        "wires": [
+            []
         ]
     }
 ]
