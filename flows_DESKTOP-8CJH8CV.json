@@ -9,7 +9,7 @@
     {
         "id": "a0954fe29f87ceff",
         "type": "subflow",
-        "name": "HTTP Sender",
+        "name": "Do Script",
         "info": "",
         "category": "",
         "in": [
@@ -28,7 +28,7 @@
         "meta": {},
         "color": "#DDAA99",
         "status": {
-            "x": 600,
+            "x": 400,
             "y": 60,
             "wires": [
                 {
@@ -223,7 +223,7 @@
     {
         "id": "3581784ff799b3aa",
         "type": "subflow",
-        "name": "Do Script",
+        "name": "Exe Commands",
         "info": "",
         "category": "",
         "in": [
@@ -256,8 +256,9 @@
     {
         "id": "11a5884a1e26f777",
         "type": "subflow",
-        "name": "Subflow 5",
+        "name": "Init Scripts",
         "info": "",
+        "category": "",
         "in": [
             {
                 "x": 60,
@@ -269,7 +270,10 @@
                 ]
             }
         ],
-        "out": []
+        "out": [],
+        "env": [],
+        "meta": {},
+        "color": "#DDAA99"
     },
     {
         "id": "4f82a66a.93b828",
@@ -474,9 +478,9 @@
         "id": "b84ec5acc38872a7",
         "type": "subflow:a0954fe29f87ceff",
         "z": "ef4cb095a7656cc5",
-        "name": "HTTP Sender",
+        "name": "Do Script",
         "env": [],
-        "x": 800,
+        "x": 780,
         "y": 340,
         "wires": []
     },
@@ -657,7 +661,7 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "satan",
+        "payload": "elon",
         "payloadType": "str",
         "x": 170,
         "y": 100,
@@ -752,7 +756,7 @@
         "type": "function",
         "z": "a0954fe29f87ceff",
         "name": "Next Script",
-        "func": "let chk_talker_status=function(){\n    const talker_status = flow.get(\"talker_status\")\n    if(talker_status!=\"playing\" && msg.cmd_name!=\"Init\") {\n        msg.topic=\"initializing\"\n        msg.payload={name: \"Init\"}\n        msg.cmd_name=\"Init\"\n        msg.commands=global.get(\"init_commands\")\n        msg.counter=0\n        \n        // set view time. Dwell at least this long\n        msg.view_time = 5000\n    \n        msg.tweet={}\n        msg.user={}\n        msg.location={}\n        // set command sentiment ???\n        // const cmd_parts = msg.payload[0].name.split(\" \")\n        // msg.cmd_sentiment=cmd_parts[0]\n        \n        //node.warn(\"Sending Init CMDs\")\n        // node.warn(msg)\n        node.send(msg)\n    } else {\n        setTimeout(chk_talker_status,500)\n    }\n}\n\nconst queue_status = global.get(\"globals\").status\nif(msg.cmd_name==\"Init\") {\n    // we're done get next message in queue\n    let qlen=flow.get(\"$parent.queue_len\")\n    if(qlen==0) {\n        flow.set(\"$parent.queuing\",false)\n    }\n    msg.payload=\"trigger\"\n    //node.warn(msg.cmd_name)\n    // node.warn(\"Init received\")\n    // node.warn(msg)\n    return msg;\n} else {\n    chk_talker_status()    \n}\n\n\n// msg.payload={name: \"Init\"}\n// msg.cmd_name=\"Init\"\n// msg.commands=global.get(\"init_commands\")\n// msg.counter=0\n\n",
+        "func": "let chk_talker_status=function(){\n    const talker_status = flow.get(\"talker_status\")\n    if(talker_status!=\"playing\" && msg.cmd_name!=\"Init\") {\n        msg.topic=\"initializing\"\n        msg.payload={name: \"Init\"}\n        msg.cmd_name=\"Init\"\n        msg.commands=global.get(\"init_commands\")\n        msg.counter=0\n        \n        // set view time. Dwell at least this long\n        msg.view_time = 5000 + Math.floor(Math.random() * 5000)\n    \n        msg.tweet={}\n        msg.user={}\n        msg.location={}\n        // set command sentiment ???\n        // const cmd_parts = msg.payload[0].name.split(\" \")\n        // msg.cmd_sentiment=cmd_parts[0]\n        \n        //node.warn(\"Sending Init CMDs\")\n        // node.warn(msg)\n        node.send(msg)\n    } else {\n        setTimeout(chk_talker_status,500)\n    }\n}\n\nconst queue_status = global.get(\"globals\").status\nif(msg.cmd_name==\"Init\") {\n    // we're done get next message in queue\n    let qlen=flow.get(\"$parent.queue_len\")\n    if(qlen==0) {\n        flow.set(\"$parent.queuing\",false)\n    }\n    msg.payload=\"trigger\"\n    //node.warn(msg.cmd_name)\n    // node.warn(\"Init received\")\n    // node.warn(msg)\n    return msg;\n} else {\n    chk_talker_status()    \n}\n\n\n// msg.payload={name: \"Init\"}\n// msg.cmd_name=\"Init\"\n// msg.commands=global.get(\"init_commands\")\n// msg.counter=0\n\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -976,7 +980,7 @@
         "fwdInMessages": true,
         "resendOnRefresh": true,
         "templateScope": "local",
-        "x": 870,
+        "x": 930,
         "y": 140,
         "wires": [
             []
@@ -1117,7 +1121,7 @@
         "func": "// see On Start",
         "outputs": 1,
         "noerr": 0,
-        "initialize": "// Code added here will be run once\n// whenever the node is started.\nconst Globals = {\n    \"debug\": false,\n    \"data_source\" : \"file\",\n    \"speech_volume\" : 95,\n    \"dev0\" : {\n        url: \"192.168.0.115\",\n        enabled: true\n    },\n    \"dev1\" : {\n        url: \"192.168.0.105\",\n        enabled: true\n    }\n}\nglobal.set(\"globals\",Globals)\nlet msg = { data_source: Globals.data_source }\nnode.send(msg)",
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\nconst Globals = {\n    \"debug\": false,\n    \"data_source\" : \"file\",\n    \"filename\" : \"C:\\\\Users\\\\Shannon\\\\Dropbox\\\\moog\\\\spankulator\\\\node-red\\\\docs\\\\sentiment_4.json\",\n    \"speech_volume\" : 95,\n    \"dev0\" : {\n        url: \"192.168.0.115\",\n        enabled: true\n    },\n    \"dev1\" : {\n        url: \"192.168.0.105\",\n        enabled: true\n    }\n}\nglobal.set(\"globals\",Globals)\nlet msg = { \n    data_source: Globals.data_source,\n    filename: Globals.filename\n}\nnode.send(msg)\n/*\nMongo DB node must be configured manually!\n*/",
         "finalize": "",
         "libs": [],
         "x": 160,
@@ -1140,7 +1144,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 710,
+        "x": 750,
         "y": 140,
         "wires": [
             [
@@ -1306,7 +1310,7 @@
         "type": "function",
         "z": "b77158335238532e",
         "name": "Enhance Display",
-        "func": "if(msg.tweet) {\n    const twitter_search = flow.get(\"$parent.$parent.twitter_search\")\n    if(twitter_search && msg.tweet.text) {\n        let reg = new RegExp(twitter_search, \"gi\");\n        msg.tweet.text=msg.tweet.text.replace(reg,`<span>${twitter_search}</span>`)\n    }\n}\n\ntry {\n   msg.img=msg.tweet.extended_entities.media[0].media_url \n} catch(err) {\n    //node.warn(\"No image!\")\n    msg.img=\"\"\n}\n\nmsg.tweet_class=msg.cmd_name.replace(\" \",\"_\")\n\nreturn msg;",
+        "func": "if(msg.tweet) {\n    const twitter_search = flow.get(\"$parent.$parent.twitter_search\")\n    if(twitter_search && msg.tweet.text) {\n        let reg = new RegExp(twitter_search, \"gi\");\n        msg.tweet.text=msg.tweet.text.replace(reg,`<span>${twitter_search}</span>`)\n    }\n}\n\ntry {\n   msg.img=msg.tweet.extended_entities.media[0].media_url \n} catch(err) {\n    //node.warn(\"No image!\")\n    msg.img=null\n}\n\nmsg.tweet_class=msg.cmd_name.replace(\" \",\"_\")\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1471,7 +1475,7 @@
         "z": "a0954fe29f87ceff",
         "name": "",
         "env": [],
-        "x": 520,
+        "x": 540,
         "y": 140,
         "wires": [
             [
@@ -1757,7 +1761,7 @@
         "type": "file in",
         "z": "11a5884a1e26f777",
         "name": "Get File Data",
-        "filename": "C:\\Users\\Shannon\\Dropbox\\moog\\spankulator\\node-red\\docs\\sentiment_4.json",
+        "filename": "",
         "format": "utf8",
         "chunk": false,
         "sendError": false,
