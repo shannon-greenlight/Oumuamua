@@ -2,7 +2,7 @@
     {
         "id": "ef4cb095a7656cc5",
         "type": "tab",
-        "label": "SCP",
+        "label": "Oumuamua",
         "disabled": false,
         "info": ""
     },
@@ -254,6 +254,24 @@
         "color": "#DDAA99"
     },
     {
+        "id": "11a5884a1e26f777",
+        "type": "subflow",
+        "name": "Subflow 5",
+        "info": "",
+        "in": [
+            {
+                "x": 60,
+                "y": 120,
+                "wires": [
+                    {
+                        "id": "b5f09f1928bf2ccc"
+                    }
+                ]
+            }
+        ],
+        "out": []
+    },
+    {
         "id": "4f82a66a.93b828",
         "type": "mqtt-broker",
         "name": "",
@@ -445,7 +463,7 @@
         "payload": "{\"name\":\"Init\"}",
         "payloadType": "json",
         "x": 170,
-        "y": 220,
+        "y": 280,
         "wires": [
             [
                 "6b769294dec11207"
@@ -459,7 +477,7 @@
         "name": "HTTP Sender",
         "env": [],
         "x": 800,
-        "y": 280,
+        "y": 340,
         "wires": []
     },
     {
@@ -469,7 +487,7 @@
         "name": "Get Script",
         "env": [],
         "x": 580,
-        "y": 220,
+        "y": 280,
         "wires": [
             [
                 "b84ec5acc38872a7"
@@ -480,9 +498,9 @@
         "id": "6ef2c13140bffd5b",
         "type": "comment",
         "z": "ef4cb095a7656cc5",
-        "name": "Spankulator command processor",
+        "name": "Oumuamua",
         "info": "# Spankulator Command Processor\nThe SCP runs scripts that control The Spankulator.\nThe scripts are found in either a MongoDB Atlas or in a JSON formatted text file.\nEach script contains an array of objects in the format:\n{\n    name: String,\n    commands: Array of Strings,\n    delay: msecs to delay after script is run\n}\n * The commands are sent to the Spankulator via HTTP to the endpoint specified in the Spankulator's WiFi settings.\n * Commands are sent one-by-one by the **HTTP Sender** node that waits for the Spankulator's response before sending the next command.\n * Edit the **Start** node's payload parameter to enter the name of the script that is to be executed. eg. {\"name\":\"Up\"}\n * This payload is used by the **Get Data** node which delivers the script data to the **Set Commands** node.\n * A warning will be issued to the debug panel if the script is not found.\n * If the script is found, **Set Commands** sets the flow variables _commands_ and _delay_ to the data found in the script. The payload is ignored beyond this point.\n * The **HTTP Sender** node uses flow variables to parse and send the commands.",
-        "x": 230,
+        "x": 170,
         "y": 540,
         "wires": []
     },
@@ -617,7 +635,7 @@
         "name": "",
         "env": [],
         "x": 340,
-        "y": 60,
+        "y": 100,
         "wires": [
             [
                 "6b769294dec11207"
@@ -642,7 +660,7 @@
         "payload": "satan",
         "payloadType": "str",
         "x": 170,
-        "y": 60,
+        "y": 100,
         "wires": [
             [
                 "90b884e16d0f35a3"
@@ -851,7 +869,7 @@
         "payload": "reset",
         "payloadType": "str",
         "x": 190,
-        "y": 280,
+        "y": 340,
         "wires": [
             [
                 "b84ec5acc38872a7"
@@ -917,10 +935,10 @@
         "once": false,
         "onceDelay": "1",
         "topic": "",
-        "payload": "{\"name\":\"Default\"}",
+        "payload": "{\"name\":\"Up 9\"}",
         "payloadType": "json",
         "x": 170,
-        "y": 160,
+        "y": 220,
         "wires": [
             [
                 "db38738f211fe984"
@@ -1030,7 +1048,7 @@
         "finalize": "",
         "libs": [],
         "x": 340,
-        "y": 160,
+        "y": 220,
         "wires": [
             [
                 "6b769294dec11207"
@@ -1103,13 +1121,13 @@
         "finalize": "",
         "libs": [],
         "x": 160,
-        "y": 400,
+        "y": 440,
         "wires": [
             [
-                "b5f09f1928bf2ccc"
+                "5dcf2412633e21e2"
             ]
         ],
-        "icon": "node-red/parser-json.svg"
+        "icon": "node-red/cog.svg"
     },
     {
         "id": "7857e13809b2a289",
@@ -1692,7 +1710,7 @@
         "payload": "trigger",
         "payloadType": "str",
         "x": 170,
-        "y": 120,
+        "y": 160,
         "wires": [
             [
                 "0f4b37566e66f7ea"
@@ -1711,7 +1729,7 @@
         "finalize": "",
         "libs": [],
         "x": 340,
-        "y": 120,
+        "y": 160,
         "wires": [
             [
                 "6b769294dec11207"
@@ -1721,13 +1739,13 @@
     {
         "id": "f4d24581fa554a37",
         "type": "mongodb in",
-        "z": "ef4cb095a7656cc5",
+        "z": "11a5884a1e26f777",
         "mongodb": "54588401fea63e01",
         "name": "Get Data",
         "collection": "sentiment_4_2",
         "operation": "find",
-        "x": 580,
-        "y": 360,
+        "x": 440,
+        "y": 80,
         "wires": [
             [
                 "539b1bb86df82852"
@@ -1737,7 +1755,7 @@
     {
         "id": "06add11047b34c37",
         "type": "file in",
-        "z": "ef4cb095a7656cc5",
+        "z": "11a5884a1e26f777",
         "name": "Get File Data",
         "filename": "C:\\Users\\Shannon\\Dropbox\\moog\\spankulator\\node-red\\docs\\sentiment_4.json",
         "format": "utf8",
@@ -1745,8 +1763,8 @@
         "sendError": false,
         "encoding": "none",
         "allProps": false,
-        "x": 510,
-        "y": 460,
+        "x": 370,
+        "y": 180,
         "wires": [
             [
                 "7718c4b15d40c5bf"
@@ -1756,13 +1774,13 @@
     {
         "id": "7718c4b15d40c5bf",
         "type": "json",
-        "z": "ef4cb095a7656cc5",
+        "z": "11a5884a1e26f777",
         "name": "",
         "property": "payload",
         "action": "",
         "pretty": false,
-        "x": 650,
-        "y": 460,
+        "x": 510,
+        "y": 180,
         "wires": [
             [
                 "539b1bb86df82852"
@@ -1772,7 +1790,7 @@
     {
         "id": "b5f09f1928bf2ccc",
         "type": "switch",
-        "z": "ef4cb095a7656cc5",
+        "z": "11a5884a1e26f777",
         "name": "",
         "property": "data_source",
         "propertyType": "msg",
@@ -1791,8 +1809,8 @@
         "checkall": "true",
         "repair": false,
         "outputs": 2,
-        "x": 330,
-        "y": 400,
+        "x": 190,
+        "y": 120,
         "wires": [
             [
                 "f4d24581fa554a37"
@@ -1805,7 +1823,7 @@
     {
         "id": "539b1bb86df82852",
         "type": "function",
-        "z": "ef4cb095a7656cc5",
+        "z": "11a5884a1e26f777",
         "name": "",
         "func": "global.set(\"scripts\",msg.payload)\nreturn msg;",
         "outputs": 1,
@@ -1813,10 +1831,20 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 810,
-        "y": 400,
+        "x": 670,
+        "y": 120,
         "wires": [
             []
         ]
+    },
+    {
+        "id": "5dcf2412633e21e2",
+        "type": "subflow:11a5884a1e26f777",
+        "z": "ef4cb095a7656cc5",
+        "name": "Init Scripts",
+        "env": [],
+        "x": 350,
+        "y": 440,
+        "wires": []
     }
 ]
