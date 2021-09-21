@@ -603,7 +603,7 @@
         "type": "function",
         "z": "80f13c56f5360838",
         "name": "Message Processor",
-        "func": "let score = msg.sentiment.score\nlet sentiment = score > 0 ? \"Up \" : \"Down \"\nif(score>10) {\n    score=10\n}\nif(score<-10) {\n    score=-10\n}\nscore = Math.abs(score)\nmsg.payload = { \"name\" : sentiment+score }\nif(msg.sentiment.score==0) {\n    msg.payload = { \"name\" : \"Default\" }\n}\nreturn msg;\n\n// node.send(msg)\n// msg.payload = { \"name\" : \"Init\" }\n// msg.tweet.text=\"\"\n// msg.tweet.extended_tweet = { full_text : \"\" }\n// msg.tweet.user = {}\n// msg.location = {}\n// node.send(msg)\n// return msg;",
+        "func": "let score = msg.sentiment.score\nlet sentiment = score > 0 ? \"Up \" : \"Down \"\nif(score>10) {\n    score=10\n}\nif(score<-10) {\n    score=-10\n}\nscore = Math.abs(score)\nmsg.payload = { \"name\" : sentiment+score }\nif(msg.sentiment.score==0) {\n    msg.payload = { \"name\" : \"Default\" }\n}\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "// Code added here will be run once\n// whenever the node is started.\nflow.set(\"message_queue\",[])",
@@ -661,7 +661,7 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "elon",
+        "payload": "bitcoin",
         "payloadType": "str",
         "x": 170,
         "y": 100,
@@ -885,7 +885,7 @@
         "type": "function",
         "z": "a0954fe29f87ceff",
         "name": "Queue Ctrl",
-        "func": "if(msg.topic==\"control\") {\n    flow.set(\"$parent.queuing\",false)\n} else {\n    let qmsg = \"open\"\n    if(flow.get(\"$parent.queuing\")) {\n        qmsg=\"queue\"\n    }\n    let ctrlmsg = {\n        payload: qmsg,\n        topic: \"control\"\n    }\n    node.send(ctrlmsg)\n    flow.set(\"$parent.queuing\",true)\n}\nreturn msg;\n",
+        "func": "global.get(\"recent_tweets\").debug()\n\nif(global.get(\"recent_tweets\").add_tweet(msg.tweet.text)) {\n    let qmsg = \"open\"\n    if(flow.get(\"$parent.queuing\")) {\n        qmsg=\"queue\"\n    }\n    let ctrlmsg = {\n        payload: qmsg,\n        topic: \"control\"\n    }\n    node.send(ctrlmsg)\n    flow.set(\"$parent.queuing\",true)\n    return msg;\n} else {\n    node.warn(\"Dropping duplicate tweet: \"+msg.tweet.text)\n}\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -932,6 +932,11 @@
                 "p": "msg.tweet.user.screen_name",
                 "v": "JoeBigfoot",
                 "vt": "str"
+            },
+            {
+                "p": "msg.tweet.user.location",
+                "v": "Outer Sasquatchia",
+                "vt": "str"
             }
         ],
         "repeat": "",
@@ -939,7 +944,7 @@
         "once": false,
         "onceDelay": "1",
         "topic": "",
-        "payload": "{\"name\":\"Up 9\"}",
+        "payload": "{\"name\":\"Down 10\"}",
         "payloadType": "json",
         "x": 170,
         "y": 220,
@@ -980,7 +985,7 @@
         "fwdInMessages": true,
         "resendOnRefresh": true,
         "templateScope": "local",
-        "x": 930,
+        "x": 1110,
         "y": 140,
         "wires": [
             []
@@ -1045,7 +1050,7 @@
         "type": "function",
         "z": "ef4cb095a7656cc5",
         "name": "Set Test Data",
-        "func": "flow.set(\"twitter_search\",msg.twitter_search)\nmsg.language=\"en\"\n//msg.endpoint=global.get(\"globals\").dev0.url\nreturn msg;",
+        "func": "flow.set(\"twitter_search\",msg.twitter_search)\nmsg.language=\"en\"\nmsg.tweet.text=\"Hey. Stop that!\"\n//msg.endpoint=global.get(\"globals\").dev0.url\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1121,7 +1126,7 @@
         "func": "// see On Start",
         "outputs": 1,
         "noerr": 0,
-        "initialize": "// Code added here will be run once\n// whenever the node is started.\nconst Globals = {\n    \"debug\": false,\n    \"data_source\" : \"file\",\n    \"filename\" : \"C:\\\\Users\\\\Shannon\\\\Dropbox\\\\moog\\\\spankulator\\\\node-red\\\\docs\\\\sentiment_4.json\",\n    \"speech_volume\" : 95,\n    \"dev0\" : {\n        url: \"192.168.0.115\",\n        enabled: true\n    },\n    \"dev1\" : {\n        url: \"192.168.0.105\",\n        enabled: true\n    }\n}\nglobal.set(\"globals\",Globals)\nlet msg = { \n    data_source: Globals.data_source,\n    filename: Globals.filename\n}\nnode.send(msg)\n/*\nMongo DB node must be configured manually!\n*/",
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\nconst Globals = {\n    \"debug\": false,\n    \"data_source\" : \"file\",\n    \"filename\" : \"C:\\\\Users\\\\Shannon\\\\Dropbox\\\\moog\\\\spankulator\\\\node-red\\\\docs\\\\sentiment_4.json\",\n    \"speech_volume\" : 95,\n    \"dev0\" : {\n        url: \"192.168.0.115\",\n        enabled: true\n    },\n    \"dev1\" : {\n        url: \"192.168.0.105\",\n        enabled: true\n    }\n}\nglobal.set(\"globals\",Globals)\n\nlet recent_tweets = {\n    max_tweets: 7,\n    tweets: [],\n    add_tweet: function(tweet) {\n        if(this.tweets.indexOf(tweet)>-1) {\n            console.log(\"Duplicate tweet. Dropping: \"+tweet)\n            return false\n        } else {\n            this.tweets.push(tweet)\n            if(this.tweets.length>this.max_tweets) {\n                this.tweets.shift()\n            }\n            return true\n        }\n    },\n    debug: function() {\n        console.log(this.tweets)\n    }\n}\nglobal.set(\"recent_tweets\",recent_tweets)\n\nlet msg = { \n    data_source: Globals.data_source,\n    filename: Globals.filename\n}\nnode.send(msg)\n/*\nMongo DB node must be configured manually!\n*/",
         "finalize": "",
         "libs": [],
         "x": 160,
@@ -1144,7 +1149,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 750,
+        "x": 930,
         "y": 140,
         "wires": [
             [
@@ -1475,7 +1480,7 @@
         "z": "a0954fe29f87ceff",
         "name": "",
         "env": [],
-        "x": 540,
+        "x": 720,
         "y": 140,
         "wires": [
             [
@@ -1489,7 +1494,7 @@
         "type": "function",
         "z": "3581784ff799b3aa",
         "name": "Process Command",
-        "func": "// meta-commands MUST be followed by non-meta command\nmsg.device=\"dev0\"\nconst globals = global.get(\"globals\")\nconst cmds = msg.commands\nlet ctr = msg.counter\nif(ctr<cmds.length) {\n    let cmd = cmds[ctr]\n    if(cmd>\"\") {\n        if(cmd.indexOf(\"#dev\")==0) {\n            msg.device=cmd.replace('#',\"\")\n            // check to make sure it isn't bogus\n            switch(msg.device) {\n                case \"dev0\":\n                case \"dev1\":\n                    break;\n                default:\n                    node.warn(`Replacing ${msg.device} with dev0`)\n                    msg.device=\"dev0\"\n            }\n            msg.endpoint=globals[msg.device].url\n            msg.device_enabled=globals[msg.device].enabled\n            //node.warn(msg)\n            ctr++\n        }\n        if(cmd.indexOf(\"#delay\")==0) {\n            node.warn(\"Hit a delay!\")\n            const parts = cmd.split(\":\")\n            msg.script_delay=parts[1]\n            ctr++\n        } else {\n            msg.script_delay=null\n        }\n    }\n    // msg.device_enabled=true\n    // todo: check that cmds[ctr] is non-meta\n    msg.query=cmds[ctr]\n    msg.counter = ctr\n    return msg;\n} else {\n    //node.warn(\"End of the line...\")\n}\n",
+        "func": "// meta-commands MUST be followed by non-meta command\n\nmsg.device=\"dev0\"\nconst globals = global.get(\"globals\")\nconst cmds = msg.commands\nlet ctr = msg.counter\nif(ctr<cmds.length) {\n    let cmd = cmds[ctr]\n    if(cmd>\"\") {\n        if(cmd.indexOf(\"#dev\")==0) {\n            msg.device=cmd.replace('#',\"\")\n            // check to make sure it isn't bogus\n            switch(msg.device) {\n                case \"dev0\":\n                case \"dev1\":\n                    break;\n                default:\n                    node.warn(`Replacing ${msg.device} with dev0`)\n                    msg.device=\"dev0\"\n            }\n            msg.endpoint=globals[msg.device].url\n            msg.device_enabled=globals[msg.device].enabled\n            //node.warn(msg)\n            ctr++\n        }\n        if(cmd.indexOf(\"#delay\")==0) {\n            node.warn(\"Hit a delay!\")\n            const parts = cmd.split(\":\")\n            msg.script_delay=parts[1]\n            ctr++\n        } else {\n            msg.script_delay=null\n        }\n    }\n    // msg.device_enabled=true\n    // todo: check that cmds[ctr] is non-meta\n    msg.query=cmds[ctr]\n    msg.counter = ctr\n    return msg;\n} else {\n    //node.warn(\"End of the line...\")\n}\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1725,7 +1730,7 @@
         "id": "0f4b37566e66f7ea",
         "type": "function",
         "z": "ef4cb095a7656cc5",
-        "name": "Set Test Data",
+        "name": "Set Play Data",
         "func": "msg.twitter_search=\"Howdy\"\nmsg.language=\"en\"\nflow.set(\"twitter_search\",msg.twitter_search)\nfor(i=-10;i<11;i++) {\n    let sentiment = i>0 ? \"Up\":\"Down\"\n    const magnitude = Math.abs(i)\n    if(i==0) sentiment=\"Default\"\n    if(i!=0) sentiment = `${sentiment} ${magnitude}`\n    msg.payload = {name: sentiment}\n    msg.tweet = {\n        text: `Howdy ${sentiment}!`,\n        user: {}\n    }\n    node.send(msg)\n}\n",
         "outputs": 1,
         "noerr": 0,
@@ -1847,7 +1852,7 @@
         "z": "ef4cb095a7656cc5",
         "name": "Init Scripts",
         "env": [],
-        "x": 350,
+        "x": 370,
         "y": 440,
         "wires": []
     }
