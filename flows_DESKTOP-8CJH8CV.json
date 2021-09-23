@@ -537,7 +537,7 @@
         "func": "msg.data_source = global.get(\"settings\").data_source\nmsg.cmd_name=msg.payload.name\nmsg.query=msg.payload\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "initialize": "// Code added here will be run once\n// whenever the node is started.\n// Get the init commands for executing between received commands\n// let msg={}\n// msg.data_source = global.get(\"settings\").data_source\n// msg.payload={name: \"Init\"}\n// msg.cmd_name=msg.payload.name\n// msg.query=msg.payload\n// msg.initializing=true\n// node.warn(\"Start Up\")\n// node.warn(msg)\n// node.send(msg)",
+        "initialize": "",
         "finalize": "",
         "libs": [],
         "x": 200,
@@ -564,7 +564,7 @@
         "type": "function",
         "z": "90cfb10a56fd7196",
         "name": "Find Data",
-        "func": "// looks through all scripts to find script specd by msg.query.name\nfunction checkName(script) {\n    let search_term=msg.query.name\n    return script.name == search_term;\n}\n//let temp = msg.payload\nlet temp = global.get(\"info\").scripts\nnode.warn(global.get(\"info\"))\nmsg.payload=[]\nmsg.payload[0]=temp.find(checkName)\nreturn msg;",
+        "func": "// looks through all scripts to find script specd by msg.query.name\nfunction checkName(script) {\n    let search_term=msg.query.name\n    return script.name == search_term;\n}\n//let temp = msg.payload\nlet temp = global.get(\"info\").scripts\nmsg.payload=[]\nmsg.payload[0]=temp.find(checkName)\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -574,8 +574,7 @@
         "y": 80,
         "wires": [
             [
-                "7cc11906534b4543",
-                "1e5a8f6fbe35d25a"
+                "7cc11906534b4543"
             ]
         ]
     },
@@ -672,7 +671,7 @@
         "id": "a19ad4b6cb68ac7e",
         "type": "inject",
         "z": "ef4cb095a7656cc5",
-        "name": "Start",
+        "name": "On/Off",
         "props": [
             {
                 "p": "twitter_search",
@@ -754,7 +753,7 @@
         "type": "function",
         "z": "a0954fe29f87ceff",
         "name": "Next Script",
-        "func": "let chk_talker_status=function(){\n    const talker_status = global.get(\"talker\").status.text\n    if(talker_status!=\"playing\" && msg.cmd_name!=\"Init\") {\n        msg.topic=\"initializing\"\n        msg.payload={name: \"Init\"}\n        msg.cmd_name=\"Init\"\n        msg.commands=global.get(\"info\").init_commands\n        msg.counter=0\n        \n        // set view time. Dwell at least this long\n        msg.view_time = 5000 + Math.floor(Math.random() * 5000)\n    \n        msg.tweet={}\n        msg.user={}\n        msg.location={}\n        node.send(msg)\n        \n    } else {\n        setTimeout(chk_talker_status,500)\n    }\n}\n\nconst queue = global.get(\"queue\")\nif(msg.cmd_name==\"Init\") {\n    // we're done get next message in queue\n    if(queue.len==0) {\n        queue.queuing=false\n    }\n    msg.payload=\"trigger\"\n    //node.warn(msg.cmd_name)\n    // node.warn(\"Init received\")\n    // node.warn(msg)\n    return msg;\n} else {\n    chk_talker_status()    \n}\n\n",
+        "func": "let chk_talker_status=function(){\n    const talker_status = global.get(\"talker\").status.text\n    if(talker_status!=\"playing\" && msg.cmd_name!=\"Init\") {\n        msg.topic=\"initializing\"\n        msg.payload={name: \"Init\"}\n        msg.cmd_name=\"Init\"\n        msg.commands=global.get(\"info\").init_commands\n        msg.counter=0\n        \n        // set view time. Dwell at least this long\n        msg.view_time = 5000 + Math.floor(Math.random() * 5000)\n    \n        msg.tweet={}\n        msg.user={}\n        msg.location={}\n        node.send(msg)\n        \n    } else {\n        setTimeout(chk_talker_status,500)\n    }\n}\n\nconst queue = global.get(\"queue\")\nif(msg.cmd_name==\"Init\") {\n    // we're done get next message in queue\n    if(queue.len==0) {\n        queue.queuing=false\n    }\n    msg.payload=\"trigger\"\n    return msg;\n} else {\n    chk_talker_status()    \n}\n\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -871,7 +870,7 @@
         "topic": "control",
         "payload": "reset",
         "payloadType": "str",
-        "x": 190,
+        "x": 570,
         "y": 340,
         "wires": [
             [
@@ -1063,7 +1062,7 @@
         "type": "function",
         "z": "b77158335238532e",
         "name": "Process speech",
-        "func": "if(msg.cmd_name!=\"Init\") {\n    let speech=msg.tweet.text\n    if(msg.tweet.user) {\n        if(msg.tweet.user.screen_name) {\n            speech += \". tweeted by: \" + msg.tweet.user.screen_name\n        }\n        if(msg.tweet.user.location) {\n            speech += \", \" + msg.tweet.user.location\n        }\n    }\n    msg.payload=speech\n    msg.payload=msg.payload.replace(/http(\\S+)/g,\"\")\n    msg.payload=msg.payload.replace(/_/g,\" \")\n    msg.level=global.get(\"settings\").speech_volume\n    // node.warn(msg)\n    return msg;\n}\n",
+        "func": "if(msg.cmd_name!=\"Init\") {\n    let speech=msg.tweet.text\n    if(msg.tweet.user) {\n        if(msg.tweet.user.screen_name) {\n            speech += \". tweeted by: \" + msg.tweet.user.screen_name\n        }\n        if(msg.tweet.user.location) {\n            speech += \", \" + msg.tweet.user.location\n        }\n    }\n    msg.payload=speech\n    msg.payload=msg.payload.replace(/http(\\S+)/g,\"\")\n    msg.payload=msg.payload.replace(/_/g,\" \")\n    msg.level=global.get(\"settings\").speech_volume\n    return msg;\n}\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1124,7 +1123,7 @@
         "finalize": "",
         "libs": [],
         "x": 160,
-        "y": 440,
+        "y": 340,
         "wires": [
             [
                 "5dcf2412633e21e2"
@@ -1488,7 +1487,7 @@
         "type": "function",
         "z": "3581784ff799b3aa",
         "name": "Process Command",
-        "func": "// meta-commands MUST be followed by non-meta command\n\nmsg.device=\"dev0\"\nconst globals = global.get(\"settings\")\nconst cmds = msg.commands\nlet ctr = msg.counter\nif(ctr<cmds.length) {\n    let cmd = cmds[ctr]\n    if(cmd>\"\") {\n        if(cmd.indexOf(\"#dev\")==0) {\n            msg.device=cmd.replace('#',\"\")\n            // check to make sure it isn't bogus\n            switch(msg.device) {\n                case \"dev0\":\n                case \"dev1\":\n                    break;\n                default:\n                    node.warn(`Replacing ${msg.device} with dev0`)\n                    msg.device=\"dev0\"\n            }\n            msg.endpoint=globals[msg.device].url\n            msg.device_enabled=globals[msg.device].enabled\n            //node.warn(msg)\n            ctr++\n        }\n        if(cmd.indexOf(\"#delay\")==0) {\n            node.warn(\"Hit a delay!\")\n            const parts = cmd.split(\":\")\n            msg.script_delay=parts[1]\n            ctr++\n        } else {\n            msg.script_delay=null\n        }\n    }\n    // msg.device_enabled=true\n    // todo: check that cmds[ctr] is non-meta\n    msg.query=cmds[ctr]\n    msg.counter = ctr\n    return msg;\n} else {\n    //node.warn(\"End of the line...\")\n}\n",
+        "func": "// meta-commands MUST be followed by non-meta command\n\nmsg.device=\"dev0\"\nconst globals = global.get(\"settings\")\nconst cmds = msg.commands\nlet ctr = msg.counter\nif(ctr<cmds.length) {\n    let cmd = cmds[ctr]\n    if(cmd>\"\") {\n        if(cmd.indexOf(\"#dev\")==0) {\n            msg.device=cmd.replace('#',\"\")\n            // check to make sure it isn't bogus\n            switch(msg.device) {\n                case \"dev0\":\n                case \"dev1\":\n                    break;\n                default:\n                    node.warn(`Replacing ${msg.device} with dev0`)\n                    msg.device=\"dev0\"\n            }\n            msg.endpoint=globals[msg.device].url\n            msg.device_enabled=globals[msg.device].enabled\n            //node.warn(msg)\n            ctr++\n        }\n        if(cmd.indexOf(\"#delay\")==0) {\n            //node.warn(\"Hit a delay!\")\n            const parts = cmd.split(\":\")\n            msg.script_delay=parts[1]\n            ctr++\n        } else {\n            msg.script_delay=null\n        }\n    }\n    // msg.device_enabled=true\n    // todo: check that cmds[ctr] is non-meta\n    msg.query=cmds[ctr]\n    msg.counter = ctr\n    return msg;\n} else {\n    //node.warn(\"End of the line...\")\n}\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1650,7 +1649,7 @@
         "type": "function",
         "z": "90cfb10a56fd7196",
         "name": "Validate",
-        "func": "if(msg.payload[0]!=undefined) {\n    if(msg.initializing) {\n        // don't execute. We are saving these for later\n        const info = global.get(\"info\")\n        info.init_commands=msg.payload[0].commands\n        node.warn(info)\n    } else {\n        // set commands and send msg\n        msg.commands = msg.payload[0].commands\n        \n        const first_command = msg.commands[0]\n        \n        // The first command must be a device meta-command\n        if(first_command.indexOf(\"#dev\")!=0) {\n            node.warn(`First command must be a device command! Dropping ${msg.cmd_name}`)\n        } else {\n            // set counter\n            msg.counter = 0\n            \n            // set view time. Dwell at least this long\n            msg.view_time = parseInt(msg.payload[0].delay,10)\n        \n            // set command sentiment\n            const cmd_parts = msg.payload[0].name.split(\" \")\n            msg.cmd_sentiment=cmd_parts[0]\n            \n            return msg;\n        }\n    }\n    \n} else {\n    node.warn(msg.query.name + \": Not Found!\")\n}",
+        "func": "if(msg.payload[0]!=undefined) {\n    if(msg.initializing) {\n        // don't execute. We are saving these for later\n        const info = global.get(\"info\")\n        info.init_commands=msg.payload[0].commands\n    } else {\n        // set commands and send msg\n        msg.commands = msg.payload[0].commands\n        \n        const first_command = msg.commands[0]\n        \n        // The first command must be a device meta-command\n        if(first_command.indexOf(\"#dev\")!=0) {\n            node.warn(`First command must be a device command! Dropping ${msg.cmd_name}`)\n        } else {\n            // set counter\n            msg.counter = 0\n            \n            // set view time. Dwell at least this long\n            msg.view_time = parseInt(msg.payload[0].delay,10)\n        \n            // set command sentiment\n            const cmd_parts = msg.payload[0].name.split(\" \")\n            msg.cmd_sentiment=cmd_parts[0]\n            \n            return msg;\n        }\n    }\n    \n} else {\n    node.warn(msg.query.name + \": Not Found!\")\n}",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1829,7 +1828,7 @@
         "type": "function",
         "z": "11a5884a1e26f777",
         "name": "Set Scripts",
-        "func": "// payload is object containing array of all scripts\nconst info = global.get(\"info\")\ninfo.scripts=msg.payload\nnode.warn(info)\n// global.set(\"scripts\",msg.payload)\nconst text = \"Data Source: \"+global.get(\"settings\").data_source\nmsg.payload=({text:text});\nreturn msg;\n",
+        "func": "// payload is object containing array of all scripts\nconst info = global.get(\"info\")\ninfo.scripts=msg.payload\nconst text = \"Data Source: \"+global.get(\"settings\").data_source + \" \" + info.scripts.length + \" scripts\"\nmsg.payload=({text:text});\nreturn msg;\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1850,7 +1849,7 @@
         "name": "Init Scripts",
         "env": [],
         "x": 330,
-        "y": 440,
+        "y": 340,
         "wires": [
             [
                 "6b769294dec11207"
@@ -2024,7 +2023,7 @@
         "type": "function",
         "z": "11a5884a1e26f777",
         "name": "Get Init Commands",
-        "func": "// get init commands to store for later\n\nmsg.data_source = global.get(\"settings\").data_source\nmsg.payload={name: \"Init\"}\nmsg.cmd_name=msg.payload.name\nmsg.query=msg.payload\nmsg.initializing=true\nnode.warn(\"Start Up\")\nnode.warn(msg)\nnode.send(msg)",
+        "func": "// get init commands to store for later\n\nmsg.data_source = global.get(\"settings\").data_source\nmsg.payload={name: \"Init\"}\nmsg.cmd_name=msg.payload.name\nmsg.query=msg.payload\nmsg.initializing=true\nnode.send(msg)",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
