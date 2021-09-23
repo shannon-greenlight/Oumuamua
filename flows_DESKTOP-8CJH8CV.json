@@ -273,7 +273,17 @@
         "out": [],
         "env": [],
         "meta": {},
-        "color": "#DDAA99"
+        "color": "#DDAA99",
+        "status": {
+            "x": 820,
+            "y": 120,
+            "wires": [
+                {
+                    "id": "539b1bb86df82852",
+                    "port": 0
+                }
+            ]
+        }
     },
     {
         "id": "4f82a66a.93b828",
@@ -940,7 +950,7 @@
         "once": false,
         "onceDelay": "1",
         "topic": "",
-        "payload": "{\"name\":\"Down 10\"}",
+        "payload": "{\"name\":\"Up 10\"}",
         "payloadType": "json",
         "x": 170,
         "y": 220,
@@ -1046,7 +1056,7 @@
         "type": "function",
         "z": "ef4cb095a7656cc5",
         "name": "Set Test Data",
-        "func": "global.get(\"twitter_scanner\").search.set(msg)\nmsg.language=\"en\"\nmsg.tweet.text=\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum efficitur elit quis sem volutpat venenatis. Ut ullamcorper pharetra dui eget eleifend. Aenean eu lobortis justo. Aliquam nisl ante, eleifend nec quam id, dapibus pretium ex. Aliquam et leo quam. In non nibh et ante maximus porttitor a non ipsum. Curabitur id commodo nunc.\"\n//msg.tweet.text=\"Hey. Stop that! You idiot.\"\nreturn msg;",
+        "func": "global.get(\"twitter_scanner\").search.set(msg)\nmsg.language=\"en\"\nmsg.tweet.text=\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum efficitur elit quis sem volutpat venenatis. Ut ullamcorper pharetra dui eget eleifend. Aenean eu lobortis justo. Aliquam nisl ante, eleifend nec quam id, dapibus pretium ex. Aliquam et leo quam. In non nibh et ante maximus porttitor a non ipsum.\"\n//msg.tweet.text=\"Hey. Stop that! You idiot.\"\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1412,7 +1422,7 @@
         "type": "function",
         "z": "90cfb10a56fd7196",
         "name": "Status",
-        "func": "if(msg.cmd_name!=\"Init\") {\n    const text = \"From \"+global.get(\"globals\").data_source + \": \" + msg.cmd_name \n    msg.payload=({text:text});\n    return msg\n}\n",
+        "func": "if(msg.cmd_name!=\"Init\") {\n    const text = msg.cmd_name \n    msg.payload=({text:text});\n    return msg\n}\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1830,7 +1840,7 @@
         "type": "function",
         "z": "11a5884a1e26f777",
         "name": "",
-        "func": "global.set(\"scripts\",msg.payload)\nreturn msg;",
+        "func": "global.set(\"scripts\",msg.payload)\nconst text = \"Data Source: \"+global.get(\"globals\").data_source\nmsg.payload=({text:text});\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
