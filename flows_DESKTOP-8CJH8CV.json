@@ -15,7 +15,7 @@
         "in": [
             {
                 "x": 40,
-                "y": 140,
+                "y": 220,
                 "wires": [
                     {
                         "id": "d834998fd2533b91"
@@ -28,8 +28,8 @@
         "meta": {},
         "color": "#DDAA99",
         "status": {
-            "x": 400,
-            "y": 60,
+            "x": 700,
+            "y": 140,
             "wires": [
                 {
                     "id": "5a1ebb28ce1c7929",
@@ -535,7 +535,7 @@
         "name": "msg ignored at input",
         "info": "",
         "x": 110,
-        "y": 680,
+        "y": 760,
         "wires": []
     },
     {
@@ -719,7 +719,7 @@
         "finalize": "",
         "libs": [],
         "x": 250,
-        "y": 320,
+        "y": 400,
         "wires": [
             [
                 "a43740b735526d66",
@@ -744,7 +744,7 @@
         "drop": false,
         "allowrate": false,
         "x": 430,
-        "y": 320,
+        "y": 400,
         "wires": [
             [
                 "c543ab0b894d0bda"
@@ -756,14 +756,14 @@
         "type": "function",
         "z": "a0954fe29f87ceff",
         "name": "Next Script",
-        "func": "let chk_talker_status=function(){\n    // const talker_status = flow.get(\"talker_status\")\n    const talker_status = global.get(\"talker\").status.text\n    if(talker_status!=\"playing\" && msg.cmd_name!=\"Init\") {\n        msg.topic=\"initializing\"\n        msg.payload={name: \"Init\"}\n        msg.cmd_name=\"Init\"\n        msg.commands=global.get(\"init_commands\")\n        msg.counter=0\n        \n        // set view time. Dwell at least this long\n        msg.view_time = 5000 + Math.floor(Math.random() * 5000)\n    \n        msg.tweet={}\n        msg.user={}\n        msg.location={}\n        node.send(msg)\n        \n    } else {\n        setTimeout(chk_talker_status,500)\n    }\n}\n\nconst queue = global.get(\"queue\")\nif(msg.cmd_name==\"Init\") {\n    // we're done get next message in queue\n    let qlen=queue.length\n    if(qlen==0) {\n        queue.queuing=false\n    }\n    msg.payload=\"trigger\"\n    //node.warn(msg.cmd_name)\n    // node.warn(\"Init received\")\n    // node.warn(msg)\n    return msg;\n} else {\n    chk_talker_status()    \n}\n\n",
+        "func": "let chk_talker_status=function(){\n    const talker_status = global.get(\"talker\").status.text\n    if(talker_status!=\"playing\" && msg.cmd_name!=\"Init\") {\n        msg.topic=\"initializing\"\n        msg.payload={name: \"Init\"}\n        msg.cmd_name=\"Init\"\n        msg.commands=global.get(\"init_commands\")\n        msg.counter=0\n        \n        // set view time. Dwell at least this long\n        msg.view_time = 5000 + Math.floor(Math.random() * 5000)\n    \n        msg.tweet={}\n        msg.user={}\n        msg.location={}\n        node.send(msg)\n        \n    } else {\n        setTimeout(chk_talker_status,500)\n    }\n}\n\nconst queue = global.get(\"queue\")\nif(msg.cmd_name==\"Init\") {\n    // we're done get next message in queue\n    if(queue.len==0) {\n        queue.queuing=false\n    }\n    msg.payload=\"trigger\"\n    //node.warn(msg.cmd_name)\n    // node.warn(\"Init received\")\n    // node.warn(msg)\n    return msg;\n} else {\n    chk_talker_status()    \n}\n\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
         "x": 610,
-        "y": 320,
+        "y": 400,
         "wires": [
             [
                 "73d9e25da19621e7",
@@ -795,7 +795,7 @@
         "persist": false,
         "storeName": "memory",
         "x": 350,
-        "y": 140,
+        "y": 220,
         "wires": [
             [
                 "010b4454e988afe3"
@@ -816,7 +816,7 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 670,
-        "y": 440,
+        "y": 520,
         "wires": []
     },
     {
@@ -828,10 +828,10 @@
             "54ddcdf1a3f321fa"
         ],
         "x": 80,
-        "y": 60,
+        "y": 80,
         "wires": [
             [
-                "5a1ebb28ce1c7929"
+                "7dd170435563c70f"
             ]
         ]
     },
@@ -839,15 +839,15 @@
         "id": "5a1ebb28ce1c7929",
         "type": "function",
         "z": "a0954fe29f87ceff",
-        "name": "Set Queue Status",
-        "func": "const queue = global.get(\"queue\")\nlet qlen=0\nlet arr=msg.status.text.split(\" \")\nlet status=arr[0]\nif(status!=\"open\") {\n    qlen=arr[1]\n}\nqueue.status=status\nqueue.lenght=qlen\nmsg.payload=({fill:\"green\",shape:\"dot\",text:\"Queue len: \"+qlen + \" Status: \"+status});\nreturn msg;",
+        "name": "Set Node Status",
+        "func": "const talker_status = global.get(\"talker\").status.text\nconst queue = global.get(\"queue\")\nconst qlen=queue.len\nmsg.payload=({fill:\"green\",shape:\"dot\",text:\"Queue: \"+queue.status+\" \"+qlen+\" Talker: \"+talker_status});\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 270,
-        "y": 60,
+        "x": 520,
+        "y": 140,
         "wires": [
             []
         ]
@@ -893,7 +893,7 @@
         "finalize": "",
         "libs": [],
         "x": 170,
-        "y": 140,
+        "y": 220,
         "wires": [
             [
                 "54ddcdf1a3f321fa"
@@ -940,7 +940,7 @@
         "once": false,
         "onceDelay": "1",
         "topic": "",
-        "payload": "{\"name\":\"Up 10\"}",
+        "payload": "{\"name\":\"Down 10\"}",
         "payloadType": "json",
         "x": 170,
         "y": 220,
@@ -964,7 +964,7 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 800,
-        "y": 360,
+        "y": 440,
         "wires": []
     },
     {
@@ -982,7 +982,7 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "x": 950,
-        "y": 140,
+        "y": 220,
         "wires": [
             []
         ]
@@ -1122,7 +1122,7 @@
         "func": "// see On Start",
         "outputs": 1,
         "noerr": 0,
-        "initialize": "// Code added here will be run once\n// whenever the node is started.\n\nlet twitter_scanner={\n    search: {\n        search_string: \"money\",\n        get: function() {\n            return this.search_string;\n        },\n        set: function(msg) {\n            if(msg.twitter_search>\"\") {\n                this.search_string=msg.twitter_search\n            }\n        }\n    },\n    gate: {\n        enabled: false,\n        get: function() { return this.enabled },\n        set: function(f) { this.enabled=f!=0 },\n        toggle: function() {\n            this.enabled = !this.enabled\n            return this.get()\n        }\n    },\n    recent_tweets : {\n        max_tweets: 7,\n        tweets: [],\n        add_tweet: function(tweet) {\n            if(this.tweets.indexOf(tweet)>-1) {\n                console.log(\"Duplicate tweet. Dropping: \"+tweet)\n                return false\n            } else {\n                this.tweets.push(tweet)\n                if(this.tweets.length>this.max_tweets) {\n                    this.tweets.shift()\n                }\n                return true\n            }\n        },\n        reset: function() {\n            this.tweets=[]\n        },\n        debug: function() {\n            console.log(this.tweets)\n        }\n    }\n}\nglobal.set(\"twitter_scanner\",twitter_scanner)\n\nlet queue = {\n    length: 0,\n    status: \"\",\n    queuing: false\n}\nglobal.set(\"queue\",queue)\n\nconst talker = {\n    status: {}\n}\nglobal.set(\"talker\",talker)\n\nconst Settings = {\n    \"debug\": false,\n    \"data_source\" : \"file\",\n    \"filename\" : \"C:\\\\Users\\\\Shannon\\\\Dropbox\\\\moog\\\\spankulator\\\\node-red\\\\docs\\\\sentiment_4.json\",\n    \"speech_volume\" : 95,\n    \"dev0\" : {\n        url: \"192.168.0.115\",\n        enabled: true\n    },\n    \"dev1\" : {\n        url: \"192.168.0.105\",\n        enabled: true\n    }\n}\nglobal.set(\"globals\",Settings)\n\nlet msg = { \n    data_source: Settings.data_source,\n    filename: Settings.filename\n}\nnode.send(msg)\n/*\nMongo DB node must be configured manually!\n*/",
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\n\nlet twitter_scanner={\n    search: {\n        search_string: \"money\",\n        get: function() {\n            return this.search_string;\n        },\n        set: function(msg) {\n            if(msg.twitter_search>\"\") {\n                this.search_string=msg.twitter_search\n            }\n        }\n    },\n    gate: {\n        enabled: false,\n        get: function() { return this.enabled },\n        set: function(f) { this.enabled=f!=0 },\n        toggle: function() {\n            this.enabled = !this.enabled\n            return this.get()\n        }\n    },\n    recent_tweets : {\n        max_tweets: 7,\n        tweets: [],\n        add_tweet: function(tweet) {\n            if(this.tweets.indexOf(tweet)>-1) {\n                console.log(\"Duplicate tweet. Dropping: \"+tweet)\n                return false\n            } else {\n                this.tweets.push(tweet)\n                if(this.tweets.length>this.max_tweets) {\n                    this.tweets.shift()\n                }\n                return true\n            }\n        },\n        reset: function() {\n            this.tweets=[]\n        },\n        debug: function() {\n            console.log(this.tweets)\n        }\n    }\n}\nglobal.set(\"twitter_scanner\",twitter_scanner)\n\nlet queue = {\n    len: 0,\n    status: \"\",\n    queuing: false\n}\nglobal.set(\"queue\",queue)\n\nlet talker = {\n    status: { text: \"unset\"}\n}\nglobal.set(\"talker\",talker)\n\nconst Settings = {\n    \"debug\": false,\n    \"data_source\" : \"file\",\n    \"filename\" : \"C:\\\\Users\\\\Shannon\\\\Dropbox\\\\moog\\\\spankulator\\\\node-red\\\\docs\\\\sentiment_4.json\",\n    \"speech_volume\" : 95,\n    \"dev0\" : {\n        url: \"192.168.0.115\",\n        enabled: true\n    },\n    \"dev1\" : {\n        url: \"192.168.0.105\",\n        enabled: true\n    }\n}\nglobal.set(\"globals\",Settings)\n\nlet msg = { \n    data_source: Settings.data_source,\n    filename: Settings.filename\n}\nnode.send(msg)\n/*\nMongo DB node must be configured manually!\n*/",
         "finalize": "",
         "libs": [],
         "x": 160,
@@ -1146,7 +1146,7 @@
         "finalize": "",
         "libs": [],
         "x": 770,
-        "y": 140,
+        "y": 220,
         "wires": [
             [
                 "ee4c480b39108e75"
@@ -1199,7 +1199,7 @@
         "name": "Process UI",
         "env": [],
         "x": 430,
-        "y": 540,
+        "y": 620,
         "wires": [
             [
                 "352aa494d8ddcbfe"
@@ -1230,7 +1230,7 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "x": 670,
-        "y": 480,
+        "y": 560,
         "wires": [
             []
         ]
@@ -1244,7 +1244,7 @@
         "voice": "Microsoft David - English (United States)",
         "always": true,
         "x": 670,
-        "y": 520,
+        "y": 600,
         "wires": []
     },
     {
@@ -1256,7 +1256,7 @@
         "voice": "Microsoft Zira - English (United States)",
         "always": "",
         "x": 660,
-        "y": 560,
+        "y": 640,
         "wires": []
     },
     {
@@ -1268,7 +1268,7 @@
         "voice": "Microsoft Mark - English (United States)",
         "always": "",
         "x": 670,
-        "y": 600,
+        "y": 680,
         "wires": []
     },
     {
@@ -1282,7 +1282,7 @@
             "fd8285b77b157c7e"
         ],
         "x": 670,
-        "y": 660,
+        "y": 740,
         "wires": [
             [
                 "5f7dd9f90f0385bd"
@@ -1294,14 +1294,14 @@
         "type": "function",
         "z": "a0954fe29f87ceff",
         "name": "Set Talker Status",
-        "func": "// flow.set(\"talker_status\",msg.status.text)\nglobal.get(\"talker\").status=msg.status\nreturn msg;",
+        "func": "global.get(\"talker\").status=msg.status\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
         "x": 870,
-        "y": 660,
+        "y": 740,
         "wires": [
             []
         ]
@@ -1477,7 +1477,7 @@
         "name": "",
         "env": [],
         "x": 560,
-        "y": 140,
+        "y": 220,
         "wires": [
             [
                 "7857e13809b2a289",
@@ -1687,7 +1687,7 @@
         "repair": false,
         "outputs": 2,
         "x": 790,
-        "y": 320,
+        "y": 400,
         "wires": [
             [
                 "010b4454e988afe3"
@@ -1884,5 +1884,51 @@
         "x": 400,
         "y": 260,
         "wires": []
+    },
+    {
+        "id": "475a0b86f6c590d3",
+        "type": "inject",
+        "z": "a0954fe29f87ceff",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "status.text",
+                "v": "...",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 140,
+        "wires": [
+            [
+                "5a1ebb28ce1c7929"
+            ]
+        ]
+    },
+    {
+        "id": "7dd170435563c70f",
+        "type": "function",
+        "z": "a0954fe29f87ceff",
+        "name": "Set Queue global",
+        "func": "let qlen=0\nlet arr=msg.status.text.split(\" \")\nlet status=arr[0]\nif(status!=\"open\") {\n    qlen=arr[1]\n}\n\nlet queue = global.get(\"queue\")\nqueue.status=status\nqueue.len=qlen\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 280,
+        "y": 80,
+        "wires": [
+            []
+        ]
     }
 ]
