@@ -645,12 +645,12 @@
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
+        "complete": "tweet",
+        "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 610,
-        "y": 160,
+        "x": 1210,
+        "y": 180,
         "wires": []
     },
     {
@@ -675,7 +675,7 @@
         "props": [
             {
                 "p": "twitter_search",
-                "v": "dildo,girl",
+                "v": "sweet,angry",
                 "vt": "str"
             }
         ],
@@ -972,7 +972,7 @@
         "order": 1,
         "width": 6,
         "height": 9,
-        "format": "<style>\n    .nr-dashboard-theme {\n        font-family: arial !important;\n    }\n    .debug_class {\n        color: red;\n    }\n    .warn_class {\n        color: orange;\n    }\n    #Greenface_Labs_Debug {\n        {{msg.debug_style}};\n    }\n    #Greenface_Labs_Debug .nr-dashboard-cardtitle {\n        margin-bottom: 50px;\n    }\n    #Greenface_Labs_Debug md-card {\n        background-color: #edd !important;\n        border-radius: 15px;\n        padding: 25px;\n    }\n    #Greenface_Labs_Debug md-card > div {\n        margin-bottom: 15px;\n    }\n    .hide {\n        display: none;\n    }\n    .debug_class span {\n        color: black;\n    }\n    #sentiment_div {\n        display: flex;\n        justify-content: center;\n        gap: 20px;\n    }\n    #sentiment_div>div {\n        width: 40%;\n    }\n    #sentiment_div li {\n        color: black;\n    }\n    #sentiment_div ul {\n        list-style-type: none;\n        list-style-position: outside;\n        text-align: left;\n        padding:0;\n    }\n</style>\n<div id=\"debug_cmd_name\" class=\"debug_class\" ng-bind-html=\"msg.cmd_name\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.endpoint\"></div>\n<div id=\"debug_fxn\" class=\"debug_class\" ng-bind-html=\"msg.payload.fxn\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.query\"></div>\n<div id=\"sentiment_div\" class=\"debug_class\">\n    <div id=\"good_words\">\n        <strong>Good Words</strong>\n        <ul>\n            <li ng-repeat=\"x in msg.sentiment.positive\">{{x}}</li>\n        </ul>\n    </div>\n    <div id=\"bad_words\">\n        <strong>Bad Words</strong>\n        <ul>\n            <li ng-repeat=\"x in msg.sentiment.negative\">{{x}}</li>\n        </ul>\n    </div>\n</div>\n",
+        "format": "<style>\n    .nr-dashboard-theme {\n        font-family: arial !important;\n    }\n    .debug_class {\n        color: red;\n    }\n    .warn_class {\n        color: orange;\n    }\n    #Greenface_Labs_Debug {\n        {{msg.debug_style}};\n    }\n    #Greenface_Labs_Debug .nr-dashboard-cardtitle {\n        margin-bottom: 50px;\n    }\n    #Greenface_Labs_Debug md-card {\n        background-color: #edd !important;\n        border-radius: 15px;\n        padding: 25px;\n    }\n    #Greenface_Labs_Debug md-card > div {\n        margin-bottom: 15px;\n    }\n    .hide {\n        display: none;\n    }\n    .debug_class span {\n        color: black;\n    }\n    #sentiment_div {\n        display: flex;\n        justify-content: center;\n        gap: 20px;\n    }\n    #sentiment_div>div {\n        width: 40%;\n    }\n    #sentiment_div li {\n        color: black;\n    }\n    #sentiment_div ul {\n        list-style-type: none;\n        list-style-position: outside;\n        text-align: left;\n        padding:0;\n    }\n</style>\n<div id=\"debug_cmd_name\" class=\"debug_class\" ng-bind-html=\"msg.cmd_name\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.endpoint\"></div>\n<div id=\"debug_fxn\" class=\"debug_class\" ng-bind-html=\"msg.payload.fxn\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.query\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.sentiment_score\"></div>\n<div id=\"sentiment_div\" class=\"debug_class\">\n    <div id=\"good_words\">\n        <strong>Good Words</strong>\n        <ul>\n            <li ng-repeat=\"x in msg.sentiment.positive\">{{x}}</li>\n        </ul>\n    </div>\n    <div id=\"bad_words\">\n        <strong>Bad Words</strong>\n        <ul>\n            <li ng-repeat=\"x in msg.sentiment.negative\">{{x}}</li>\n        </ul>\n    </div>\n</div>\n",
         "storeOutMessages": true,
         "fwdInMessages": true,
         "resendOnRefresh": true,
@@ -1135,7 +1135,7 @@
         "type": "function",
         "z": "a0954fe29f87ceff",
         "name": "Debug Filter",
-        "func": "if(msg.topic!=\"control\") {\n    msg.debug_style=global.get(\"settings\").debug ? \"\" : \"display:none\"\n    msg.endpoint=`${msg.device}: <span>${msg.endpoint}</span>`\n    msg.payload.fxn=`Fxn: <span>${msg.payload.fxn}</span>`\n    msg.cmd_name = `Script name: <span>${msg.cmd_name}</span>`\n    msg.query = `CMD: <span>${msg.query}</span>`\n    return msg;\n}",
+        "func": "if(msg.topic!=\"control\") {\n    msg.debug_style=global.get(\"settings\").debug ? \"\" : \"display:none\"\n    msg.endpoint=`${msg.device}: <span>${msg.endpoint}</span>`\n    msg.payload.fxn=`Fxn: <span>${msg.payload.fxn}</span>`\n    msg.cmd_name = `Script name: <span>${msg.cmd_name}</span>`\n    msg.query = `CMD: <span>${msg.query}</span>`\n    if(msg.sentiment) msg.sentiment_score = `Sentiment: <span>${msg.sentiment.score}</span>`\n    return msg;\n}",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1993,12 +1993,12 @@
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "cmd_name",
-        "targetType": "msg",
+        "complete": "true",
+        "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 970,
-        "y": 60,
+        "x": 730,
+        "y": 260,
         "wires": []
     },
     {
@@ -2040,7 +2040,7 @@
         "type": "function",
         "z": "a0954fe29f87ceff",
         "name": "DeQueue",
-        "func": "let ok_to_add=false\nconst twitter_scanner=global.get(\"twitter_scanner\")\nconst recent_tweets = twitter_scanner.recent_tweets\ntry {\n    if(msg.tweet.text>\"\") {\n        ok_to_add = recent_tweets.add_tweet(msg.tweet.text)\n    }\n}\ncatch(err) {\n    node.warn(err)\n}\n\nrecent_tweets.debug()\n\nif(ok_to_add) {\n    msg.sender=\"\"\n    return msg\n} else {\n    node.warn(\"Dropping duplicate: \"+msg.tweet.text)\n    let newmsg = {\n        topic: \"control\",\n        payload: \"trigger\",\n        sender: \"dequeue\"\n    }\n    node.send(newmsg)\n}\n",
+        "func": "let ok_to_add=false\nif(msg.cmd_name==\"Init\") {\n    ok_to_add=true\n} else {\n    const twitter_scanner=global.get(\"twitter_scanner\")\n    const recent_tweets = twitter_scanner.recent_tweets\n    try {\n        if(msg.tweet.text>\"\") {\n            ok_to_add = recent_tweets.add_tweet(msg.tweet.text)\n        }\n    }\n    catch(err) {\n        node.warn(err)\n    }\n    \n    recent_tweets.debug()\n}\n\nif(ok_to_add) {\n    msg.sender=\"\"\n    return msg\n} else {\n    node.warn(\"Dropping duplicate: \"+msg.tweet.text)\n    let newmsg = {\n        topic: \"control\",\n        payload: \"trigger\",\n        sender: \"dequeue\"\n    }\n    node.send(newmsg)\n}\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -2050,7 +2050,8 @@
         "y": 260,
         "wires": [
             [
-                "60ec921b4b8b4219"
+                "60ec921b4b8b4219",
+                "59bbae44cb4481db"
             ]
         ]
     },
