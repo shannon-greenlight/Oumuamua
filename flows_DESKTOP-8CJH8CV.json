@@ -15,7 +15,7 @@
         "in": [
             {
                 "x": 40,
-                "y": 220,
+                "y": 260,
                 "wires": [
                     {
                         "id": "d834998fd2533b91"
@@ -488,7 +488,7 @@
         "payload": "{\"name\":\"Init\"}",
         "payloadType": "json",
         "x": 170,
-        "y": 280,
+        "y": 220,
         "wires": [
             [
                 "6b769294dec11207"
@@ -624,7 +624,7 @@
         "type": "function",
         "z": "80f13c56f5360838",
         "name": "Message Processor",
-        "func": "let score = msg.sentiment.score\nlet sentiment = score > 0 ? \"Up \" : \"Down \"\nif(score>10) {\n    score=10\n}\nif(score<-10) {\n    score=-10\n}\nscore = Math.abs(score)\nmsg.payload = { \"name\" : sentiment+score }\nif(msg.sentiment.score==0) {\n    msg.payload = { \"name\" : \"Default\" }\n}\nreturn msg;",
+        "func": "let score = msg.sentiment.score\nlet sentiment = score > 0 ? \"Up \" : \"Down \"\nif(score>10) {\n    score=10\n}\nif(score<-10) {\n    score=-10\n}\nscore = Math.abs(score)\nmsg.payload = { \"name\" : sentiment+score }\nif(msg.sentiment.score==0) {\n    msg.payload = { \"name\" : \"Default\" }\n}\nmsg.source=\"twitter\"\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -649,7 +649,7 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 650,
+        "x": 610,
         "y": 160,
         "wires": []
     },
@@ -675,7 +675,7 @@
         "props": [
             {
                 "p": "twitter_search",
-                "v": "titties",
+                "v": "dildo,girl",
                 "vt": "str"
             }
         ],
@@ -697,7 +697,7 @@
         "type": "function",
         "z": "80f13c56f5360838",
         "name": "Twitter Gate",
-        "func": "let ok_to_add=false\nconst twitter_scanner=global.get(\"twitter_scanner\")\nconst recent_tweets = twitter_scanner.recent_tweets\ntry {\n    if(msg.tweet.text>\"\") {\n        ok_to_add = recent_tweets.add_tweet(msg.tweet.text)\n    }\n}\ncatch(err) {\n    node.warn(err)\n}\n\nrecent_tweets.debug()\n\nif(ok_to_add && twitter_scanner.gate.enabled && msg.tweet.text.indexOf(twitter_scanner.search.get())!=-1 && msg.lang==\"en\") {\n    msg.overrides={\"greenface\": 5}\n    return msg;\n} else {\n    // don't return msg\n}\n",
+        "func": "const twitter_scanner=global.get(\"twitter_scanner\")\nlet tweet_contains_search_term=false\nfor(i=0;i<twitter_scanner.search.search_parts.length;i++) {\n    if(msg.tweet.text.indexOf(twitter_scanner.search.search_parts[i])!=-1) {\n        tweet_contains_search_term=true\n    }\n}\nif(twitter_scanner.gate.enabled && tweet_contains_search_term && msg.lang==\"en\") {\n    msg.overrides={\"greenface\": 5}\n    return msg;\n} else {\n    // don't return msg\n}\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -753,13 +753,13 @@
         "type": "function",
         "z": "a0954fe29f87ceff",
         "name": "Next Script",
-        "func": "let chk_talker_status=function(){\n    const talker_status = global.get(\"talker\").status.text\n    if(talker_status!=\"playing\" && msg.cmd_name!=\"Init\") {\n        msg.topic=\"initializing\"\n        msg.payload={name: \"Init\"}\n        msg.cmd_name=\"Init\"\n        msg.commands=global.get(\"info\").init_commands\n        msg.counter=0\n        \n        // set view time. Dwell at least this long\n        msg.view_time = 5000 + Math.floor(Math.random() * 5000)\n    \n        msg.tweet={}\n        msg.user={}\n        msg.location={}\n        node.send(msg)\n        \n    } else {\n        setTimeout(chk_talker_status,500)\n    }\n}\n\nconst queue = global.get(\"queue\")\nif(msg.cmd_name==\"Init\") {\n    // we're done get next message in queue\n    if(queue.len==0) {\n        queue.queuing=false\n    }\n    msg.payload=\"trigger\"\n    return msg;\n} else {\n    chk_talker_status()    \n}\n\n",
+        "func": "let chk_talker_status=function(){\n    let d2 = new Date();\n    const now = d2.getTime();\n    const elapsed = (now - global.get(\"info\").talk_start_time)/1000\n    //node.warn(`Elapsed time: ${elapsed}`)\n    const talker_status = global.get(\"talker\").status.text\n    if(elapsed>60 || (talker_status!=\"playing\" && msg.cmd_name!=\"Init\")) {\n        msg.topic=\"initializing\"\n        msg.payload={name: \"Init\"}\n        msg.cmd_name=\"Init\"\n        msg.commands=global.get(\"info\").init_commands\n        msg.counter=0\n        \n        // set view time. Dwell at least this long\n        const silent_time = global.get(\"settings\").silent_time\n        msg.view_time = silent_time + Math.floor(Math.random() * silent_time)\n    \n        msg.tweet={}\n        msg.user={}\n        msg.location={}\n        node.send(msg)\n        \n    } else {\n        setTimeout(chk_talker_status,500)\n    }\n}\n\nconst queue = global.get(\"queue\")\nif(msg.cmd_name==\"Init\") {\n    // we're done get next message in queue\n    if(queue.len==0) {\n        queue.queuing=false\n    }\n    msg.payload=\"trigger\"\n    return msg;\n} else {\n    let d = new Date();\n    global.get(\"info\").talk_start_time = d.getTime();\n    chk_talker_status()    \n}\n\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 510,
+        "x": 470,
         "y": 400,
         "wires": [
             [
@@ -791,11 +791,10 @@
         "persist": false,
         "storeName": "memory",
         "x": 350,
-        "y": 220,
+        "y": 260,
         "wires": [
             [
-                "010b4454e988afe3",
-                "59bbae44cb4481db"
+                "212e0062caa9429e"
             ]
         ]
     },
@@ -870,7 +869,7 @@
         "topic": "control",
         "payload": "reset",
         "payloadType": "str",
-        "x": 570,
+        "x": 590,
         "y": 340,
         "wires": [
             [
@@ -890,7 +889,7 @@
         "finalize": "",
         "libs": [],
         "x": 170,
-        "y": 220,
+        "y": 260,
         "wires": [
             [
                 "54ddcdf1a3f321fa"
@@ -937,10 +936,10 @@
         "once": false,
         "onceDelay": "1",
         "topic": "",
-        "payload": "{\"name\":\"Up 5\"}",
+        "payload": "{\"name\":\"Up 6\"}",
         "payloadType": "json",
         "x": 170,
-        "y": 220,
+        "y": 280,
         "wires": [
             [
                 "db38738f211fe984"
@@ -956,12 +955,12 @@
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "cmd_name",
-        "targetType": "msg",
+        "complete": "true",
+        "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 880,
-        "y": 440,
+        "x": 840,
+        "y": 480,
         "wires": []
     },
     {
@@ -971,15 +970,15 @@
         "group": "2a033f5be28e93e0",
         "name": "Debug",
         "order": 1,
-        "width": 0,
-        "height": 0,
-        "format": "<style>\n    .nr-dashboard-theme {\n        font-family: arial !important;\n    }\n    .debug_class {\n        color: red;\n    }\n    .warn_class {\n        color: orange;\n    }\n    #Greenface_Labs_Debug {\n        {{msg.debug_style}};\n    }\n    .hide {\n        display: none;\n    }\n</style>\n<div id=\"debug_fxn\" class=\"debug_class\" ng-bind-html=\"msg.payload.fxn\"></div>\n<div id=\"debug_cmd_name\" class=\"debug_class\" ng-bind-html=\"msg.cmd_name\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.endpoint\"></div>\n",
+        "width": 6,
+        "height": 9,
+        "format": "<style>\n    .nr-dashboard-theme {\n        font-family: arial !important;\n    }\n    .debug_class {\n        color: red;\n    }\n    .warn_class {\n        color: orange;\n    }\n    #Greenface_Labs_Debug {\n        {{msg.debug_style}};\n    }\n    #Greenface_Labs_Debug .nr-dashboard-cardtitle {\n        margin-bottom: 50px;\n    }\n    #Greenface_Labs_Debug md-card {\n        background-color: #edd !important;\n        border-radius: 15px;\n        padding: 25px;\n    }\n    #Greenface_Labs_Debug md-card > div {\n        margin-bottom: 15px;\n    }\n    .hide {\n        display: none;\n    }\n    .debug_class span {\n        color: black;\n    }\n    #sentiment_div {\n        display: flex;\n        justify-content: center;\n        gap: 20px;\n    }\n    #sentiment_div>div {\n        width: 40%;\n    }\n    #sentiment_div li {\n        color: black;\n    }\n    #sentiment_div ul {\n        list-style-type: none;\n        list-style-position: outside;\n        text-align: left;\n        padding:0;\n    }\n</style>\n<div id=\"debug_cmd_name\" class=\"debug_class\" ng-bind-html=\"msg.cmd_name\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.endpoint\"></div>\n<div id=\"debug_fxn\" class=\"debug_class\" ng-bind-html=\"msg.payload.fxn\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.query\"></div>\n<div id=\"sentiment_div\" class=\"debug_class\">\n    <div id=\"good_words\">\n        <strong>Good Words</strong>\n        <ul>\n            <li ng-repeat=\"x in msg.sentiment.positive\">{{x}}</li>\n        </ul>\n    </div>\n    <div id=\"bad_words\">\n        <strong>Bad Words</strong>\n        <ul>\n            <li ng-repeat=\"x in msg.sentiment.negative\">{{x}}</li>\n        </ul>\n    </div>\n</div>\n",
         "storeOutMessages": true,
         "fwdInMessages": true,
         "resendOnRefresh": true,
         "templateScope": "local",
-        "x": 950,
-        "y": 220,
+        "x": 1230,
+        "y": 400,
         "wires": [
             []
         ]
@@ -1050,7 +1049,7 @@
         "finalize": "",
         "libs": [],
         "x": 340,
-        "y": 220,
+        "y": 280,
         "wires": [
             [
                 "6b769294dec11207"
@@ -1119,7 +1118,7 @@
         "func": "// see On Start",
         "outputs": 1,
         "noerr": 0,
-        "initialize": "// Code added here will be run once\n// whenever the node is started.\n\nconst twitter_scanner={\n    search: {\n        search_string: \"money\",\n        get: function() {\n            return this.search_string;\n        },\n        set: function(msg) {\n            if(msg.twitter_search>\"\") {\n                this.search_string=msg.twitter_search\n            }\n        }\n    },\n    gate: {\n        enabled: false,\n        get: function() { return this.enabled },\n        set: function(f) { this.enabled=f!=0 },\n        toggle: function() {\n            this.enabled = !this.enabled\n            return this.get()\n        }\n    },\n    recent_tweets : {\n        max_tweets: 7,\n        tweets: [],\n        add_tweet: function(tweet) {\n            if(this.tweets.indexOf(tweet)>-1) {\n                console.log(\"Duplicate tweet. Dropping: \"+tweet)\n                return false\n            } else {\n                this.tweets.push(tweet)\n                if(this.tweets.length>this.max_tweets) {\n                    this.tweets.shift()\n                }\n                return true\n            }\n        },\n        reset: function() {\n            this.tweets=[]\n        },\n        debug: function() {\n            console.log(this.tweets)\n        }\n    }\n}\nglobal.set(\"twitter_scanner\",twitter_scanner)\n\nconst queue = {\n    len: 0,\n    status: \"\",\n    queuing: false\n}\nglobal.set(\"queue\",queue)\n\nconst talker = {\n    status: { text: \"unset\"}\n}\nglobal.set(\"talker\",talker)\n\nconst info = {\n    scripts: {},\n    init_commands: [],\n    cmd_name: \"\"\n}\nglobal.set(\"info\",info)\n\nconst Settings = {\n    \"debug\": false,\n    \"data_source\" : \"file\",\n    \"filename\" : \"C:\\\\Users\\\\Shannon\\\\Dropbox\\\\moog\\\\spankulator\\\\node-red\\\\docs\\\\sentiment_4.json\",\n    \"speech_volume\" : 95,\n    \"dev0\" : {\n        url: \"192.168.0.115\",\n        enabled: true\n    },\n    \"dev1\" : {\n        url: \"192.168.0.105\",\n        enabled: true\n    }\n}\nglobal.set(\"settings\",Settings)\n\nlet msg = { \n    data_source: Settings.data_source,\n    filename: Settings.filename\n}\nnode.send(msg)\n/*\nMongo DB node must be configured manually!\n*/",
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\n\nconst twitter_scanner={\n    search: {\n        search_string: \"money\",\n        search_parts: [],\n        get: function() {\n            return this.search_string;\n        },\n        set: function(msg) {\n            if(msg.twitter_search>\"\") {\n                this.search_string=msg.twitter_search\n                this.search_parts=this.search_string.split(\",\")\n            }\n        }\n    },\n    gate: {\n        enabled: false,\n        get: function() { return this.enabled },\n        set: function(f) { this.enabled=f!=0 },\n        toggle: function() {\n            this.enabled = !this.enabled\n            return this.get()\n        }\n    },\n    recent_tweets : {\n        max_tweets: 75,\n        tweets: [],\n        add_tweet: function(tweet) {\n            if(this.tweets.indexOf(tweet)>-1) {\n                console.log(\"Duplicate tweet. Dropping: \"+tweet)\n                return false\n            } else {\n                this.tweets.push(tweet)\n                if(this.tweets.length>this.max_tweets) {\n                    this.tweets.shift()\n                }\n                return true\n            }\n        },\n        reset: function() {\n            this.tweets=[]\n        },\n        debug: function() {\n            console.log(this.tweets)\n        }\n    }\n}\nglobal.set(\"twitter_scanner\",twitter_scanner)\n\nconst queue = {\n    len: 0,\n    status: \"\",\n    queuing: false\n}\nglobal.set(\"queue\",queue)\n\nconst talker = {\n    status: { text: \"unset\"}\n}\nglobal.set(\"talker\",talker)\n\nconst info = {\n    scripts: {},\n    init_commands: [],\n    talk_start_time: 0,\n    cmd_name: \"\"\n}\nglobal.set(\"info\",info)\n\nconst Settings = {\n    \"debug\": true,\n    \"data_source\" : \"file\",\n    \"filename\" : \"C:\\\\Users\\\\Shann\\\\Dropbox\\\\moog\\\\spankulator\\\\node-red\\\\docs\\\\sentiment_4.json\",\n    \"speech_volume\" : 95,\n    \"view_time\": 3000,\n    \"silent_time\": 300,\n    \"require_image\": true,\n    \"dev0\" : {\n        url: \"192.168.0.115\",\n        enabled: true\n    },\n    \"dev1\" : {\n        url: \"192.168.0.105\",\n        enabled: true\n    }\n}\nglobal.set(\"settings\",Settings)\n\nlet msg = { \n    data_source: Settings.data_source,\n    filename: Settings.filename\n}\nnode.send(msg)\n/*\nMongo DB node must be configured manually!\n*/",
         "finalize": "",
         "libs": [],
         "x": 160,
@@ -1136,14 +1135,14 @@
         "type": "function",
         "z": "a0954fe29f87ceff",
         "name": "Debug Filter",
-        "func": "if(msg.topic!=\"control\") {\n    msg.debug_style=global.get(\"settings\").debug ? \"\" : \"display:none\"\n    return msg;\n}",
+        "func": "if(msg.topic!=\"control\") {\n    msg.debug_style=global.get(\"settings\").debug ? \"\" : \"display:none\"\n    msg.endpoint=`${msg.device}: <span>${msg.endpoint}</span>`\n    msg.payload.fxn=`Fxn: <span>${msg.payload.fxn}</span>`\n    msg.cmd_name = `Script name: <span>${msg.cmd_name}</span>`\n    msg.query = `CMD: <span>${msg.query}</span>`\n    return msg;\n}",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 770,
-        "y": 220,
+        "x": 1070,
+        "y": 400,
         "wires": [
             [
                 "ee4c480b39108e75"
@@ -1221,7 +1220,7 @@
         "order": 1,
         "width": 14,
         "height": 9,
-        "format": "<style>\n    @import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Rubik+Beastly&family=Sigmar+One&family=Amita:wght@700&family=Black+Ops+One&family=Bungee+Inline&family=Chewy&family=Courier+Prime:wght@700&family=Creepster&family=Emilys+Candy&family=Freckle+Face&family=Lakki+Reddy&family=Metal+Mania&family=Mystery+Quest&family=New+Rocker&family=Oleo+Script&family=Rock+Salt&family=Rye&family=Shrikhand&family=UnifrakturCook:wght@700&display=swap');\n    /*.nr-dashboard-theme {*/\n    /*    font-family: copperplate !important;*/\n    /*}*/\n    /*.nr-dashboard-cardcontainer {*/\n    /*    height: 500px !important;*/\n    /*}*/\n    md-content>section {\n        background-image: url('https://www.greenlightdevelopment.com/wp-content/plugins/gld_demos/alien_landers/images/spacegame/stars.gif');\n    }\n    ui-card-panel, md-card {\n        background-color: transparent !important;\n        border: none !important;\n    }\n    .nr-dashboard-theme ui-card-panel p.nr-dashboard-cardtitle {\n        color: #567;\n        font-family: 'Sigmar One', cursive;\n        font-size: 3em;\n    }\n    #toolbar {\n        display: none;\n    }\n    #Greenface_Labs_Oumuamua {\n        margin-top: 35px;\n    }\n    #img_div {\n\t\tposition: absolute;\n\t\ttop: 0px;\n\t\tleft: 0px;\n\t\twidth: 100%;\n\t\topacity: .3;\n    }\n    #tweet {\n\t\tposition: relative;\n        overflow: hidden;\n        border-radius: 45px;\n        margin: 36px;\n        min-height: 585px;\n        font-size: 3em;\n        /* padding: 25px; */\n        transition-duration: 4s;\n        opacity: 1;\n    }\n\t#tweet_text {\n\t\tmargin: 25px;\n\t}\n    #tweet span {\n        text-shadow: 2px 2px #000;\n    }\n    #tweet.Down span {\n        color: #417940 !important;\n    }\n    #tweet.Up span {\n        color: #bb422f !important;\n    }\n    #tweet.Default span {\n        color: blue !important;\n        text-shadow: orange !important;\n    }\n    #user {\n        padding-bottom: 1em;\n        position: absolute;\n        bottom: 25px;\n        width: 96%;\n    }\n    #user * {\n        float: right;\n    }\n    #user div {\n        margin-right: 1em;\n    }\n    #user_location {\n        color: #dda;\n    }\n    .Init {\n        opacity: 0 !important;\n    }\n    \n    .Test, .Default {\n        font-family: Sigmar One;\n        font-size: 2.2em !important;\n        color: #333;\n        background-color: #ddd;\n        background-image: linear-gradient(#ee0, #aaf);\n    }\n    .Up_1 {\n        background-image: linear-gradient(yellow 50%, green 90%);\n        font-family: 'Oleo Script', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_2 {\n        background-image: linear-gradient(yellow 40%, green 90%);\n        font-family: 'Shrikhand', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_3 {\n        background-image: linear-gradient(yellow 30%, green 90%);\n        font-family: 'Rock Salt', cursive !important;\n        font-size: 2em !important;\n    }\n    .Up_4 {\n        background-image: linear-gradient(yellow 20%, green 90%);\n        font-family: 'Chewy', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_5 {\n        background-image: linear-gradient(yellow 10%, green 90%);\n        font-family: 'Amita', cursive !important;\n        font-size: 2.7em !important;\n    }\n    .Up_6 {\n        background-image: linear-gradient(yellow 0%, green 90%);\n        font-family: 'Lakki Reddy', cursive !important;\n        font-size: 3em !important;\n        line-height: 1.4em !important;\n    }\n    .Up_7 {\n        background-image: linear-gradient(yellow -10%, green 90%);\n        font-family: 'Freckle Face', cursive !important;\n        font-size: 3em !important;\n        line-height: 1.5em !important;\n    }\n    .Up_8 {\n        background-image: linear-gradient(yellow -20%, green 90%);\n        font-family: 'Oleo Script', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_9 {\n        background-image: linear-gradient(yellow -30%, green 90%);\n        font-family: 'Mystery Quest', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_10 {\n        background-image: linear-gradient(yellow -40%, green 90%);\n        font-family: 'Emilys Candy', cursive !important;\n        font-size: 3.3em !important;\n    }\n    .Up {\n        color: #617;\n        background-color: #5a5;\n        /*background-image: linear-gradient(green, yellow);*/\n        /*font-family: 'Alfa Slab One', cursive !important;*/\n    }\n    .Down_1 {\n        background-image: linear-gradient(yellow 50%, red 90%);\n        font-family: 'Courier Prime', cursive !important;\n    }\n    .Down_2 {\n        background-image: linear-gradient(yellow 40%, red 90%);\n        font-family: 'Creepster', cursive !important;\n    }\n    .Down_3 {\n        background-image: linear-gradient(yellow 30%, red 90%);\n        font-family: 'Rock Salt', cursive !important;\n        font-size: 2em !important;\n    }\n    .Down_4 {\n        background-image: linear-gradient(yellow 20%, red 90%);\n        font-family: 'Metal Mania', cursive !important;\n    }\n    .Down_5 {\n        background-image: linear-gradient(yellow 10%, red 90%);\n        font-family: 'UnifrakturCook', cursive !important;\n        font-size: 3.5em !important;\n        letter-spacing: 2px;\n    }\n    .Down_6 {\n        background-image: linear-gradient(yellow 0%, red 90%);\n        font-family: 'Creepster', cursive !important;\n        line-height: 1.3em;\n    }\n    .Down_7 {\n        background-image: linear-gradient(yellow -10%, red 90%);\n        font-family: 'Rock Salt', cursive !important;\n        font-size: 2em !important;\n    }\n    .Down_8 {\n        background-image: linear-gradient(yellow -20%, red 90%);\n        font-family: 'Metal Mania', cursive !important;\n    }\n    .Down_9 {\n        background-image: linear-gradient(yellow -30%, red 90%);\n        font-family: 'Black Ops One', cursive !important;\n        font-size: 3em !important;\n    }\n    .Down_10 {\n        background-image: linear-gradient(yellow -40%, red 90%);\n        font-family: 'Rubik Beastly', cursive !important;\n        color: #30303a !important;\n    }\n    .Down {\n        color: black;\n        background-color: #f77;\n        /*background-image: linear-gradient(yellow 50%, red 90%);*/\n        /*font-family: 'Rock Salt', cursive;\n        font-family: 'Freckle Face', cursive;*/\n    }\n    \n</style>\n<div id=\"tweet\" class=\"{{msg.cmd_sentiment}} {{msg.tweet_class}}\">\n    <div id=\"tweet_text\" ng-bind-html=\"msg.tweet.text\" ></div>\n    <div id=\"img_div\"><img id=\"the_image\" ng-show=\"msg.img\" ng-src=\"{{msg.img}}\" /></div>\n</div>\n\n<div id=\"user\">\n    <img src=\"{{msg.tweet.user.profile_image_url}}\" ng-hide=\"{{msg.cmd_name==='Init'}}\" />\n    <div id=\"user_location\" ng-bind-html=\"msg.location.place\"></div>\n    <div ng-bind-html=\"msg.tweet.user.screen_name\"></div>\n</div>\n",
+        "format": "<style>\n    @import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Rubik+Beastly&family=Sigmar+One&family=Amita:wght@700&family=Black+Ops+One&family=Bungee+Inline&family=Chewy&family=Courier+Prime:wght@700&family=Creepster&family=Emilys+Candy&family=Freckle+Face&family=Lakki+Reddy&family=Metal+Mania&family=Mystery+Quest&family=New+Rocker&family=Oleo+Script&family=Rock+Salt&family=Rye&family=Shrikhand&family=UnifrakturCook:wght@700&display=swap');\n    /*.nr-dashboard-theme {*/\n    /*    font-family: copperplate !important;*/\n    /*}*/\n    /*.nr-dashboard-cardcontainer {*/\n    /*    height: 500px !important;*/\n    /*}*/\n    md-content>section {\n        background-image: url('https://www.greenlightdevelopment.com/wp-content/plugins/gld_demos/alien_landers/images/spacegame/stars.gif');\n    }\n     ui-card-panel, #Greenface_Labs_Oumuamua md-card {\n        background-color: transparent !important;\n        border: none !important;\n    }\n    .nr-dashboard-theme ui-card-panel p.nr-dashboard-cardtitle {\n        color: #567;\n        font-family: 'Sigmar One', cursive;\n        font-size: 3em;\n    }\n    #toolbar {\n        display: none;\n    }\n    ui-card-panel {\n        margin-top: 35px;\n    }\n    #img_div {\n\t\tposition: absolute;\n\t\ttop: 0px;\n\t\tleft: 0px;\n\t\twidth: 100%;\n\t\topacity: .3;\n    }\n    #tweet {\n\t\tposition: relative;\n        overflow: hidden;\n        border-radius: 45px;\n        margin: 36px;\n        min-height: 585px;\n        font-size: 3em;\n        /* padding: 25px; */\n        transition-duration: 4s;\n        opacity: 1;\n    }\n\t#tweet_text {\n\t\tmargin: 25px;\n\t}\n    #tweet span {\n        text-shadow: 2px 2px #000;\n    }\n    #tweet.Down span {\n        color: #417940 !important;\n    }\n    #tweet.Up span {\n        color: #bb422f !important;\n    }\n    #tweet.Default span {\n        color: blue !important;\n        text-shadow: orange !important;\n    }\n    #user {\n        padding-bottom: 1em;\n        position: absolute;\n        bottom: 25px;\n        width: 96%;\n    }\n    #user * {\n        float: right;\n    }\n    #user div {\n        margin-right: 1em;\n    }\n    #user_location {\n        color: #dda;\n    }\n    .Init {\n        opacity: 0 !important;\n    }\n    \n    .Test, .Default {\n        font-family: Sigmar One;\n        font-size: 2.2em !important;\n        color: #333;\n        background-color: #ddd;\n        background-image: linear-gradient(#ee0, #aaf);\n    }\n    .Up_1 {\n        background-image: linear-gradient(yellow 50%, green 90%);\n        font-family: 'Oleo Script', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_2 {\n        background-image: linear-gradient(yellow 40%, green 90%);\n        font-family: 'Shrikhand', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_3 {\n        background-image: linear-gradient(yellow 30%, green 90%);\n        font-family: 'Rock Salt', cursive !important;\n        font-size: 2em !important;\n    }\n    .Up_4 {\n        background-image: linear-gradient(yellow 20%, green 90%);\n        font-family: 'Chewy', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_5 {\n        background-image: linear-gradient(yellow 10%, green 90%);\n        font-family: 'Amita', cursive !important;\n        font-size: 2.7em !important;\n    }\n    .Up_6 {\n        background-image: linear-gradient(yellow 0%, green 90%);\n        font-family: 'Lakki Reddy', cursive !important;\n        font-size: 3em !important;\n        line-height: 1.4em !important;\n    }\n    .Up_7 {\n        background-image: linear-gradient(yellow -10%, green 90%);\n        font-family: 'Freckle Face', cursive !important;\n        font-size: 3em !important;\n        line-height: 1.5em !important;\n    }\n    .Up_8 {\n        background-image: linear-gradient(yellow -20%, green 90%);\n        font-family: 'Oleo Script', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_9 {\n        background-image: linear-gradient(yellow -30%, green 90%);\n        font-family: 'Mystery Quest', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_10 {\n        background-image: linear-gradient(yellow -40%, green 90%);\n        font-family: 'Emilys Candy', cursive !important;\n        font-size: 3.3em !important;\n    }\n    .Up {\n        color: #617;\n        background-color: #5a5;\n        /*background-image: linear-gradient(green, yellow);*/\n        /*font-family: 'Alfa Slab One', cursive !important;*/\n    }\n    .Down_1 {\n        background-image: linear-gradient(yellow 50%, red 90%);\n        font-family: 'Courier Prime', cursive !important;\n    }\n    .Down_2 {\n        background-image: linear-gradient(yellow 40%, red 90%);\n        font-family: 'Creepster', cursive !important;\n    }\n    .Down_3 {\n        background-image: linear-gradient(yellow 30%, red 90%);\n        font-family: 'Rock Salt', cursive !important;\n        font-size: 2em !important;\n    }\n    .Down_4 {\n        background-image: linear-gradient(yellow 20%, red 90%);\n        font-family: 'Metal Mania', cursive !important;\n    }\n    .Down_5 {\n        background-image: linear-gradient(yellow 10%, red 90%);\n        font-family: 'UnifrakturCook', cursive !important;\n        font-size: 3.5em !important;\n        letter-spacing: 2px;\n    }\n    .Down_6 {\n        background-image: linear-gradient(yellow 0%, red 90%);\n        font-family: 'Creepster', cursive !important;\n        line-height: 1.3em;\n    }\n    .Down_7 {\n        background-image: linear-gradient(yellow -10%, red 90%);\n        font-family: 'Rock Salt', cursive !important;\n        font-size: 2em !important;\n    }\n    .Down_8 {\n        background-image: linear-gradient(yellow -20%, red 90%);\n        font-family: 'Metal Mania', cursive !important;\n    }\n    .Down_9 {\n        background-image: linear-gradient(yellow -30%, red 90%);\n        font-family: 'Black Ops One', cursive !important;\n        font-size: 3em !important;\n    }\n    .Down_10 {\n        background-image: linear-gradient(yellow -40%, red 90%);\n        font-family: 'Rubik Beastly', cursive !important;\n        color: #30303a !important;\n    }\n    .Down {\n        color: black;\n        background-color: #f77;\n        /*background-image: linear-gradient(yellow 50%, red 90%);*/\n        /*font-family: 'Rock Salt', cursive;\n        font-family: 'Freckle Face', cursive;*/\n    }\n    \n</style>\n<div id=\"tweet\" class=\"{{msg.cmd_sentiment}} {{msg.tweet_class}}\">\n    <div id=\"tweet_text\" ng-bind-html=\"msg.tweet.text\" ></div>\n    <div id=\"img_div\"><img id=\"the_image\" ng-show=\"msg.img\" ng-src=\"{{msg.img}}\" /></div>\n</div>\n\n<div id=\"user\">\n    <img src=\"{{msg.tweet.user.profile_image_url}}\" ng-hide=\"{{msg.cmd_name==='Init'}}\" />\n    <div id=\"user_location\" ng-bind-html=\"msg.location.place\"></div>\n    <div ng-bind-html=\"msg.tweet.user.screen_name\"></div>\n</div>\n",
         "storeOutMessages": true,
         "fwdInMessages": true,
         "resendOnRefresh": true,
@@ -1308,7 +1307,7 @@
         "type": "function",
         "z": "b77158335238532e",
         "name": "Enhance Display",
-        "func": "if(msg.tweet) {\n    const search = global.get(\"twitter_scanner\").search.get()\n    if(search && msg.tweet.text) {\n        let reg = new RegExp(search, \"gi\");\n        msg.tweet.text=msg.tweet.text.replace(reg,`<span>${search}</span>`)\n    }\n}\n\ntry {\n   msg.img=msg.tweet.extended_entities.media[0].media_url \n} catch(err) {\n    //node.warn(\"No image!\")\n    msg.img=null\n}\n\nmsg.tweet_class=msg.cmd_name.replace(\" \",\"_\")\n\nreturn msg;",
+        "func": "if(msg.tweet) {\n    const search = global.get(\"twitter_scanner\").search.get()\n    //node.warn(global.get(\"twitter_scanner\").search.search_parts)\n    if(search && msg.tweet.text) {\n        global.get(\"twitter_scanner\").search.search_parts.forEach(function(currentValue, index) {\n            let reg = new RegExp(currentValue, \"gi\");\n            msg.tweet.text=msg.tweet.text.replace(reg,`<span>${currentValue}</span>`)\n        })\n        // let reg = new RegExp(search, \"gi\");\n        // msg.tweet.text=msg.tweet.text.replace(reg,`<span>${search}</span>`)\n    }\n}\n\ntry {\n   msg.img=msg.tweet.extended_entities.media[0].media_url \n} catch(err) {\n    //node.warn(\"No image!\")\n    msg.img=null\n}\n\nmsg.tweet_class=msg.cmd_name.replace(\" \",\"_\")\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1473,8 +1472,8 @@
         "z": "a0954fe29f87ceff",
         "name": "",
         "env": [],
-        "x": 560,
-        "y": 220,
+        "x": 1060,
+        "y": 300,
         "wires": [
             [
                 "7857e13809b2a289",
@@ -1649,7 +1648,7 @@
         "type": "function",
         "z": "90cfb10a56fd7196",
         "name": "Validate",
-        "func": "if(msg.payload[0]!=undefined) {\n    if(msg.initializing) {\n        // don't execute. We are saving these for later\n        const info = global.get(\"info\")\n        info.init_commands=msg.payload[0].commands\n    } else {\n        // set commands and send msg\n        msg.commands = msg.payload[0].commands\n        \n        const first_command = msg.commands[0]\n        \n        // The first command must be a device meta-command\n        if(first_command.indexOf(\"#dev\")!=0) {\n            node.warn(`First command must be a device command! Dropping ${msg.cmd_name}`)\n        } else {\n            // set counter\n            msg.counter = 0\n            \n            // set view time. Dwell at least this long\n            msg.view_time = parseInt(msg.payload[0].delay,10)\n        \n            // set command sentiment\n            const cmd_parts = msg.payload[0].name.split(\" \")\n            msg.cmd_sentiment=cmd_parts[0]\n            \n            return msg;\n        }\n    }\n    \n} else {\n    node.warn(msg.query.name + \": Not Found!\")\n}",
+        "func": "if(msg.payload[0]!=undefined) {\n    if(msg.initializing) {\n        // don't execute. We are saving these for later\n        const info = global.get(\"info\")\n        info.init_commands=msg.payload[0].commands\n    } else {\n        // set commands and send msg\n        msg.commands = msg.payload[0].commands\n        \n        const first_command = msg.commands[0]\n        \n        // The first command must be a device meta-command\n        if(first_command.indexOf(\"#dev\")!=0) {\n            node.warn(`First command must be a device command! Dropping ${msg.cmd_name}`)\n        } else {\n            // set counter\n            msg.counter = 0\n            \n            // set view time. Dwell at least this long\n            // msg.view_time = parseInt(msg.payload[0].delay,10)\n            msg.view_time = global.get(\"settings\").view_time\n        \n            // set command sentiment\n            const cmd_parts = msg.payload[0].name.split(\" \")\n            msg.cmd_sentiment=cmd_parts[0]\n            \n            try {\n               msg.img=msg.tweet.extended_entities.media[0].media_url \n            } catch(err) {\n                //node.warn(\"No image!\")\n                msg.img=null\n            }\n            \n            if(global.get(\"settings\").require_image) {\n                if(msg.img || msg.source!=\"twitter\") {\n                    return msg;\n                }\n            } else {\n                return msg\n            }\n            \n        }\n    }\n    \n} else {\n    node.warn(msg.query.name + \": Not Found!\")\n}",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1670,12 +1669,12 @@
         "propertyType": "msg",
         "rules": [
             {
-                "t": "neq",
+                "t": "eq",
                 "v": "control",
                 "vt": "str"
             },
             {
-                "t": "eq",
+                "t": "neq",
                 "v": "control",
                 "vt": "str"
             }
@@ -1683,14 +1682,14 @@
         "checkall": "true",
         "repair": false,
         "outputs": 2,
-        "x": 870,
+        "x": 810,
         "y": 400,
         "wires": [
             [
-                "010b4454e988afe3"
+                "54ddcdf1a3f321fa"
             ],
             [
-                "54ddcdf1a3f321fa"
+                "010b4454e988afe3"
             ]
         ]
     },
@@ -1877,16 +1876,17 @@
         "id": "1e5a8f6fbe35d25a",
         "type": "debug",
         "z": "90cfb10a56fd7196",
-        "name": "",
+        "name": "GetScript:Validate",
         "active": true,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "false",
+        "complete": "true",
+        "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 630,
-        "y": 300,
+        "x": 950,
+        "y": 180,
         "wires": []
     },
     {
@@ -1951,7 +1951,7 @@
         "randomUnits": "seconds",
         "drop": false,
         "allowrate": false,
-        "x": 690,
+        "x": 650,
         "y": 400,
         "wires": [
             [
@@ -1976,7 +1976,7 @@
         "randomUnits": "seconds",
         "drop": false,
         "allowrate": false,
-        "x": 320,
+        "x": 300,
         "y": 400,
         "wires": [
             [
@@ -1997,8 +1997,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 590,
-        "y": 180,
+        "x": 970,
+        "y": 60,
         "wires": []
     },
     {
@@ -2033,6 +2033,58 @@
         "y": 200,
         "wires": [
             []
+        ]
+    },
+    {
+        "id": "212e0062caa9429e",
+        "type": "function",
+        "z": "a0954fe29f87ceff",
+        "name": "DeQueue",
+        "func": "let ok_to_add=false\nconst twitter_scanner=global.get(\"twitter_scanner\")\nconst recent_tweets = twitter_scanner.recent_tweets\ntry {\n    if(msg.tweet.text>\"\") {\n        ok_to_add = recent_tweets.add_tweet(msg.tweet.text)\n    }\n}\ncatch(err) {\n    node.warn(err)\n}\n\nrecent_tweets.debug()\n\nif(ok_to_add) {\n    msg.sender=\"\"\n    return msg\n} else {\n    node.warn(\"Dropping duplicate: \"+msg.tweet.text)\n    let newmsg = {\n        topic: \"control\",\n        payload: \"trigger\",\n        sender: \"dequeue\"\n    }\n    node.send(newmsg)\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 260,
+        "wires": [
+            [
+                "60ec921b4b8b4219"
+            ]
+        ]
+    },
+    {
+        "id": "60ec921b4b8b4219",
+        "type": "switch",
+        "z": "a0954fe29f87ceff",
+        "name": "",
+        "property": "sender",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "dequeue",
+                "vt": "str"
+            },
+            {
+                "t": "neq",
+                "v": "dequeue",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 710,
+        "y": 180,
+        "wires": [
+            [
+                "54ddcdf1a3f321fa"
+            ],
+            [
+                "010b4454e988afe3"
+            ]
         ]
     }
 ]
