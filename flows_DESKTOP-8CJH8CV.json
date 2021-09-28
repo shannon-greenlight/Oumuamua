@@ -1486,7 +1486,7 @@
         "type": "function",
         "z": "3581784ff799b3aa",
         "name": "Process Command",
-        "func": "// meta-commands MUST be followed by non-meta command\n\nmsg.device=\"dev0\"\nconst globals = global.get(\"settings\")\nconst cmds = msg.commands\nlet ctr = msg.counter\nif(ctr<cmds.length) {\n    let cmd = cmds[ctr]\n    if(cmd>\"\") {\n        if(cmd.indexOf(\"#dev\")==0) {\n            msg.device=cmd.replace('#',\"\")\n            // check to make sure it isn't bogus\n            switch(msg.device) {\n                case \"dev0\":\n                case \"dev1\":\n                    break;\n                default:\n                    node.warn(`Replacing ${msg.device} with dev0`)\n                    msg.device=\"dev0\"\n            }\n            msg.endpoint=globals[msg.device].url\n            msg.device_enabled=globals[msg.device].enabled\n            //node.warn(msg)\n            ctr++\n        }\n        if(cmd.indexOf(\"#delay\")==0) {\n            node.warn(\"Hit a delay!\")\n            const parts = cmd.split(\":\")\n            msg.script_delay=parts[1]\n            ctr++\n        } else {\n            msg.script_delay=null\n        }\n    }\n    // msg.device_enabled=true\n    // todo: check that cmds[ctr] is non-meta\n    msg.query=cmds[ctr]\n    msg.counter = ctr\n    return msg;\n} else {\n    //node.warn(\"End of the line...\")\n}\n",
+        "func": "// meta-commands MUST be followed by non-meta command\n\nmsg.device=\"dev0\"\nconst globals = global.get(\"settings\")\nconst cmds = msg.commands\nlet ctr = msg.counter\nif(ctr<cmds.length) {\n    let cmd = cmds[ctr]\n    if(cmd>\"\") {\n        if(cmd.indexOf(\"#dev\")==0) {\n            msg.device=cmd.replace('#',\"\")\n            // check to make sure it isn't bogus\n            switch(msg.device) {\n                case \"dev0\":\n                case \"dev1\":\n                    break;\n                default:\n                    node.warn(`Replacing ${msg.device} with dev0`)\n                    msg.device=\"dev0\"\n            }\n            msg.endpoint=globals[msg.device].url\n            msg.device_enabled=globals[msg.device].enabled\n            //node.warn(msg)\n            ctr++\n        }\n        if(cmd.indexOf(\"#delay\")==0) {\n            //node.warn(\"Hit a delay! \"+cmd)\n            const parts = cmd.split(\":\")\n            msg.script_delay=parts[1]\n            //ctr++\n        } else {\n            msg.script_delay=null\n            //node.warn(\"No delay! \"+cmd+\" delay: \"+msg.script_delay)\n        }\n    }\n    // msg.device_enabled=true\n    // todo: check that cmds[ctr] is non-meta\n    msg.query=cmds[ctr]\n    msg.counter = ctr\n    return msg;\n} else {\n    //node.warn(\"End of the line...\")\n}\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1541,7 +1541,8 @@
         "y": 120,
         "wires": [
             [
-                "75b3c36e64088333"
+                "75b3c36e64088333",
+                "f6b0e71050799ee2"
             ],
             [
                 "ad9d1126bcaccfa1"
@@ -1611,6 +1612,13 @@
                 "pt": "msg",
                 "to": "0",
                 "tot": "num"
+            },
+            {
+                "t": "set",
+                "p": "script_delay",
+                "pt": "msg",
+                "to": "0",
+                "tot": "num"
             }
         ],
         "action": "",
@@ -1630,7 +1638,7 @@
         "id": "f6b0e71050799ee2",
         "type": "debug",
         "z": "3581784ff799b3aa",
-        "name": "Set Commands",
+        "name": "Process Command",
         "active": true,
         "tosidebar": true,
         "console": false,
@@ -1639,8 +1647,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 260,
-        "y": 240,
+        "x": 610,
+        "y": 40,
         "wires": []
     },
     {
