@@ -1061,7 +1061,7 @@
         "type": "function",
         "z": "b77158335238532e",
         "name": "Process speech",
-        "func": "if(msg.cmd_name!=\"Init\") {\n    let pre_speech=\"\"\n    if(msg.sentiment.positive.length && !msg.testing) {\n        pre_speech=`I see ${msg.sentiment.positive.length} positive word${msg.sentiment.positive.length==1 ? \"\" : \"s\"}. `\n        msg.sentiment.positive.forEach(function(value){\n            pre_speech += value +\". \"\n        })\n    }\n    if(msg.sentiment.negative.length && !msg.testing) {\n        pre_speech+=` I see ${msg.sentiment.negative.length} negative word${msg.sentiment.negative.length==1 ? \"\" : \"s\"}. `\n        msg.sentiment.negative.forEach(function(value){\n            pre_speech += value +\". \"\n        })\n    }\n    let speech=pre_speech+msg.tweet.text\n    if(msg.tweet.user) {\n        if(msg.tweet.user.screen_name) {\n            speech += \". tweeted by: \" + msg.tweet.user.screen_name\n        }\n        if(msg.tweet.user.location) {\n            speech += \", from \" + msg.tweet.user.location\n        }\n    }\n    msg.payload=speech\n    msg.payload=msg.payload.replace(/http(\\S+)/g,\"\")\n    msg.payload=msg.payload.replace(/_/g,\" \")\n    msg.level=global.get(\"settings\").speech_volume\n    return msg;\n}\n",
+        "func": "function add_word(speech, currentWord, currentIndex, arr) {\n    let and = \"\"\n    if(currentIndex==arr.length-1 && arr.length>1) {\n        and = \" and \"\n    }\n    return speech + `${and} ${currentWord}. `\n}\n\nif(msg.cmd_name!=\"Init\") {\n    let pre_speech=\"\"\n    if(msg.sentiment) {\n        if(msg.sentiment.positive.length && !msg.testing) {\n            pre_speech=`I see ${msg.sentiment.positive.length} positive word${msg.sentiment.positive.length==1 ? \"\" : \"s\"}. `\n            pre_speech+=msg.sentiment.positive.reduce(add_word)\n            // msg.sentiment.positive.forEach(function(value){\n            //     pre_speech += value +\". \"\n            // })\n        }\n        if(msg.sentiment.negative.length && !msg.testing) {\n            pre_speech+=` I see ${msg.sentiment.negative.length} negative word${msg.sentiment.negative.length==1 ? \"\" : \"s\"}. `\n            pre_speech+=msg.negative.positive.reduce(add_word)\n            // msg.sentiment.negative.forEach(function(value){\n            //     pre_speech += value +\". \"\n            // })\n        }\n    }\n    let speech=pre_speech+msg.tweet.text\n    if(msg.tweet.user) {\n        if(msg.tweet.user.screen_name) {\n            speech += \". tweeted by: \" + msg.tweet.user.screen_name\n        }\n        if(msg.tweet.user.location) {\n            speech += \", from \" + msg.tweet.user.location\n        }\n    }\n    msg.payload=speech\n    msg.payload=msg.payload.replace(/http(\\S+)/g,\"\")\n    msg.payload=msg.payload.replace(/_/g,\" \")\n    msg.level=global.get(\"settings\").speech_volume\n    return msg;\n}\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1071,7 +1071,8 @@
         "y": 140,
         "wires": [
             [
-                "da73d9101d84a872"
+                "da73d9101d84a872",
+                "b717160d2430598a"
             ]
         ]
     },
@@ -1433,8 +1434,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 680,
-        "y": 40,
+        "x": 590,
+        "y": 300,
         "wires": []
     },
     {
@@ -1541,8 +1542,7 @@
         "y": 120,
         "wires": [
             [
-                "75b3c36e64088333",
-                "f6b0e71050799ee2"
+                "75b3c36e64088333"
             ],
             [
                 "ad9d1126bcaccfa1"
