@@ -515,7 +515,8 @@
         "y": 220,
         "wires": [
             [
-                "b84ec5acc38872a7"
+                "b84ec5acc38872a7",
+                "fa4a64d9d72756e2"
             ]
         ]
     },
@@ -534,7 +535,7 @@
         "type": "function",
         "z": "90cfb10a56fd7196",
         "name": "Process MSG",
-        "func": "msg.data_source = global.get(\"settings\").data_source\nmsg.cmd_name=msg.payload.name\nmsg.query=msg.payload\nreturn msg;",
+        "func": "function make_unique(currentValue, index, arr){\n    return arr.indexOf(currentValue)===index\n}\n\nif(msg.sentiment) {\n    msg.sentiment.positive = msg.sentiment.positive.filter(make_unique)\n    msg.sentiment.negative = msg.sentiment.negative.filter(make_unique)\n}\nmsg.data_source = global.get(\"settings\").data_source\nmsg.cmd_name=msg.payload.name\nmsg.query=msg.payload\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1042,7 +1043,7 @@
         "type": "function",
         "z": "ef4cb095a7656cc5",
         "name": "Set Test Data",
-        "func": "msg.twitter_search=\"pancakes\"\nglobal.get(\"twitter_scanner\").search.set(msg)\nmsg.language=\"en\"\n// msg.tweet.text=\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum efficitur elit quis sem volutpat venenatis. Ut ullamcorper pharetra dui eget eleifend. Aenean eu lobortis justo. Aliquam nisl ante, eleifend nec quam id, dapibus pretium ex. Aliquam et leo quam. In non nibh et ante maximus porttitor a non ipsum.\"\n//msg.tweet.text=\"Hey. Stop that! You idiot.\"\nmsg.tweet.text=global.get(\"lipsum\").get_chars(280,\"tweet\")\nmsg.sentiment = {\n    positive : [],\n    negative : []\n}\nreturn msg;",
+        "func": "msg.twitter_search=\"pancakes\"\nglobal.get(\"twitter_scanner\").search.set(msg)\nmsg.language=\"en\"\n// msg.tweet.text=\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum efficitur elit quis sem volutpat venenatis. Ut ullamcorper pharetra dui eget eleifend. Aenean eu lobortis justo. Aliquam nisl ante, eleifend nec quam id, dapibus pretium ex. Aliquam et leo quam. In non nibh et ante maximus porttitor a non ipsum.\"\n//msg.tweet.text=\"Hey. Stop that! You idiot.\"\nmsg.tweet.text=global.get(\"lipsum\").get_chars(280,\"tweet\")\nmsg.sentiment = {\n    score: 6,\n    positive : [\n        \"favorite\",\n        \"favorite\",\n        \"alive\",\n        \"favorite\"\n        ],\n    negative : []\n}\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1146,7 +1147,8 @@
         "y": 400,
         "wires": [
             [
-                "ee4c480b39108e75"
+                "ee4c480b39108e75",
+                "798628fef62eb009"
             ]
         ]
     },
@@ -2118,7 +2120,7 @@
         "id": "798628fef62eb009",
         "type": "debug",
         "z": "a0954fe29f87ceff",
-        "name": "Debug UI",
+        "name": "UI Debug",
         "active": true,
         "tosidebar": true,
         "console": false,
@@ -2177,5 +2179,22 @@
                 "5dcf2412633e21e2"
             ]
         ]
+    },
+    {
+        "id": "fa4a64d9d72756e2",
+        "type": "debug",
+        "z": "ef4cb095a7656cc5",
+        "name": "Get Script",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 800,
+        "y": 160,
+        "wires": []
     }
 ]
