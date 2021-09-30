@@ -151,6 +151,9 @@
                     },
                     {
                         "id": "8f0eb1af610523e6"
+                    },
+                    {
+                        "id": "ac5d82c807760246"
                     }
                 ]
             }
@@ -209,7 +212,17 @@
         ],
         "env": [],
         "meta": {},
-        "color": "#DDAA99"
+        "color": "#DDAA99",
+        "status": {
+            "x": 340,
+            "y": 360,
+            "wires": [
+                {
+                    "id": "ac5d82c807760246",
+                    "port": 0
+                }
+            ]
+        }
     },
     {
         "id": "41efa1154190c24d",
@@ -723,7 +736,7 @@
         "props": [
             {
                 "p": "twitter_search",
-                "v": "artist, painter, museum",
+                "v": "girl",
                 "vt": "str"
             }
         ],
@@ -1081,8 +1094,7 @@
         "y": 140,
         "wires": [
             [
-                "da73d9101d84a872",
-                "b717160d2430598a"
+                "da73d9101d84a872"
             ]
         ]
     },
@@ -1302,7 +1314,7 @@
         "id": "b717160d2430598a",
         "type": "debug",
         "z": "b77158335238532e",
-        "name": "Speech",
+        "name": "Process UI",
         "active": true,
         "tosidebar": true,
         "console": false,
@@ -1311,8 +1323,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 620,
-        "y": 460,
+        "x": 650,
+        "y": 300,
         "wires": []
     },
     {
@@ -2042,7 +2054,7 @@
         "type": "function",
         "z": "b77158335238532e",
         "name": "Debug Filter",
-        "func": "if(msg.topic!=\"control\") {\n    msg.debug_style=global.get(\"settings\").debug ? \"\" : \"display:none\"\n    msg.endpoint=`${msg.device}: <span>${msg.endpoint}</span>`\n    msg.payload.fxn=`Fxn: <span>${msg.payload.fxn}</span>`\n    msg.cmd_name = `Script name: <span>${msg.cmd_name}</span>`\n    msg.query = `CMD: <span>${msg.query}</span>`\n    if(msg.sentiment) msg.sentiment_score = `Sentiment: <span>${msg.sentiment.score}</span>`\n    return msg;\n}",
+        "func": "if(msg.topic!=\"control\") {\n    msg.debug_style=global.get(\"settings\").debug ? \"\" : \"display:none\"\n    msg.endpoint=`${msg.device}: <span>${msg.endpoint}</span>`\n    msg.payload.fxn=`Fxn: <span>${msg.payload.fxn}</span>`\n    msg.cmd_name = `Script name: <span>${msg.cmd_name}</span>`\n    msg.query = `CMD: <span>${msg.query}</span>`\n    if(msg.sentiment) msg.sentiment_score = `Sentiment: <span>${msg.sentiment.score}</span>`\n    // msg.send_status=`Status: <span>Sending</span>`\n    return msg;\n} else {\n    // msg.send_status=`Status: <span>Idle</span>`\n}\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -2051,7 +2063,9 @@
         "x": 210,
         "y": 240,
         "wires": [
-            []
+            [
+                "b717160d2430598a"
+            ]
         ]
     },
     {
@@ -2063,7 +2077,7 @@
         "order": 1,
         "width": 6,
         "height": "5",
-        "format": "<style>\n    .nr-dashboard-theme {\n        font-family: arial !important;\n    }\n    md-select-value {\n        color: red;\n        border-color: initial;\n    }\n    .debug_class {\n        color: red;\n    }\n    .warn_class {\n        color: orange;\n    }\n    #Greenface_Labs_Debug {\n        {{msg.debug_style}};\n    }\n    #Greenface_Labs_Debug .nr-dashboard-cardtitle {\n        margin-bottom: 50px;\n    }\n    #Greenface_Labs_Debug md-card {\n        background-color: #edd !important;\n        border-radius: 15px;\n        padding: 25px;\n    }\n    #Greenface_Labs_Debug md-card > div {\n        margin-bottom: 15px;\n    }\n    .hide {\n        display: none;\n    }\n    .debug_class span {\n        color: black;\n    }\n    #sentiment_div {\n        display: flex;\n        justify-content: center;\n        gap: 20px;\n    }\n    #sentiment_div>div {\n        width: 40%;\n    }\n    #sentiment_div li {\n        /*color: black;*/\n    }\n    #sentiment_div ul {\n        list-style-type: none;\n        list-style-position: outside;\n        text-align: left;\n        padding:0;\n    }\n</style>\n<div id=\"debug_cmd_name\" class=\"debug_class\" ng-bind-html=\"msg.cmd_name\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.endpoint\"></div>\n<div id=\"debug_fxn\" class=\"debug_class\" ng-bind-html=\"msg.payload.fxn\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.query\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.sentiment_score\"></div>\n<div id=\"sentiment_div\" class=\"debug_class {{msg.testing}}\">\n    <div id=\"good_words\">\n        <strong>Positive Words</strong>\n        <ul>\n            <li class=\"{{msg.testing ? 'Up' : ''}} {{x}}\" ng-repeat=\"x in msg.sentiment.positive\">{{x}}</li>\n        </ul>\n    </div>\n    <div id=\"bad_words\">\n        <strong>Negative Words</strong>\n        <ul>\n            <li class=\"{{msg.testing ? 'Down' : ''}} {{x}}\" ng-repeat=\"x in msg.sentiment.negative\">{{x}}</li>\n        </ul>\n    </div>\n</div>\n",
+        "format": "<style>\n    .nr-dashboard-theme {\n        font-family: arial !important;\n    }\n    md-select-value {\n        color: red !important;\n        border-color: initial !important;\n    }\n    .debug_class {\n        color: red;\n    }\n    .warn_class {\n        color: orange;\n    }\n    #Greenface_Labs_Debug {\n        {{msg.debug_style}};\n    }\n    #Greenface_Labs_Debug .nr-dashboard-cardtitle {\n        margin-bottom: 50px;\n    }\n    #Greenface_Labs_Debug md-card {\n        background-color: #edd !important;\n        border-radius: 15px;\n        padding: 25px;\n    }\n    #Greenface_Labs_Debug md-card > div {\n        margin-bottom: 15px;\n    }\n    .hide {\n        display: none;\n    }\n    .debug_class span {\n        color: black;\n    }\n    #sentiment_div {\n        display: grid;\n        grid-template-columns: auto auto;\n        grid-gap: 20px;\n        text-align: center;\n        border: 1px dotted;\n        padding-top: 5px;\n    }\n    #sentiment_div>div {\n        /*width: 100%;*/\n    }\n    #sentiment_div li {\n        /*color: black;*/\n    }\n    #sentiment_div ul {\n        list-style-type: none;\n        list-style-position: outside;\n        text-align: center;\n        padding:0;\n    }\n</style>\n<div id=\"debug_cmd_name\" class=\"debug_class\" ng-bind-html=\"msg.cmd_name\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.sentiment_score\"></div>\n<!--<div class=\"debug_class\" ng-bind-html=\"msg.send_status\"></div>-->\n<div class=\"debug_class\" ng-bind-html=\"msg.endpoint\"></div>\n<div id=\"debug_fxn\" class=\"debug_class\" ng-bind-html=\"msg.payload.fxn\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.query\"></div>\n<div id=\"sentiment_div\" class=\"debug_class {{msg.testing}}\">\n    <div id=\"good_words\">\n        <strong>Positive Words</strong>\n        <ul>\n            <li class=\"{{msg.testing ? 'Up' : ''}} {{x}}\" ng-repeat=\"x in msg.sentiment.positive\">{{x}}</li>\n        </ul>\n    </div>\n    <div id=\"bad_words\">\n        <strong>Negative Words</strong>\n        <ul>\n            <li class=\"{{msg.testing ? 'Down' : ''}} {{x}}\" ng-repeat=\"x in msg.sentiment.negative\">{{x}}</li>\n        </ul>\n    </div>\n</div>\n",
         "storeOutMessages": true,
         "fwdInMessages": true,
         "resendOnRefresh": true,
@@ -2184,7 +2198,7 @@
             "d362eae7e95a0781"
         ],
         "x": 1010,
-        "y": 600,
+        "y": 400,
         "wires": [
             [
                 "34db4e46bb08a130"
@@ -2203,7 +2217,7 @@
         "finalize": "",
         "libs": [],
         "x": 1210,
-        "y": 600,
+        "y": 400,
         "wires": [
             []
         ]
@@ -2341,31 +2355,6 @@
         ]
     },
     {
-        "id": "01e1112dd965ed25",
-        "type": "ui_button",
-        "z": "ef4cb095a7656cc5",
-        "name": "",
-        "group": "c79e57f6fc5202d5",
-        "order": 4,
-        "width": 0,
-        "height": 0,
-        "passthru": false,
-        "label": "button",
-        "tooltip": "",
-        "color": "",
-        "bgcolor": "",
-        "icon": "",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "x": 460,
-        "y": 620,
-        "wires": [
-            []
-        ]
-    },
-    {
         "id": "97658eafb9548970",
         "type": "function",
         "z": "ef4cb095a7656cc5",
@@ -2382,6 +2371,23 @@
             [
                 "db38738f211fe984"
             ]
+        ]
+    },
+    {
+        "id": "ac5d82c807760246",
+        "type": "function",
+        "z": "b77158335238532e",
+        "name": "",
+        "func": "const is_idle = msg.topic===\"control\" && msg.payload===\"trigger\" && msg.cmd_name===\"Init\"\nconst color = is_idle ? \"green\" : \"red\"\nconst stat = is_idle ? \"Idle\" : \"Busy\"\nmsg.payload=({fill:color,shape:\"dot\",text:\"Status: \"+stat});\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 220,
+        "y": 360,
+        "wires": [
+            []
         ]
     }
 ]
