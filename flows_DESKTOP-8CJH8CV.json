@@ -575,8 +575,7 @@
         "y": 220,
         "wires": [
             [
-                "b84ec5acc38872a7",
-                "fa4a64d9d72756e2"
+                "b84ec5acc38872a7"
             ]
         ]
     },
@@ -587,7 +586,7 @@
         "name": "Oumuamua",
         "info": "# Spankulator Command Processor\nThe SCP runs scripts that control The Spankulator.\nThe scripts are found in either a MongoDB Atlas or in a JSON formatted text file.\nEach script contains an array of objects in the format:\n{\n    name: String,\n    commands: Array of Strings,\n    delay: msecs to delay after script is run\n}\n * The commands are sent to the Spankulator via HTTP to the endpoint specified in the Spankulator's WiFi settings.\n * Commands are sent one-by-one by the **HTTP Sender** node that waits for the Spankulator's response before sending the next command.\n * Edit the **Start** node's payload parameter to enter the name of the script that is to be executed. eg. {\"name\":\"Up\"}\n * This payload is used by the **Get Data** node which delivers the script data to the **Set Commands** node.\n * A warning will be issued to the debug panel if the script is not found.\n * If the script is found, **Set Commands** sets the flow variables _commands_ and _delay_ to the data found in the script. The payload is ignored beyond this point.\n * The **HTTP Sender** node uses flow variables to parse and send the commands.",
         "x": 170,
-        "y": 620,
+        "y": 580,
         "wires": []
     },
     {
@@ -879,7 +878,7 @@
         "type": "function",
         "z": "a0954fe29f87ceff",
         "name": "Set Node Status",
-        "func": "// msg only contains timestamp. All data should come from globals\nconst talker_status = global.get(\"talker\").status.text\nconst queue = global.get(\"queue\")\nconst qlen=queue.len\nmsg.payload=({fill:\"green\",shape:\"dot\",text:\"Queue: \"+queue.status+\" \"+qlen+\" Talker: \"+talker_status});\nreturn msg;",
+        "func": "// msg only contains timestamp. All data should come from globals\nconst talker_status = global.get(\"talker\").status.text\nconst queue = global.get(\"queue\")\nconst qlen=queue.len\nmsg.payload=({fill:\"green\",shape:\"dot\",text:\"Queue: \"+queue.status+\" \"+qlen});\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -912,8 +911,8 @@
         "topic": "control",
         "payload": "reset",
         "payloadType": "str",
-        "x": 590,
-        "y": 340,
+        "x": 630,
+        "y": 280,
         "wires": [
             [
                 "b84ec5acc38872a7"
@@ -1920,7 +1919,7 @@
         "type": "function",
         "z": "11a5884a1e26f777",
         "name": "Get Init Commands",
-        "func": "// get init commands to store for later\n\nmsg.data_source = global.get(\"settings\").data_source\nmsg.payload={name: \"Init\"}\nmsg.cmd_name=msg.payload.name\nmsg.query=msg.payload\nmsg.initializing=true\nnode.send(msg)",
+        "func": "// get init commands sent to Get Script to store for later\n// Get Script will not execute an Init\nmsg.data_source = global.get(\"settings\").data_source\nmsg.payload={name: \"Init\"}\nmsg.cmd_name=msg.payload.name\nmsg.query=msg.payload\nmsg.initializing=true // this tells Get Script to store init commands\nreturn msg\n// node.send(msg)",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -2006,7 +2005,7 @@
         "topic": "",
         "payloadType": "date",
         "x": 190,
-        "y": 400,
+        "y": 440,
         "wires": [
             [
                 "ccd7c905b12a3a3e"
@@ -2025,29 +2024,12 @@
         "finalize": "",
         "libs": [],
         "x": 340,
-        "y": 400,
+        "y": 440,
         "wires": [
             [
                 "5dcf2412633e21e2"
             ]
         ]
-    },
-    {
-        "id": "fa4a64d9d72756e2",
-        "type": "debug",
-        "z": "ef4cb095a7656cc5",
-        "name": "Get Script",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 800,
-        "y": 160,
-        "wires": []
     },
     {
         "id": "8f0eb1af610523e6",
@@ -2094,7 +2076,7 @@
         "z": "ef4cb095a7656cc5",
         "name": "Process UI",
         "env": [],
-        "x": 1030,
+        "x": 1010,
         "y": 220,
         "wires": [
             [
@@ -2183,8 +2165,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 390,
-        "y": 340,
+        "x": 1250,
+        "y": 60,
         "wires": []
     },
     {
@@ -2216,7 +2198,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1210,
+        "x": 1250,
         "y": 400,
         "wires": [
             []
