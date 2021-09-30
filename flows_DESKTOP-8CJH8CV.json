@@ -717,7 +717,7 @@
         "name": "",
         "env": [],
         "x": 340,
-        "y": 100,
+        "y": 80,
         "wires": [
             [
                 "6b769294dec11207"
@@ -742,7 +742,7 @@
         "onceDelay": 0.1,
         "topic": "",
         "x": 170,
-        "y": 100,
+        "y": 80,
         "wires": [
             [
                 "90b884e16d0f35a3"
@@ -853,23 +853,6 @@
                 "212e0062caa9429e"
             ]
         ]
-    },
-    {
-        "id": "15e83af912a10abb",
-        "type": "debug",
-        "z": "a0954fe29f87ceff",
-        "name": "UI",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1230,
-        "y": 420,
-        "wires": []
     },
     {
         "id": "456369ab92f7d534",
@@ -992,7 +975,7 @@
         "once": false,
         "onceDelay": "1",
         "topic": "",
-        "payload": "{\"name\":\"Up 9\"}",
+        "payload": "{\"name\":\"Up 5\"}",
         "payloadType": "json",
         "x": 170,
         "y": 280,
@@ -1159,7 +1142,7 @@
         "finalize": "",
         "libs": [],
         "x": 160,
-        "y": 420,
+        "y": 440,
         "wires": [
             [
                 "5dcf2412633e21e2"
@@ -1601,7 +1584,8 @@
             [
                 "010b4454e988afe3"
             ]
-        ]
+        ],
+        "info": "Output 1. Queue Control\nOutput 2. Init message sent at end of every script"
     },
     {
         "id": "3ef298db31890e5d",
@@ -1643,8 +1627,7 @@
         "y": 160,
         "wires": [
             [
-                "6b769294dec11207",
-                "30a1f6bd743bcf92"
+                "6b769294dec11207"
             ]
         ]
     },
@@ -1759,11 +1742,10 @@
         "name": "Init Scripts",
         "env": [],
         "x": 350,
-        "y": 420,
+        "y": 440,
         "wires": [
             [
-                "6b769294dec11207",
-                "418a7db7e361ee58"
+                "6b769294dec11207"
             ]
         ]
     },
@@ -2001,23 +1983,6 @@
         ]
     },
     {
-        "id": "30a1f6bd743bcf92",
-        "type": "debug",
-        "z": "ef4cb095a7656cc5",
-        "name": "Play",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 600,
-        "y": 160,
-        "wires": []
-    },
-    {
         "id": "127a54f3ac87b25f",
         "type": "inject",
         "z": "ef4cb095a7656cc5",
@@ -2038,7 +2003,7 @@
         "topic": "",
         "payloadType": "date",
         "x": 190,
-        "y": 500,
+        "y": 340,
         "wires": [
             [
                 "ccd7c905b12a3a3e"
@@ -2057,7 +2022,7 @@
         "finalize": "",
         "libs": [],
         "x": 340,
-        "y": 500,
+        "y": 340,
         "wires": [
             [
                 "5dcf2412633e21e2"
@@ -2112,8 +2077,8 @@
         "fwdInMessages": true,
         "resendOnRefresh": true,
         "templateScope": "local",
-        "x": 1210,
-        "y": 460,
+        "x": 1250,
+        "y": 320,
         "wires": [
             []
         ]
@@ -2124,8 +2089,8 @@
         "z": "ef4cb095a7656cc5",
         "name": "Process UI",
         "env": [],
-        "x": 990,
-        "y": 360,
+        "x": 1030,
+        "y": 220,
         "wires": [
             [
                 "fc0850422bf0b673"
@@ -2158,8 +2123,8 @@
         "fwdInMessages": true,
         "resendOnRefresh": true,
         "templateScope": "local",
-        "x": 1230,
-        "y": 300,
+        "x": 1270,
+        "y": 160,
         "wires": [
             []
         ]
@@ -2172,8 +2137,8 @@
         "group": "c79e57f6fc5202d5",
         "voice": "Microsoft Mark - English (United States)",
         "always": true,
-        "x": 1230,
-        "y": 340,
+        "x": 1270,
+        "y": 200,
         "wires": []
     },
     {
@@ -2184,8 +2149,8 @@
         "group": "c79e57f6fc5202d5",
         "voice": "Microsoft Mark - English (United States)",
         "always": "",
-        "x": 1220,
-        "y": 380,
+        "x": 1260,
+        "y": 240,
         "wires": []
     },
     {
@@ -2196,15 +2161,15 @@
         "group": "c79e57f6fc5202d5",
         "voice": "Microsoft Mark - English (United States)",
         "always": "",
-        "x": 1230,
-        "y": 420,
+        "x": 1270,
+        "y": 280,
         "wires": []
     },
     {
         "id": "418a7db7e361ee58",
         "type": "debug",
         "z": "ef4cb095a7656cc5",
-        "name": "UI Debug",
+        "name": "UI",
         "active": true,
         "tosidebar": true,
         "console": false,
@@ -2213,8 +2178,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 600,
-        "y": 420,
+        "x": 1250,
+        "y": 120,
         "wires": []
     },
     {
