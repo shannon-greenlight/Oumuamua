@@ -357,15 +357,6 @@
         "screen_name": "GreenfaceLabs"
     },
     {
-        "id": "4396d4fbcfa72625",
-        "type": "ui_tab",
-        "z": "a0954fe29f87ceff",
-        "name": "Greenface Labs",
-        "icon": "dashboard",
-        "disabled": false,
-        "hidden": false
-    },
-    {
         "id": "aeb4069b6516d878",
         "type": "ui_base",
         "theme": {
@@ -468,7 +459,7 @@
         "type": "ui_group",
         "z": "a0954fe29f87ceff",
         "name": "Oumuamua",
-        "tab": "4396d4fbcfa72625",
+        "tab": "",
         "order": 1,
         "disp": true,
         "width": "14",
@@ -479,7 +470,7 @@
         "type": "ui_group",
         "z": "a0954fe29f87ceff",
         "name": "Debug",
-        "tab": "4396d4fbcfa72625",
+        "tab": "",
         "order": 2,
         "disp": true,
         "width": "6",
@@ -1061,7 +1052,7 @@
         "type": "function",
         "z": "ef4cb095a7656cc5",
         "name": "Set Test Data",
-        "func": "msg.twitter_search=\"pancakes\"\nglobal.get(\"twitter_scanner\").search.set(msg)\nmsg.language=\"en\"\n// msg.tweet.text=\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum efficitur elit quis sem volutpat venenatis. Ut ullamcorper pharetra dui eget eleifend. Aenean eu lobortis justo. Aliquam nisl ante, eleifend nec quam id, dapibus pretium ex. Aliquam et leo quam. In non nibh et ante maximus porttitor a non ipsum.\"\n//msg.tweet.text=\"Hey. Stop that! You idiot.\"\nmsg.tweet.text=global.get(\"lipsum\").get_chars(40,\"tweet\")\nmsg.sentiment = {\n    score: 6,\n    positive : [\n        \"favorite\",\n        \"favorite\",\n        \"alive\",\n        \"favorite\"\n        ],\n    negative : []\n}\nreturn msg;",
+        "func": "msg.twitter_search=\"pancakes\"\nglobal.get(\"twitter_scanner\").search.set(msg)\nmsg.language=\"en\"\n// msg.tweet.text=\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum efficitur elit quis sem volutpat venenatis. Ut ullamcorper pharetra dui eget eleifend. Aenean eu lobortis justo. Aliquam nisl ante, eleifend nec quam id, dapibus pretium ex. Aliquam et leo quam. In non nibh et ante maximus porttitor a non ipsum.\"\n//msg.tweet.text=\"Hey. Stop that! You idiot.\"\nmsg.tweet.text=global.get(\"lipsum\").get_chars(Math.floor(Math.random() * 40)+20,\"tweet\")\nmsg.sentiment = {\n    score: 6,\n    positive : [\n        \"favorite\",\n        \"favorite\",\n        \"alive\",\n        \"favorite\"\n        ],\n    negative : []\n}\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1142,7 +1133,7 @@
         "finalize": "",
         "libs": [],
         "x": 160,
-        "y": 440,
+        "y": 500,
         "wires": [
             [
                 "5dcf2412633e21e2"
@@ -1742,7 +1733,7 @@
         "name": "Init Scripts",
         "env": [],
         "x": 350,
-        "y": 440,
+        "y": 500,
         "wires": [
             [
                 "6b769294dec11207"
@@ -2003,7 +1994,7 @@
         "topic": "",
         "payloadType": "date",
         "x": 190,
-        "y": 340,
+        "y": 400,
         "wires": [
             [
                 "ccd7c905b12a3a3e"
@@ -2022,7 +2013,7 @@
         "finalize": "",
         "libs": [],
         "x": 340,
-        "y": 340,
+        "y": 400,
         "wires": [
             [
                 "5dcf2412633e21e2"
@@ -2071,14 +2062,14 @@
         "name": "Debug",
         "order": 1,
         "width": 6,
-        "height": 9,
-        "format": "<style>\n    .nr-dashboard-theme {\n        font-family: arial !important;\n    }\n    .debug_class {\n        color: red;\n    }\n    .warn_class {\n        color: orange;\n    }\n    #Greenface_Labs_Debug {\n        {{msg.debug_style}};\n    }\n    #Greenface_Labs_Debug .nr-dashboard-cardtitle {\n        margin-bottom: 50px;\n    }\n    #Greenface_Labs_Debug md-card {\n        background-color: #edd !important;\n        border-radius: 15px;\n        padding: 25px;\n    }\n    #Greenface_Labs_Debug md-card > div {\n        margin-bottom: 15px;\n    }\n    .hide {\n        display: none;\n    }\n    .debug_class span {\n        color: black;\n    }\n    #sentiment_div {\n        display: flex;\n        justify-content: center;\n        gap: 20px;\n    }\n    #sentiment_div>div {\n        width: 40%;\n    }\n    #sentiment_div li {\n        /*color: black;*/\n    }\n    #sentiment_div ul {\n        list-style-type: none;\n        list-style-position: outside;\n        text-align: left;\n        padding:0;\n    }\n</style>\n<div id=\"debug_cmd_name\" class=\"debug_class\" ng-bind-html=\"msg.cmd_name\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.endpoint\"></div>\n<div id=\"debug_fxn\" class=\"debug_class\" ng-bind-html=\"msg.payload.fxn\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.query\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.sentiment_score\"></div>\n<div id=\"sentiment_div\" class=\"debug_class {{msg.testing}}\">\n    <div id=\"good_words\">\n        <strong>Positive Words</strong>\n        <ul>\n            <li class=\"{{msg.testing ? 'Up' : ''}} {{x}}\" ng-repeat=\"x in msg.sentiment.positive\">{{x}}</li>\n        </ul>\n    </div>\n    <div id=\"bad_words\">\n        <strong>Negative Words</strong>\n        <ul>\n            <li class=\"{{msg.testing ? 'Down' : ''}} {{x}}\" ng-repeat=\"x in msg.sentiment.negative\">{{x}}</li>\n        </ul>\n    </div>\n</div>\n",
+        "height": "5",
+        "format": "<style>\n    .nr-dashboard-theme {\n        font-family: arial !important;\n    }\n    md-select-value {\n        color: red;\n        border-color: initial;\n    }\n    .debug_class {\n        color: red;\n    }\n    .warn_class {\n        color: orange;\n    }\n    #Greenface_Labs_Debug {\n        {{msg.debug_style}};\n    }\n    #Greenface_Labs_Debug .nr-dashboard-cardtitle {\n        margin-bottom: 50px;\n    }\n    #Greenface_Labs_Debug md-card {\n        background-color: #edd !important;\n        border-radius: 15px;\n        padding: 25px;\n    }\n    #Greenface_Labs_Debug md-card > div {\n        margin-bottom: 15px;\n    }\n    .hide {\n        display: none;\n    }\n    .debug_class span {\n        color: black;\n    }\n    #sentiment_div {\n        display: flex;\n        justify-content: center;\n        gap: 20px;\n    }\n    #sentiment_div>div {\n        width: 40%;\n    }\n    #sentiment_div li {\n        /*color: black;*/\n    }\n    #sentiment_div ul {\n        list-style-type: none;\n        list-style-position: outside;\n        text-align: left;\n        padding:0;\n    }\n</style>\n<div id=\"debug_cmd_name\" class=\"debug_class\" ng-bind-html=\"msg.cmd_name\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.endpoint\"></div>\n<div id=\"debug_fxn\" class=\"debug_class\" ng-bind-html=\"msg.payload.fxn\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.query\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.sentiment_score\"></div>\n<div id=\"sentiment_div\" class=\"debug_class {{msg.testing}}\">\n    <div id=\"good_words\">\n        <strong>Positive Words</strong>\n        <ul>\n            <li class=\"{{msg.testing ? 'Up' : ''}} {{x}}\" ng-repeat=\"x in msg.sentiment.positive\">{{x}}</li>\n        </ul>\n    </div>\n    <div id=\"bad_words\">\n        <strong>Negative Words</strong>\n        <ul>\n            <li class=\"{{msg.testing ? 'Down' : ''}} {{x}}\" ng-repeat=\"x in msg.sentiment.negative\">{{x}}</li>\n        </ul>\n    </div>\n</div>\n",
         "storeOutMessages": true,
         "fwdInMessages": true,
         "resendOnRefresh": true,
         "templateScope": "local",
         "x": 1250,
-        "y": 320,
+        "y": 340,
         "wires": [
             []
         ]
@@ -2124,7 +2115,7 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "x": 1270,
-        "y": 160,
+        "y": 100,
         "wires": [
             []
         ]
@@ -2138,7 +2129,7 @@
         "voice": "Microsoft Mark - English (United States)",
         "always": true,
         "x": 1270,
-        "y": 200,
+        "y": 160,
         "wires": []
     },
     {
@@ -2150,7 +2141,7 @@
         "voice": "Microsoft Mark - English (United States)",
         "always": "",
         "x": 1260,
-        "y": 240,
+        "y": 220,
         "wires": []
     },
     {
@@ -2178,8 +2169,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1250,
-        "y": 120,
+        "x": 390,
+        "y": 340,
         "wires": []
     },
     {
@@ -2215,6 +2206,182 @@
         "y": 600,
         "wires": [
             []
+        ]
+    },
+    {
+        "id": "5946ec28ecf168be",
+        "type": "ui_dropdown",
+        "z": "ef4cb095a7656cc5",
+        "name": "",
+        "label": "",
+        "tooltip": "",
+        "place": "Select option",
+        "group": "ebd8e8684f7f7eda",
+        "order": 1,
+        "width": "6",
+        "height": "2",
+        "passthru": true,
+        "multiple": false,
+        "options": [
+            {
+                "label": "Default",
+                "value": "{\"name\":\"Default\"}",
+                "type": "str"
+            },
+            {
+                "label": "Up 1",
+                "value": "{\"name\":\"Up 1\"}",
+                "type": "str"
+            },
+            {
+                "label": "Up 2",
+                "value": "{\"name\":\"Up 2\"}",
+                "type": "str"
+            },
+            {
+                "label": "Up 3",
+                "value": "{\"name\":\"Up 3\"}",
+                "type": "str"
+            },
+            {
+                "label": "Up 4",
+                "value": "{\"name\":\"Up 4\"}",
+                "type": "str"
+            },
+            {
+                "label": "Up 5",
+                "value": "{\"name\":\"Up 5\"}",
+                "type": "str"
+            },
+            {
+                "label": "Up 6",
+                "value": "{\"name\":\"Up 6\"}",
+                "type": "str"
+            },
+            {
+                "label": "Up 7",
+                "value": "{\"name\":\"Up 7\"}",
+                "type": "str"
+            },
+            {
+                "label": "Up 8",
+                "value": "{\"name\":\"Up 8\"}",
+                "type": "str"
+            },
+            {
+                "label": "Up 9",
+                "value": "{\"name\":\"Up 9\"}",
+                "type": "str"
+            },
+            {
+                "label": "Up 10",
+                "value": "{\"name\":\"Up 10\"}",
+                "type": "str"
+            },
+            {
+                "label": "Down 1",
+                "value": "{\"name\":\"Down 1\"}",
+                "type": "str"
+            },
+            {
+                "label": "Down 2",
+                "value": "{\"name\":\"Down 2\"}",
+                "type": "str"
+            },
+            {
+                "label": "Down 3",
+                "value": "{\"name\":\"Down 3\"}",
+                "type": "str"
+            },
+            {
+                "label": "Down 4",
+                "value": "{\"name\":\"Down 4\"}",
+                "type": "str"
+            },
+            {
+                "label": "Down 5",
+                "value": "{\"name\":\"Down 5\"}",
+                "type": "str"
+            },
+            {
+                "label": "Down 6",
+                "value": "{\"name\":\"Down 6\"}",
+                "type": "str"
+            },
+            {
+                "label": "Down 7",
+                "value": "{\"name\":\"Down 7\"}",
+                "type": "str"
+            },
+            {
+                "label": "Down 8",
+                "value": "{\"name\":\"Down 8\"}",
+                "type": "str"
+            },
+            {
+                "label": "Down 9",
+                "value": "{\"name\":\"Down 9\"}",
+                "type": "str"
+            },
+            {
+                "label": "Down 10",
+                "value": "{\"name\":\"Down 10\"}",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "payload",
+        "topicType": "msg",
+        "x": 80,
+        "y": 340,
+        "wires": [
+            [
+                "97658eafb9548970"
+            ]
+        ]
+    },
+    {
+        "id": "01e1112dd965ed25",
+        "type": "ui_button",
+        "z": "ef4cb095a7656cc5",
+        "name": "",
+        "group": "c79e57f6fc5202d5",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "button",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 460,
+        "y": 620,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "97658eafb9548970",
+        "type": "function",
+        "z": "ef4cb095a7656cc5",
+        "name": "",
+        "func": "msg.tweet={ text: \"\", user: {} }\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 230,
+        "y": 340,
+        "wires": [
+            [
+                "db38738f211fe984"
+            ]
         ]
     }
 ]
