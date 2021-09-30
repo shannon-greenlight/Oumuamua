@@ -23,7 +23,18 @@
                 ]
             }
         ],
-        "out": [],
+        "out": [
+            {
+                "x": 1240,
+                "y": 300,
+                "wires": [
+                    {
+                        "id": "010b4454e988afe3",
+                        "port": 0
+                    }
+                ]
+            }
+        ],
         "env": [],
         "meta": {},
         "color": "#DDAA99",
@@ -475,6 +486,34 @@
         "collapse": false
     },
     {
+        "id": "ea6debe9da8aaf7a",
+        "type": "ui_tab",
+        "name": "Greenface Labs",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "c79e57f6fc5202d5",
+        "type": "ui_group",
+        "name": "Oumuamua",
+        "tab": "ea6debe9da8aaf7a",
+        "order": 1,
+        "disp": true,
+        "width": "14",
+        "collapse": false
+    },
+    {
+        "id": "ebd8e8684f7f7eda",
+        "type": "ui_group",
+        "name": "Debug",
+        "tab": "ea6debe9da8aaf7a",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
         "id": "a6aeaef83ff76327",
         "type": "inject",
         "z": "ef4cb095a7656cc5",
@@ -516,7 +555,11 @@
         "env": [],
         "x": 800,
         "y": 220,
-        "wires": []
+        "wires": [
+            [
+                "ab3d064cfcdb6315"
+            ]
+        ]
     },
     {
         "id": "6b769294dec11207",
@@ -824,8 +867,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1270,
-        "y": 340,
+        "x": 1230,
+        "y": 420,
         "wires": []
     },
     {
@@ -949,7 +992,7 @@
         "once": false,
         "onceDelay": "1",
         "topic": "",
-        "payload": "{\"name\":\"Down 10\"}",
+        "payload": "{\"name\":\"Up 9\"}",
         "payloadType": "json",
         "x": 170,
         "y": 280,
@@ -975,26 +1018,6 @@
         "x": 840,
         "y": 480,
         "wires": []
-    },
-    {
-        "id": "ee4c480b39108e75",
-        "type": "ui_template",
-        "z": "a0954fe29f87ceff",
-        "group": "2a033f5be28e93e0",
-        "name": "Debug",
-        "order": 1,
-        "width": 6,
-        "height": 9,
-        "format": "<style>\n    .nr-dashboard-theme {\n        font-family: arial !important;\n    }\n    .debug_class {\n        color: red;\n    }\n    .warn_class {\n        color: orange;\n    }\n    #Greenface_Labs_Debug {\n        {{msg.debug_style}};\n    }\n    #Greenface_Labs_Debug .nr-dashboard-cardtitle {\n        margin-bottom: 50px;\n    }\n    #Greenface_Labs_Debug md-card {\n        background-color: #edd !important;\n        border-radius: 15px;\n        padding: 25px;\n    }\n    #Greenface_Labs_Debug md-card > div {\n        margin-bottom: 15px;\n    }\n    .hide {\n        display: none;\n    }\n    .debug_class span {\n        color: black;\n    }\n    #sentiment_div {\n        display: flex;\n        justify-content: center;\n        gap: 20px;\n    }\n    #sentiment_div>div {\n        width: 40%;\n    }\n    #sentiment_div li {\n        /*color: black;*/\n    }\n    #sentiment_div ul {\n        list-style-type: none;\n        list-style-position: outside;\n        text-align: left;\n        padding:0;\n    }\n</style>\n<div id=\"debug_cmd_name\" class=\"debug_class\" ng-bind-html=\"msg.cmd_name\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.endpoint\"></div>\n<div id=\"debug_fxn\" class=\"debug_class\" ng-bind-html=\"msg.payload.fxn\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.query\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.sentiment_score\"></div>\n<div id=\"sentiment_div\" class=\"debug_class {{msg.testing}}\">\n    <div id=\"good_words\">\n        <strong>Positive Words</strong>\n        <ul>\n            <li class=\"{{msg.testing ? 'Up' : ''}} {{x}}\" ng-repeat=\"x in msg.sentiment.positive\">{{x}}</li>\n        </ul>\n    </div>\n    <div id=\"bad_words\">\n        <strong>Negative Words</strong>\n        <ul>\n            <li class=\"{{msg.testing ? 'Down' : ''}} {{x}}\" ng-repeat=\"x in msg.sentiment.negative\">{{x}}</li>\n        </ul>\n    </div>\n</div>\n",
-        "storeOutMessages": true,
-        "fwdInMessages": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "x": 1250,
-        "y": 540,
-        "wires": [
-            []
-        ]
     },
     {
         "id": "12bf12defeb60243",
@@ -1184,123 +1207,6 @@
         ]
     },
     {
-        "id": "48a4b94afe5e33f2",
-        "type": "subflow:b77158335238532e",
-        "z": "a0954fe29f87ceff",
-        "name": "Process UI",
-        "env": [],
-        "x": 1030,
-        "y": 440,
-        "wires": [
-            [
-                "352aa494d8ddcbfe"
-            ],
-            [
-                "230c56953c36b358"
-            ],
-            [
-                "1bf7c66b0d91f2d0"
-            ],
-            [
-                "fd8285b77b157c7e"
-            ],
-            [
-                "ee4c480b39108e75"
-            ]
-        ]
-    },
-    {
-        "id": "352aa494d8ddcbfe",
-        "type": "ui_template",
-        "z": "a0954fe29f87ceff",
-        "group": "8bb6231cf84625a5",
-        "name": "UI Display",
-        "order": 1,
-        "width": 14,
-        "height": 9,
-        "format": "<style>\n    @import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Eater&family=Frijole&family=Rubik+Beastly&family=Sigmar+One&family=Amita:wght@700&family=Black+Ops+One&family=Bungee+Inline&family=Chewy&family=Courier+Prime:wght@700&family=Creepster&family=Emilys+Candy&family=Freckle+Face&family=Lakki+Reddy&family=Metal+Mania&family=Mystery+Quest&family=New+Rocker&family=Oleo+Script&family=Rock+Salt&family=Rye&family=Shrikhand&family=UnifrakturCook:wght@700&display=swap');\n    /*.nr-dashboard-theme {*/\n    /*    font-family: copperplate !important;*/\n    /*}*/\n    /*.nr-dashboard-cardcontainer {*/\n    /*    height: 500px !important;*/\n    /*}*/\n    \n    :root {\n      --up_top_color: pink;\n      --up_bottom_color: blue;\n      --down_top_color: blue;\n      --down_bottom_color: #d41;\n    }\n        \n    md-content>section {\n        background-image: url('https://www.greenlightdevelopment.com/wp-content/plugins/gld_demos/alien_landers/images/spacegame/stars.gif');\n    }\n     ui-card-panel, #Greenface_Labs_Oumuamua md-card {\n        background-color: transparent !important;\n        border: none !important;\n    }\n    .nr-dashboard-theme ui-card-panel p.nr-dashboard-cardtitle {\n        color: #567;\n        font-family: 'Sigmar One', cursive;\n        font-size: 3em;\n    }\n    #toolbar {\n        display: none;\n    }\n    ui-card-panel {\n        margin-top: 35px;\n    }\n    #img_div {\n\t\tposition: absolute;\n\t\ttop: 0px;\n\t\tleft: 0px;\n\t\twidth: 100%;\n\t\topacity: .3;\n    }\n    #img_div img {\n\t\twidth: 100%;\n    }\n    #tweet {\n\t\tposition: relative;\n        overflow: hidden;\n        border-radius: 45px;\n        margin: 36px;\n        min-height: 585px;\n        font-size: 3em;\n        /* padding: 25px; */\n        transition-duration: 4s;\n        opacity: 1;\n    }\n\t#tweet_text {\n\t\tmargin: 25px;\n\t\tposition: relative;\n\t\tz-index: 999;\n\t}\n    #tweet span {\n        text-shadow: 2px 2px #000;\n    }\n    #tweet.Down span {\n        color: #f90d0d;\n        text-shadow: 2px 2px #d8e84c;\n        /*color: #417940 !important;*/\n    }\n    #tweet.Up span {\n        color: #2a20f7;\n        text-shadow: 2px 2px #d41e50;\n        /*color: #bb422f !important;*/\n    }\n    #tweet.Default span {\n        color: blue !important;\n        text-shadow: orange !important;\n    }\n    #user {\n        padding-bottom: 1em;\n        position: absolute;\n        bottom: 25px;\n        width: 96%;\n    }\n    #user * {\n        float: right;\n    }\n    #user div {\n        margin-right: 1em;\n    }\n    #user_location {\n        color: #dda;\n    }\n    .Init {\n        opacity: 0 !important;\n    }\n    \n    .Test, .Default {\n        /*font-family: Sigmar One;*/\n        font-family: Bungee Inline;\n        \n        font-size: 2.2em !important;\n        color: #000;\n        background-color: #ddd;\n        background-image: linear-gradient(#ee0, #aaf);\n    }\n    .Up_1 {\n        background-image: linear-gradient(var(--up_top_color) 50%, var(--up_bottom_color) 90%);\n        font-family: 'Oleo Script', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_2 {\n        background-image: linear-gradient(var(--up_top_color) 40%, var(--up_bottom_color) 90%);\n        font-family: Sigmar One;\n        font-size: 3em !important;\n    }\n    .Up_3 {\n        background-image: linear-gradient(var(--up_top_color) 30%, var(--up_bottom_color) 90%);\n        font-family: 'Shrikhand', cursive !important;\n        /*font-family: 'Rock Salt', cursive !important;*/\n        font-size: 3em !important;\n    }\n    .Up_4 {\n        background-image: linear-gradient(var(--up_top_color) 20%, var(--up_bottom_color) 90%);\n        font-family: 'Chewy', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_5 {\n        background-image: linear-gradient(var(--up_top_color) 10%, var(--up_bottom_color) 90%);\n        font-family: 'Amita', cursive !important;\n        font-size: 2.7em !important;\n    }\n    .Up_6 {\n        background-image: linear-gradient(var(--up_top_color) 0%, var(--up_bottom_color) 90%);\n        font-family: 'Lakki Reddy', cursive !important;\n        font-size: 3em !important;\n        line-height: 1.4em !important;\n    }\n    .Up_7 {\n        background-image: linear-gradient(var(--up_top_color) -10%, var(--up_bottom_color) 90%);\n        font-family: 'Freckle Face', cursive !important;\n        font-size: 3em !important;\n        line-height: 1.5em !important;\n    }\n    .Up_8 {\n        background-image: linear-gradient(var(--up_top_color) -20%, var(--up_bottom_color) 90%);\n        font-family: 'Oleo Script', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_9 {\n        background-image: linear-gradient(var(--up_top_color) -30%, var(--up_bottom_color) 90%);\n        font-family: 'Mystery Quest', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_10 {\n        background-image: linear-gradient(var(--up_top_color) -40%, var(--up_bottom_color) 90%);\n        font-family: 'Emilys Candy', cursive !important;\n        font-size: 3.3em !important;\n    }\n    .Up {\n        color: #d41e50;\n        text-shadow: 2px 2px #2a20f7;\n        background-color: #5a5;\n        /*background-image: linear-gradient(green, yellow);*/\n        /*font-family: 'Alfa Slab One', cursive !important;*/\n    }\n    .Down_1 {\n        background-image: linear-gradient(var(--down_top_color) 50%, var(--down_bottom_color) 90%);\n        font-family: 'Courier Prime', cursive !important;\n        font-size: 3em !important;\n    }\n    .Down_2 {\n        background-image: linear-gradient(var(--down_top_color) 40%, var(--down_bottom_color) 90%);\n        font-family: 'Metal Mania', cursive !important;\n        font-size: 3em !important;\n    }\n    .Down_3 {\n        background-image: linear-gradient(var(--down_top_color) 30%, var(--down_bottom_color) 90%);\n        font-family: 'Alfa Slab One', cursive !important;\n        font-size: 3em !important;\n    }\n    .Down_4 {\n        background-image: linear-gradient(var(--down_top_color) 20%, var(--down_bottom_color) 90%);\n        font-family: 'New Rocker', cursive !important;\n        font-size: 3em !important;\n    }\n    .Down_5 {\n        background-image: linear-gradient(var(--down_top_color) 10%, var(--down_bottom_color) 90%);\n        font-family: 'UnifrakturCook', cursive !important;\n        font-size: 3.5em !important;\n        letter-spacing: 2px;\n    }\n    .Down_6 {\n        background-image: linear-gradient(var(--down_top_color) 0%, var(--down_bottom_color) 90%);\n        font-family: 'Rye', cursive !important;\n        font-size: 3em !important;\n        line-height: 1.3em;\n    }\n    .Down_7 {\n        background-image: linear-gradient(var(--down_top_color) -10%, var(--down_bottom_color) 90%);\n        font-family: 'Frijole', cursive !important;\n        font-size: 3em !important;\n    }\n    .Down_8 {\n        background-image: linear-gradient(var(--down_top_color) -20%, var(--down_bottom_color) 90%);\n        font-family: 'Black Ops One', cursive !important;\n        font-size: 3em !important;\n    }\n    .Down_9 {\n        background-image: linear-gradient(var(--down_top_color) -30%, var(--down_bottom_color) 90%);\n        font-family: 'Creepster', cursive !important;\n        font-size: 3.5em !important;\n        letter-spacing: 4px;\n    }\n    .Down_10 {\n        background-image: linear-gradient(var(--down_top_color) -40%, var(--down_bottom_color) 90%);\n        font-family: 'Eater', cursive !important;\n        font-size: 2.5em !important;\n        /*color: #30303a !important;*/\n    }\n    .Down {\n        background-color: #f77;\n        color: #d8e84c;\n        text-shadow: 2px 2px #f90d0d;\n        /*background-image: linear-gradient(yellow 50%, red 90%);*/\n        /*font-family: 'Rock Salt', cursive;\n        font-family: 'Freckle Face', cursive;*/\n    }\n    \n</style>\n<div id=\"tweet\" class=\"{{msg.cmd_sentiment}} {{msg.tweet_class}}\">\n    <div id=\"tweet_text\" ng-bind-html=\"msg.tweet.text\" ></div>\n    <div id=\"img_div\"><img id=\"the_image\" ng-show=\"msg.img\" ng-src=\"{{msg.img}}\" /></div>\n</div>\n\n<div id=\"user\">\n    <img src=\"{{msg.tweet.user.profile_image_url}}\" ng-hide=\"{{msg.cmd_name==='Init'}}\" />\n    <div id=\"user_location\" ng-bind-html=\"msg.location.place\"></div>\n    <div ng-bind-html=\"msg.tweet.user.screen_name\"></div>\n</div>\n",
-        "storeOutMessages": true,
-        "fwdInMessages": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "x": 1270,
-        "y": 380,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "230c56953c36b358",
-        "type": "ui_audio",
-        "z": "a0954fe29f87ceff",
-        "name": "Default talker",
-        "group": "8bb6231cf84625a5",
-        "voice": "Microsoft David - English (United States)",
-        "always": true,
-        "x": 1270,
-        "y": 420,
-        "wires": []
-    },
-    {
-        "id": "1bf7c66b0d91f2d0",
-        "type": "ui_audio",
-        "z": "a0954fe29f87ceff",
-        "name": "Up Talker",
-        "group": "8bb6231cf84625a5",
-        "voice": "Microsoft Zira - English (United States)",
-        "always": "",
-        "x": 1260,
-        "y": 460,
-        "wires": []
-    },
-    {
-        "id": "fd8285b77b157c7e",
-        "type": "ui_audio",
-        "z": "a0954fe29f87ceff",
-        "name": "Down talker",
-        "group": "8bb6231cf84625a5",
-        "voice": "Microsoft Mark - English (United States)",
-        "always": "",
-        "x": 1270,
-        "y": 500,
-        "wires": []
-    },
-    {
-        "id": "64a4fd6ba25167be",
-        "type": "status",
-        "z": "a0954fe29f87ceff",
-        "name": "Talker status",
-        "scope": [
-            "230c56953c36b358",
-            "1bf7c66b0d91f2d0",
-            "fd8285b77b157c7e"
-        ],
-        "x": 130,
-        "y": 600,
-        "wires": [
-            [
-                "5f7dd9f90f0385bd"
-            ]
-        ]
-    },
-    {
-        "id": "5f7dd9f90f0385bd",
-        "type": "function",
-        "z": "a0954fe29f87ceff",
-        "name": "Set Talker Status",
-        "func": "global.get(\"talker\").status=msg.status\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 330,
-        "y": 600,
-        "wires": [
-            []
-        ]
-    },
-    {
         "id": "0b31b19fc634e035",
         "type": "function",
         "z": "b77158335238532e",
@@ -1422,7 +1328,7 @@
         "id": "b717160d2430598a",
         "type": "debug",
         "z": "b77158335238532e",
-        "name": "UI",
+        "name": "Speech",
         "active": true,
         "tosidebar": true,
         "console": false,
@@ -1431,7 +1337,7 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 610,
+        "x": 620,
         "y": 460,
         "wires": []
     },
@@ -1474,8 +1380,7 @@
         "y": 300,
         "wires": [
             [
-                "17d96389be74e6c0",
-                "48a4b94afe5e33f2"
+                "17d96389be74e6c0"
             ]
         ]
     },
@@ -1857,7 +1762,8 @@
         "y": 420,
         "wires": [
             [
-                "6b769294dec11207"
+                "6b769294dec11207",
+                "418a7db7e361ee58"
             ]
         ]
     },
@@ -2112,23 +2018,6 @@
         "wires": []
     },
     {
-        "id": "798628fef62eb009",
-        "type": "debug",
-        "z": "a0954fe29f87ceff",
-        "name": "UI Debug",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1260,
-        "y": 580,
-        "wires": []
-    },
-    {
         "id": "127a54f3ac87b25f",
         "type": "inject",
         "z": "ef4cb095a7656cc5",
@@ -2205,6 +2094,160 @@
         "libs": [],
         "x": 210,
         "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "279a1e093d21849e",
+        "type": "ui_template",
+        "z": "ef4cb095a7656cc5",
+        "group": "ebd8e8684f7f7eda",
+        "name": "Debug",
+        "order": 1,
+        "width": 6,
+        "height": 9,
+        "format": "<style>\n    .nr-dashboard-theme {\n        font-family: arial !important;\n    }\n    .debug_class {\n        color: red;\n    }\n    .warn_class {\n        color: orange;\n    }\n    #Greenface_Labs_Debug {\n        {{msg.debug_style}};\n    }\n    #Greenface_Labs_Debug .nr-dashboard-cardtitle {\n        margin-bottom: 50px;\n    }\n    #Greenface_Labs_Debug md-card {\n        background-color: #edd !important;\n        border-radius: 15px;\n        padding: 25px;\n    }\n    #Greenface_Labs_Debug md-card > div {\n        margin-bottom: 15px;\n    }\n    .hide {\n        display: none;\n    }\n    .debug_class span {\n        color: black;\n    }\n    #sentiment_div {\n        display: flex;\n        justify-content: center;\n        gap: 20px;\n    }\n    #sentiment_div>div {\n        width: 40%;\n    }\n    #sentiment_div li {\n        /*color: black;*/\n    }\n    #sentiment_div ul {\n        list-style-type: none;\n        list-style-position: outside;\n        text-align: left;\n        padding:0;\n    }\n</style>\n<div id=\"debug_cmd_name\" class=\"debug_class\" ng-bind-html=\"msg.cmd_name\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.endpoint\"></div>\n<div id=\"debug_fxn\" class=\"debug_class\" ng-bind-html=\"msg.payload.fxn\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.query\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.sentiment_score\"></div>\n<div id=\"sentiment_div\" class=\"debug_class {{msg.testing}}\">\n    <div id=\"good_words\">\n        <strong>Positive Words</strong>\n        <ul>\n            <li class=\"{{msg.testing ? 'Up' : ''}} {{x}}\" ng-repeat=\"x in msg.sentiment.positive\">{{x}}</li>\n        </ul>\n    </div>\n    <div id=\"bad_words\">\n        <strong>Negative Words</strong>\n        <ul>\n            <li class=\"{{msg.testing ? 'Down' : ''}} {{x}}\" ng-repeat=\"x in msg.sentiment.negative\">{{x}}</li>\n        </ul>\n    </div>\n</div>\n",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "x": 1210,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ab3d064cfcdb6315",
+        "type": "subflow:b77158335238532e",
+        "z": "ef4cb095a7656cc5",
+        "name": "Process UI",
+        "env": [],
+        "x": 990,
+        "y": 360,
+        "wires": [
+            [
+                "fc0850422bf0b673"
+            ],
+            [
+                "071bbc2a667242ad"
+            ],
+            [
+                "4e2ecbedc33dc710"
+            ],
+            [
+                "d362eae7e95a0781"
+            ],
+            [
+                "279a1e093d21849e"
+            ]
+        ]
+    },
+    {
+        "id": "fc0850422bf0b673",
+        "type": "ui_template",
+        "z": "ef4cb095a7656cc5",
+        "group": "c79e57f6fc5202d5",
+        "name": "UI Display",
+        "order": 1,
+        "width": "14",
+        "height": 9,
+        "format": "<style>\n    @import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Eater&family=Frijole&family=Rubik+Beastly&family=Sigmar+One&family=Amita:wght@700&family=Black+Ops+One&family=Bungee+Inline&family=Chewy&family=Courier+Prime:wght@700&family=Creepster&family=Emilys+Candy&family=Freckle+Face&family=Lakki+Reddy&family=Metal+Mania&family=Mystery+Quest&family=New+Rocker&family=Oleo+Script&family=Rock+Salt&family=Rye&family=Shrikhand&family=UnifrakturCook:wght@700&display=swap');\n    /*.nr-dashboard-theme {*/\n    /*    font-family: copperplate !important;*/\n    /*}*/\n    /*.nr-dashboard-cardcontainer {*/\n    /*    height: 500px !important;*/\n    /*}*/\n    \n    :root {\n      --up_top_color: pink;\n      --up_bottom_color: blue;\n      --down_top_color: blue;\n      --down_bottom_color: #d41;\n    }\n        \n    md-content>section {\n        background-image: url('https://www.greenlightdevelopment.com/wp-content/plugins/gld_demos/alien_landers/images/spacegame/stars.gif');\n    }\n     ui-card-panel, #Greenface_Labs_Oumuamua md-card {\n        background-color: transparent !important;\n        border: none !important;\n    }\n    .nr-dashboard-theme ui-card-panel p.nr-dashboard-cardtitle {\n        color: #567;\n        font-family: 'Sigmar One', cursive;\n        font-size: 3em;\n    }\n    #toolbar {\n        display: none;\n    }\n    ui-card-panel {\n        margin-top: 35px;\n    }\n    #img_div {\n\t\tposition: absolute;\n\t\ttop: 0px;\n\t\tleft: 0px;\n\t\twidth: 100%;\n\t\topacity: .3;\n    }\n    #img_div img {\n\t\twidth: 100%;\n    }\n    #tweet {\n\t\tposition: relative;\n        overflow: hidden;\n        border-radius: 45px;\n        margin: 36px;\n        min-height: 585px;\n        font-size: 3em;\n        /* padding: 25px; */\n        transition-duration: 4s;\n        opacity: 1;\n    }\n\t#tweet_text {\n\t\tmargin: 25px;\n\t\tposition: relative;\n\t\tz-index: 999;\n\t}\n    #tweet span {\n        text-shadow: 2px 2px #000;\n    }\n    #tweet.Down span {\n        color: #f90d0d;\n        text-shadow: 2px 2px #d8e84c;\n        /*color: #417940 !important;*/\n    }\n    #tweet.Up span {\n        color: #2a20f7;\n        text-shadow: 2px 2px #d41e50;\n        /*color: #bb422f !important;*/\n    }\n    #tweet.Default span {\n        color: blue !important;\n        text-shadow: orange !important;\n    }\n    #user {\n        padding-bottom: 1em;\n        position: absolute;\n        bottom: 25px;\n        width: 96%;\n    }\n    #user * {\n        float: right;\n    }\n    #user div {\n        margin-right: 1em;\n    }\n    #user_location {\n        color: #dda;\n    }\n    .Init {\n        opacity: 0 !important;\n    }\n    \n    .Test, .Default {\n        /*font-family: Sigmar One;*/\n        font-family: Bungee Inline;\n        \n        font-size: 2.2em !important;\n        color: #000;\n        background-color: #ddd;\n        background-image: linear-gradient(#ee0, #aaf);\n    }\n    .Up_1 {\n        background-image: linear-gradient(var(--up_top_color) 50%, var(--up_bottom_color) 90%);\n        font-family: 'Oleo Script', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_2 {\n        background-image: linear-gradient(var(--up_top_color) 40%, var(--up_bottom_color) 90%);\n        font-family: Sigmar One;\n        font-size: 3em !important;\n    }\n    .Up_3 {\n        background-image: linear-gradient(var(--up_top_color) 30%, var(--up_bottom_color) 90%);\n        font-family: 'Shrikhand', cursive !important;\n        /*font-family: 'Rock Salt', cursive !important;*/\n        font-size: 3em !important;\n    }\n    .Up_4 {\n        background-image: linear-gradient(var(--up_top_color) 20%, var(--up_bottom_color) 90%);\n        font-family: 'Chewy', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_5 {\n        background-image: linear-gradient(var(--up_top_color) 10%, var(--up_bottom_color) 90%);\n        font-family: 'Amita', cursive !important;\n        font-size: 2.7em !important;\n    }\n    .Up_6 {\n        background-image: linear-gradient(var(--up_top_color) 0%, var(--up_bottom_color) 90%);\n        font-family: 'Lakki Reddy', cursive !important;\n        font-size: 3em !important;\n        line-height: 1.4em !important;\n    }\n    .Up_7 {\n        background-image: linear-gradient(var(--up_top_color) -10%, var(--up_bottom_color) 90%);\n        font-family: 'Freckle Face', cursive !important;\n        font-size: 3em !important;\n        line-height: 1.5em !important;\n    }\n    .Up_8 {\n        background-image: linear-gradient(var(--up_top_color) -20%, var(--up_bottom_color) 90%);\n        font-family: 'Oleo Script', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_9 {\n        background-image: linear-gradient(var(--up_top_color) -30%, var(--up_bottom_color) 90%);\n        font-family: 'Mystery Quest', cursive !important;\n        font-size: 3em !important;\n    }\n    .Up_10 {\n        background-image: linear-gradient(var(--up_top_color) -40%, var(--up_bottom_color) 90%);\n        font-family: 'Emilys Candy', cursive !important;\n        font-size: 3.3em !important;\n    }\n    .Up {\n        color: #d41e50;\n        text-shadow: 2px 2px #2a20f7;\n        background-color: #5a5;\n        /*background-image: linear-gradient(green, yellow);*/\n        /*font-family: 'Alfa Slab One', cursive !important;*/\n    }\n    .Down_1 {\n        background-image: linear-gradient(var(--down_top_color) 50%, var(--down_bottom_color) 90%);\n        font-family: 'Courier Prime', cursive !important;\n        font-size: 3em !important;\n    }\n    .Down_2 {\n        background-image: linear-gradient(var(--down_top_color) 40%, var(--down_bottom_color) 90%);\n        font-family: 'Metal Mania', cursive !important;\n        font-size: 3em !important;\n    }\n    .Down_3 {\n        background-image: linear-gradient(var(--down_top_color) 30%, var(--down_bottom_color) 90%);\n        font-family: 'Alfa Slab One', cursive !important;\n        font-size: 3em !important;\n    }\n    .Down_4 {\n        background-image: linear-gradient(var(--down_top_color) 20%, var(--down_bottom_color) 90%);\n        font-family: 'New Rocker', cursive !important;\n        font-size: 3em !important;\n    }\n    .Down_5 {\n        background-image: linear-gradient(var(--down_top_color) 10%, var(--down_bottom_color) 90%);\n        font-family: 'UnifrakturCook', cursive !important;\n        font-size: 3.5em !important;\n        letter-spacing: 2px;\n    }\n    .Down_6 {\n        background-image: linear-gradient(var(--down_top_color) 0%, var(--down_bottom_color) 90%);\n        font-family: 'Rye', cursive !important;\n        font-size: 3em !important;\n        line-height: 1.3em;\n    }\n    .Down_7 {\n        background-image: linear-gradient(var(--down_top_color) -10%, var(--down_bottom_color) 90%);\n        font-family: 'Frijole', cursive !important;\n        font-size: 3em !important;\n    }\n    .Down_8 {\n        background-image: linear-gradient(var(--down_top_color) -20%, var(--down_bottom_color) 90%);\n        font-family: 'Black Ops One', cursive !important;\n        font-size: 3em !important;\n    }\n    .Down_9 {\n        background-image: linear-gradient(var(--down_top_color) -30%, var(--down_bottom_color) 90%);\n        font-family: 'Creepster', cursive !important;\n        font-size: 3.5em !important;\n        letter-spacing: 4px;\n    }\n    .Down_10 {\n        background-image: linear-gradient(var(--down_top_color) -40%, var(--down_bottom_color) 90%);\n        font-family: 'Eater', cursive !important;\n        font-size: 2.5em !important;\n        /*color: #30303a !important;*/\n    }\n    .Down {\n        background-color: #f77;\n        color: #d8e84c;\n        text-shadow: 2px 2px #f90d0d;\n        /*background-image: linear-gradient(yellow 50%, red 90%);*/\n        /*font-family: 'Rock Salt', cursive;\n        font-family: 'Freckle Face', cursive;*/\n    }\n    \n</style>\n<div id=\"tweet\" class=\"{{msg.cmd_sentiment}} {{msg.tweet_class}}\">\n    <div id=\"tweet_text\" ng-bind-html=\"msg.tweet.text\" ></div>\n    <div id=\"img_div\"><img id=\"the_image\" ng-show=\"msg.img\" ng-src=\"{{msg.img}}\" /></div>\n</div>\n\n<div id=\"user\">\n    <img src=\"{{msg.tweet.user.profile_image_url}}\" ng-hide=\"{{msg.cmd_name==='Init'}}\" />\n    <div id=\"user_location\" ng-bind-html=\"msg.location.place\"></div>\n    <div ng-bind-html=\"msg.tweet.user.screen_name\"></div>\n</div>\n",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "x": 1230,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "071bbc2a667242ad",
+        "type": "ui_audio",
+        "z": "ef4cb095a7656cc5",
+        "name": "Default talker",
+        "group": "c79e57f6fc5202d5",
+        "voice": "Microsoft Mark - English (United States)",
+        "always": true,
+        "x": 1230,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "4e2ecbedc33dc710",
+        "type": "ui_audio",
+        "z": "ef4cb095a7656cc5",
+        "name": "Up Talker",
+        "group": "c79e57f6fc5202d5",
+        "voice": "Microsoft Mark - English (United States)",
+        "always": "",
+        "x": 1220,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "d362eae7e95a0781",
+        "type": "ui_audio",
+        "z": "ef4cb095a7656cc5",
+        "name": "Down talker",
+        "group": "c79e57f6fc5202d5",
+        "voice": "Microsoft Mark - English (United States)",
+        "always": "",
+        "x": 1230,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "418a7db7e361ee58",
+        "type": "debug",
+        "z": "ef4cb095a7656cc5",
+        "name": "UI Debug",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 600,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "a6743a6db37c3279",
+        "type": "status",
+        "z": "ef4cb095a7656cc5",
+        "name": "Talker status",
+        "scope": [
+            "071bbc2a667242ad",
+            "4e2ecbedc33dc710",
+            "d362eae7e95a0781"
+        ],
+        "x": 1010,
+        "y": 600,
+        "wires": [
+            [
+                "34db4e46bb08a130"
+            ]
+        ]
+    },
+    {
+        "id": "34db4e46bb08a130",
+        "type": "function",
+        "z": "ef4cb095a7656cc5",
+        "name": "Set Talker Status",
+        "func": "global.get(\"talker\").status=msg.status\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1210,
+        "y": 600,
         "wires": [
             []
         ]
