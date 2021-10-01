@@ -586,7 +586,7 @@
         "name": "Oumuamua",
         "info": "# Spankulator Command Processor\nThe SCP runs scripts that control The Spankulator.\nThe scripts are found in either a MongoDB Atlas or in a JSON formatted text file.\nEach script contains an array of objects in the format:\n{\n    name: String,\n    commands: Array of Strings,\n    delay: msecs to delay after script is run\n}\n * The commands are sent to the Spankulator via HTTP to the endpoint specified in the Spankulator's WiFi settings.\n * Commands are sent one-by-one by the **HTTP Sender** node that waits for the Spankulator's response before sending the next command.\n * Edit the **Start** node's payload parameter to enter the name of the script that is to be executed. eg. {\"name\":\"Up\"}\n * This payload is used by the **Get Data** node which delivers the script data to the **Set Commands** node.\n * A warning will be issued to the debug panel if the script is not found.\n * If the script is found, **Set Commands** sets the flow variables _commands_ and _delay_ to the data found in the script. The payload is ignored beyond this point.\n * The **HTTP Sender** node uses flow variables to parse and send the commands.",
         "x": 170,
-        "y": 580,
+        "y": 620,
         "wires": []
     },
     {
@@ -1064,7 +1064,7 @@
         "type": "function",
         "z": "ef4cb095a7656cc5",
         "name": "Set Test Data",
-        "func": "msg.twitter_search=\"pancakes\"\nglobal.get(\"twitter_scanner\").search.set(msg)\nmsg.language=\"en\"\n// msg.tweet.text=\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum efficitur elit quis sem volutpat venenatis. Ut ullamcorper pharetra dui eget eleifend. Aenean eu lobortis justo. Aliquam nisl ante, eleifend nec quam id, dapibus pretium ex. Aliquam et leo quam. In non nibh et ante maximus porttitor a non ipsum.\"\n//msg.tweet.text=\"Hey. Stop that! You idiot.\"\nmsg.tweet.text=global.get(\"lipsum\").get_chars(Math.floor(Math.random() * 40)+20,\"tweet\")\nmsg.sentiment = {\n    score: 6,\n    positive : [\n        \"favorite\",\n        \"favorite\",\n        \"alive\",\n        \"favorite\"\n        ],\n    negative : []\n}\nmsg.tweet.extended_entities = {\n       media : [{ media_url: \"\"}]\n}\nmsg.tweet.extended_entities.media[0].media_url=\"http://pbs.twimg.com/media/Ev5HTOuVoAQjIfd.jpg\"\nreturn msg;",
+        "func": "msg.twitter_search=\"pancakes\"\nglobal.get(\"twitter_scanner\").search.set(msg)\nmsg.language=\"en\"\n// msg.tweet.text=\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum efficitur elit quis sem volutpat venenatis. Ut ullamcorper pharetra dui eget eleifend. Aenean eu lobortis justo. Aliquam nisl ante, eleifend nec quam id, dapibus pretium ex. Aliquam et leo quam. In non nibh et ante maximus porttitor a non ipsum.\"\n//msg.tweet.text=\"Hey. Stop that! You idiot.\"\nmsg.tweet.text=global.get(\"lipsum\").get_chars(Math.floor(Math.random() * 40)+40,\"tweet\")\nmsg.sentiment = {\n    score: 6,\n    positive : [\n        \"favorite\",\n        \"favorite\",\n        \"alive\",\n        \"favorite\"\n        ],\n    negative : []\n}\nmsg.tweet.extended_entities = {\n       media : [{ media_url: \"\"}]\n}\nmsg.tweet.extended_entities.media[0].media_url=\"http://pbs.twimg.com/media/Ev5HTOuVoAQjIfd.jpg\"\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1140,11 +1140,11 @@
         "func": "// see On Start",
         "outputs": 1,
         "noerr": 0,
-        "initialize": "// Code added here will be run once\n// whenever the node is started.\nconst Settings = {\n    \"debug\": true,\n    \"data_source\" : \"file\",\n    \"filename\" : \"C:\\\\Users\\\\shann\\\\.node-red\\\\projects\\\\Oumuamua\\\\assets\\\\scripts_basic.json\",\n    \"old_filename\" : \"C:\\\\Users\\\\Shann\\\\Dropbox\\\\moog\\\\spankulator\\\\node-red\\\\docs\\\\sentiment_4.json\",\n    \"speech_volume\" : 95,\n    \"view_time\": 10000,\n    \"silent_time\": 5000,\n    \"require_image\": true,\n    \"minimum_sentiment\": 2,\n    \"dev0\" : {\n        url: \"192.168.0.115\",\n        enabled: true\n    },\n    \"dev1\" : {\n        url: \"192.168.0.105\",\n        enabled: true\n    }\n}\nglobal.set(\"settings\",Settings)\n\nconst lipsum = {\n    text: \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempor rhoncus odio, vitae fringilla neque lobortis non. Nullam in nunc at nisi ornare suscipit. Morbi congue volutpat augue, vitae tristique risus fringilla ac. Duis massa ante, blandit in commodo eget, auctor in libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean consectetur augue urna, id laoreet lorem gravida id. Aenean nec ante quam. Curabitur sed dolor metus. Morbi porttitor tortor id libero eleifend, in dignissim magna congue. Nam sapien felis, dictum id feugiat eu, sagittis at dolor. Nulla facilisi. Maecenas bibendum odio eu est molestie varius. Maecenas suscipit elit quam. Etiam aliquam leo turpis, at semper tellus volutpat sed. Nulla vitae sollicitudin turpis, ac congue elit.\",\n    tweet: \"RT @Upsydaizy28: A full Yoruba girl 💞💕💝💖 https://t.co/Hk5fXJ1HDP RT @lanadelslay77: I’m the type of girl who would fuck you and then make you pancakes 😊 https://t.co/33aLZZnRwB RT @MidnaAsh: Would you let this bat girl drain your blood? https://t.co/OtOh14r2VA\",\n    get: function(num_words,typ) {\n        if(!typ) typ=\"tweet\"\n        const parts = this[typ].split(\" \")\n        return parts.slice(0,num_words-1).join(\" \")\n    },\n    get_chars: function(num_chars,typ) {\n        if(!typ) typ=\"tweet\"\n        return this[typ].substr(0,num_chars)\n    }\n}\nglobal.set(\"lipsum\",lipsum)\n\nconst twitter_scanner={\n    search: {\n        search_string: \"money\",\n        search_parts: [],\n        get: function() {\n            return this.search_string;\n        },\n        set: function(msg) {\n            if(msg.twitter_search>\"\") {\n                this.search_string=msg.twitter_search\n                this.search_parts=this.search_string.split(\",\")\n            }\n        }\n    },\n    gate: {\n        enabled: false,\n        get: function() { return this.enabled },\n        set: function(f) { this.enabled=f!=0 },\n        toggle: function() {\n            this.enabled = !this.enabled\n            return this.get()\n        }\n    },\n    recent_tweets : {\n        max_tweets: 75,\n        tweets: [],\n        add_tweet: function(tweet) {\n            if(this.tweets.indexOf(tweet)>-1) {\n                console.log(\"Duplicate tweet. Dropping: \"+tweet)\n                return false\n            } else {\n                this.tweets.push(tweet)\n                if(this.tweets.length>this.max_tweets) {\n                    this.tweets.shift()\n                }\n                return true\n            }\n        },\n        reset: function() {\n            this.tweets=[]\n        },\n        debug: function() {\n            console.log(this.tweets)\n        }\n    }\n}\nglobal.set(\"twitter_scanner\",twitter_scanner)\n\nconst queue = {\n    len: 0,\n    status: \"\",\n    queuing: false\n}\nglobal.set(\"queue\",queue)\n\nconst talker = {\n    status: { text: \"unset\"}\n}\nglobal.set(\"talker\",talker)\n\nconst info = {\n    scripts: {},\n    init_commands: [],\n    talk_start_time: 0,\n    cmd_name: \"\"\n}\nglobal.set(\"info\",info)\n\nconst read_scripts = function(node) {\n    let msg = { \n        data_source: Settings.data_source,\n        filename: Settings.filename\n    }\n    node.send(msg)\n}\nglobal.set(\"read_scripts\",read_scripts)\n\nread_scripts(node)\n// let msg = { \n//     data_source: Settings.data_source,\n//     filename: Settings.filename\n// }\n// node.send(msg)\n/*\nMongo DB node must be configured manually!\n*/",
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\nconst Settings = {\n    \"debug\": true,\n    \"data_source\" : \"file\",\n    \"filename\" : \"C:\\\\Users\\\\shann\\\\.node-red\\\\projects\\\\Oumuamua\\\\assets\\\\scripts_basic.json\",\n    \"old_filename\" : \"C:\\\\Users\\\\Shann\\\\Dropbox\\\\moog\\\\spankulator\\\\node-red\\\\docs\\\\sentiment_4.json\",\n    \"speech_volume\" : 95,\n    \"view_time\": 10000,\n    \"silent_time\": 5000,\n    \"require_image\": true,\n    \"minimum_sentiment\": 2,\n    \"dev0\" : {\n        url: \"192.168.0.115\",\n        enabled: true\n    },\n    \"dev1\" : {\n        url: \"192.168.0.105\",\n        enabled: true\n    }\n}\nglobal.set(\"settings\",Settings)\n\nconst lipsum = {\n    text: \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempor rhoncus odio, vitae fringilla neque lobortis non. Nullam in nunc at nisi ornare suscipit. Morbi congue volutpat augue, vitae tristique risus fringilla ac. Duis massa ante, blandit in commodo eget, auctor in libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean consectetur augue urna, id laoreet lorem gravida id. Aenean nec ante quam. Curabitur sed dolor metus. Morbi porttitor tortor id libero eleifend, in dignissim magna congue. Nam sapien felis, dictum id feugiat eu, sagittis at dolor. Nulla facilisi. Maecenas bibendum odio eu est molestie varius. Maecenas suscipit elit quam. Etiam aliquam leo turpis, at semper tellus volutpat sed. Nulla vitae sollicitudin turpis, ac congue elit.\",\n    tweet: \"RT @Upsydaizy28: A full bag of beans and bolts. 💞💕💝💖 https://t.co/Hk5fXJ1HDP RT @lanadelslay77: I’m the type of girl who would kill you and then make you pancakes 😊 https://t.co/33aLZZnRwB RT @MidnaAsh: Would you let this bat girl drain your blood? https://t.co/OtOh14r2VA\",\n    get: function(num_words,typ) {\n        if(!typ) typ=\"tweet\"\n        const parts = this[typ].split(\" \")\n        return parts.slice(0,num_words-1).join(\" \")\n    },\n    get_chars: function(num_chars,typ) {\n        if(!typ) typ=\"tweet\"\n        return this[typ].substr(0,num_chars)\n    }\n}\nglobal.set(\"lipsum\",lipsum)\n\nconst twitter_scanner={\n    search: {\n        search_string: \"money\",\n        search_parts: [],\n        get: function() {\n            return this.search_string;\n        },\n        set: function(msg) {\n            if(msg.twitter_search>\"\") {\n                this.search_string=msg.twitter_search\n                this.search_parts=this.search_string.split(\",\")\n            }\n        }\n    },\n    gate: {\n        enabled: false,\n        get: function() { return this.enabled },\n        set: function(f) { this.enabled=f!=0 },\n        toggle: function() {\n            this.enabled = !this.enabled\n            return this.get()\n        }\n    },\n    recent_tweets : {\n        max_tweets: 75,\n        tweets: [],\n        add_tweet: function(tweet) {\n            if(this.tweets.indexOf(tweet)>-1) {\n                console.log(\"Duplicate tweet. Dropping: \"+tweet)\n                return false\n            } else {\n                this.tweets.push(tweet)\n                if(this.tweets.length>this.max_tweets) {\n                    this.tweets.shift()\n                }\n                return true\n            }\n        },\n        reset: function() {\n            this.tweets=[]\n        },\n        debug: function() {\n            console.log(this.tweets)\n        }\n    }\n}\nglobal.set(\"twitter_scanner\",twitter_scanner)\n\nconst queue = {\n    len: 0,\n    status: \"\",\n    queuing: false\n}\nglobal.set(\"queue\",queue)\n\nconst talker = {\n    status: { text: \"unset\"}\n}\nglobal.set(\"talker\",talker)\n\nconst info = {\n    scripts: {},\n    init_commands: [],\n    talk_start_time: 0,\n    cmd_name: \"\"\n}\nglobal.set(\"info\",info)\n\nconst read_scripts = function(node) {\n    let msg = { \n        data_source: Settings.data_source,\n        filename: Settings.filename\n    }\n    node.send(msg)\n}\nglobal.set(\"read_scripts\",read_scripts)\n\nread_scripts(node)\n// let msg = { \n//     data_source: Settings.data_source,\n//     filename: Settings.filename\n// }\n// node.send(msg)\n/*\nMongo DB node must be configured manually!\n*/",
         "finalize": "",
         "libs": [],
         "x": 160,
-        "y": 500,
+        "y": 540,
         "wires": [
             [
                 "5dcf2412633e21e2"
@@ -1744,7 +1744,7 @@
         "name": "Init Scripts",
         "env": [],
         "x": 350,
-        "y": 500,
+        "y": 540,
         "wires": [
             [
                 "6b769294dec11207"
@@ -2005,7 +2005,7 @@
         "topic": "",
         "payloadType": "date",
         "x": 190,
-        "y": 440,
+        "y": 480,
         "wires": [
             [
                 "ccd7c905b12a3a3e"
@@ -2024,7 +2024,7 @@
         "finalize": "",
         "libs": [],
         "x": 340,
-        "y": 440,
+        "y": 480,
         "wires": [
             [
                 "5dcf2412633e21e2"
@@ -2059,7 +2059,7 @@
         "order": 1,
         "width": 6,
         "height": "5",
-        "format": "<style>\n    .nr-dashboard-theme {\n        font-family: arial !important;\n    }\n    md-select-value {\n        color: red !important;\n        border-color: initial !important;\n    }\n    .debug_class {\n        color: red;\n    }\n    .warn_class {\n        color: orange;\n    }\n    #Greenface_Labs_Debug {\n        {{msg.debug_style}};\n    }\n    #Greenface_Labs_Debug .nr-dashboard-cardtitle {\n        margin-bottom: 50px;\n    }\n    #Greenface_Labs_Debug md-card {\n        background-color: #edd !important;\n        border-radius: 15px;\n        padding: 25px;\n    }\n    #Greenface_Labs_Debug md-card > div {\n        margin-bottom: 15px;\n    }\n    .hide {\n        display: none;\n    }\n    .debug_class span {\n        color: black;\n    }\n    #device_div, #sentiment_div {\n        display: grid;\n        grid-template-columns: auto auto;\n        grid-gap: 20px;\n        text-align: center;\n        border: 1px dotted;\n        padding-top: 5px;\n    }\n    #sentiment_div>div {\n        /*width: 100%;*/\n    }\n    #sentiment_div li {\n        /*color: black;*/\n    }\n    #sentiment_div ul {\n        list-style-type: none;\n        list-style-position: outside;\n        text-align: center;\n        padding:0;\n    }\n</style>\n\n<div id=\"debug_cmd_name\" class=\"debug_class\" ng-bind-html=\"msg.cmd_name\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.sentiment_score\"></div>\n<!--<div class=\"debug_class\" ng-bind-html=\"msg.send_status\"></div>-->\n\n<div id=\"device_div\" class=\"debug_class\">\n    <div id=\"device_0\">\n        <strong>Device 0</strong>\n        <div class=\"debug_class\" ng-bind-html=\"msg.dev0.endpoint\"></div>\n        <div class=\"debug_class\" ng-bind-html=\"msg.dev0.fxn\"></div>\n        <div class=\"debug_class\" ng-bind-html=\"msg.dev0.query\"></div>\n    </div>\n    <div id=\"device_1\">\n        <strong>Device 1</strong>\n        <div class=\"debug_class\" ng-bind-html=\"msg.dev1.endpoint\"></div>\n        <div class=\"debug_class\" ng-bind-html=\"msg.dev1.fxn\"></div>\n        <div class=\"debug_class\" ng-bind-html=\"msg.dev1.query\"></div>\n    </div>\n</div>\n\n<div id=\"sentiment_div\" class=\"debug_class {{msg.testing}}\">\n    <div id=\"good_words\">\n        <strong>Positive Words</strong>\n        <ul>\n            <li class=\"{{msg.testing ? 'Up' : ''}} {{x}}\" ng-repeat=\"x in msg.sentiment.positive\">{{x}}</li>\n        </ul>\n    </div>\n    <div id=\"bad_words\">\n        <strong>Negative Words</strong>\n        <ul>\n            <li class=\"{{msg.testing ? 'Down' : ''}} {{x}}\" ng-repeat=\"x in msg.sentiment.negative\">{{x}}</li>\n        </ul>\n    </div>\n</div>\n",
+        "format": "<style>\n    .nr-dashboard-theme {\n        font-family: arial !important;\n    }\n    md-select-value {\n        color: red !important;\n        border-color: initial !important;\n    }\n    .debug_class {\n        color: red;\n    }\n    .warn_class {\n        color: orange;\n    }\n    #Greenface_Labs_Debug {\n        {{msg.debug_style}};\n    }\n    #Greenface_Labs_Debug .nr-dashboard-cardtitle {\n        margin-bottom: 50px;\n    }\n    #Greenface_Labs_Debug md-card {\n        background-color: #ccc8c8 !important;\n        border-radius: 15px;\n        padding: 25px;\n    }\n    #Greenface_Labs_Debug md-card > div {\n        margin-bottom: 15px;\n    }\n    .hide {\n        display: none;\n    }\n    .debug_class span {\n        color: black;\n    }\n    #device_div, #sentiment_div {\n        display: grid;\n        grid-template-columns: auto auto;\n        grid-gap: 20px;\n        text-align: left;\n        border: 1px dotted;\n        padding: 5px;\n    }\n    #sentiment_div>div {\n        /*width: 100%;*/\n    }\n    #sentiment_div li {\n        /*color: black;*/\n    }\n    #sentiment_div ul {\n        list-style-type: none;\n        list-style-position: outside;\n        /*text-align: center;*/\n        padding:0;\n    }\n</style>\n\n<div id=\"debug_cmd_name\" class=\"debug_class\" ng-bind-html=\"msg.cmd_name\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.sentiment_score\"></div>\n<!--<div class=\"debug_class\" ng-bind-html=\"msg.send_status\"></div>-->\n\n<div id=\"device_div\" class=\"debug_class\">\n    <div id=\"device_0\">\n        <strong>Device 0</strong>\n        <div class=\"debug_class\" ng-bind-html=\"msg.dev0.endpoint\"></div>\n        <div class=\"debug_class\" ng-bind-html=\"msg.dev0.fxn\"></div>\n        <div class=\"debug_class\" ng-bind-html=\"msg.dev0.query\"></div>\n    </div>\n    <div id=\"device_1\">\n        <strong>Device 1</strong>\n        <div class=\"debug_class\" ng-bind-html=\"msg.dev1.endpoint\"></div>\n        <div class=\"debug_class\" ng-bind-html=\"msg.dev1.fxn\"></div>\n        <div class=\"debug_class\" ng-bind-html=\"msg.dev1.query\"></div>\n    </div>\n</div>\n\n<div id=\"sentiment_div\" class=\"debug_class {{msg.testing}}\">\n    <div id=\"good_words\">\n        <strong>Positive Words</strong>\n        <ul>\n            <li class=\"{{msg.testing ? 'Up' : ''}} {{x}}\" ng-repeat=\"x in msg.sentiment.positive\">{{x}}</li>\n        </ul>\n    </div>\n    <div id=\"bad_words\">\n        <strong>Negative Words</strong>\n        <ul>\n            <li class=\"{{msg.testing ? 'Down' : ''}} {{x}}\" ng-repeat=\"x in msg.sentiment.negative\">{{x}}</li>\n        </ul>\n    </div>\n</div>\n",
         "storeOutMessages": true,
         "fwdInMessages": true,
         "resendOnRefresh": true,
@@ -2165,8 +2165,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1250,
-        "y": 60,
+        "x": 330,
+        "y": 420,
         "wires": []
     },
     {
@@ -2328,7 +2328,7 @@
         "payload": "",
         "topic": "payload",
         "topicType": "msg",
-        "x": 160,
+        "x": 220,
         "y": 360,
         "wires": [
             [
@@ -2341,13 +2341,13 @@
         "type": "function",
         "z": "ef4cb095a7656cc5",
         "name": "",
-        "func": "msg.tweet={ text: \"\", user: {} }\nreturn msg;",
+        "func": "msg.tweet={ text: \"\", user: {} }\nflow.set(\"latest_select\",msg.payload)\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 310,
+        "x": 360,
         "y": 360,
         "wires": [
             [
@@ -2370,6 +2370,50 @@
         "y": 360,
         "wires": [
             []
+        ]
+    },
+    {
+        "id": "dfde5a6167a38ec6",
+        "type": "ui_button",
+        "z": "ef4cb095a7656cc5",
+        "name": "",
+        "group": "ebd8e8684f7f7eda",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "AGAIN",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "latest_select",
+        "payloadType": "flow",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 80,
+        "y": 360,
+        "wires": [
+            [
+                "1d15b77c07524f3d"
+            ]
+        ]
+    },
+    {
+        "id": "1d15b77c07524f3d",
+        "type": "json",
+        "z": "ef4cb095a7656cc5",
+        "name": "",
+        "property": "payload",
+        "action": "str",
+        "pretty": false,
+        "x": 150,
+        "y": 420,
+        "wires": [
+            [
+                "5946ec28ecf168be",
+                "418a7db7e361ee58"
+            ]
         ]
     }
 ]
