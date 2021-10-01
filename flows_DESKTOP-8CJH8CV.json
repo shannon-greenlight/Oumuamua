@@ -586,7 +586,7 @@
         "name": "Oumuamua",
         "info": "# Spankulator Command Processor\nThe SCP runs scripts that control The Spankulator.\nThe scripts are found in either a MongoDB Atlas or in a JSON formatted text file.\nEach script contains an array of objects in the format:\n{\n    name: String,\n    commands: Array of Strings,\n    delay: msecs to delay after script is run\n}\n * The commands are sent to the Spankulator via HTTP to the endpoint specified in the Spankulator's WiFi settings.\n * Commands are sent one-by-one by the **HTTP Sender** node that waits for the Spankulator's response before sending the next command.\n * Edit the **Start** node's payload parameter to enter the name of the script that is to be executed. eg. {\"name\":\"Up\"}\n * This payload is used by the **Get Data** node which delivers the script data to the **Set Commands** node.\n * A warning will be issued to the debug panel if the script is not found.\n * If the script is found, **Set Commands** sets the flow variables _commands_ and _delay_ to the data found in the script. The payload is ignored beyond this point.\n * The **HTTP Sender** node uses flow variables to parse and send the commands.",
         "x": 170,
-        "y": 620,
+        "y": 700,
         "wires": []
     },
     {
@@ -1070,7 +1070,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 340,
+        "x": 360,
         "y": 280,
         "wires": [
             [
@@ -1144,7 +1144,7 @@
         "finalize": "",
         "libs": [],
         "x": 160,
-        "y": 540,
+        "y": 620,
         "wires": [
             [
                 "5dcf2412633e21e2"
@@ -1744,7 +1744,7 @@
         "name": "Init Scripts",
         "env": [],
         "x": 350,
-        "y": 540,
+        "y": 620,
         "wires": [
             [
                 "6b769294dec11207"
@@ -2005,7 +2005,7 @@
         "topic": "",
         "payloadType": "date",
         "x": 190,
-        "y": 480,
+        "y": 560,
         "wires": [
             [
                 "ccd7c905b12a3a3e"
@@ -2024,7 +2024,7 @@
         "finalize": "",
         "libs": [],
         "x": 340,
-        "y": 480,
+        "y": 560,
         "wires": [
             [
                 "5dcf2412633e21e2"
@@ -2059,7 +2059,7 @@
         "order": 1,
         "width": 6,
         "height": "5",
-        "format": "<style>\n    .nr-dashboard-theme {\n        font-family: arial !important;\n    }\n    md-select-value {\n        color: red !important;\n        border-color: initial !important;\n    }\n    .debug_class {\n        color: red;\n    }\n    .warn_class {\n        color: orange;\n    }\n    #Greenface_Labs_Debug {\n        {{msg.debug_style}};\n    }\n    #Greenface_Labs_Debug .nr-dashboard-cardtitle {\n        margin-bottom: 50px;\n    }\n    #Greenface_Labs_Debug md-card {\n        background-color: #ccc8c8 !important;\n        border-radius: 15px;\n        padding: 25px;\n    }\n    #Greenface_Labs_Debug md-card > div {\n        margin-bottom: 15px;\n    }\n    .hide {\n        display: none;\n    }\n    .debug_class span {\n        color: black;\n    }\n    #device_div, #sentiment_div {\n        display: grid;\n        grid-template-columns: auto auto;\n        grid-gap: 20px;\n        text-align: left;\n        border: 1px dotted;\n        padding: 5px;\n    }\n    #sentiment_div>div {\n        /*width: 100%;*/\n    }\n    #sentiment_div li {\n        /*color: black;*/\n    }\n    #sentiment_div ul {\n        list-style-type: none;\n        list-style-position: outside;\n        /*text-align: center;*/\n        padding:0;\n    }\n</style>\n\n<div id=\"debug_cmd_name\" class=\"debug_class\" ng-bind-html=\"msg.cmd_name\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.sentiment_score\"></div>\n<!--<div class=\"debug_class\" ng-bind-html=\"msg.send_status\"></div>-->\n\n<div id=\"device_div\" class=\"debug_class\">\n    <div id=\"device_0\">\n        <strong>Device 0</strong>\n        <div class=\"debug_class\" ng-bind-html=\"msg.dev0.endpoint\"></div>\n        <div class=\"debug_class\" ng-bind-html=\"msg.dev0.fxn\"></div>\n        <div class=\"debug_class\" ng-bind-html=\"msg.dev0.query\"></div>\n    </div>\n    <div id=\"device_1\">\n        <strong>Device 1</strong>\n        <div class=\"debug_class\" ng-bind-html=\"msg.dev1.endpoint\"></div>\n        <div class=\"debug_class\" ng-bind-html=\"msg.dev1.fxn\"></div>\n        <div class=\"debug_class\" ng-bind-html=\"msg.dev1.query\"></div>\n    </div>\n</div>\n\n<div id=\"sentiment_div\" class=\"debug_class {{msg.testing}}\">\n    <div id=\"good_words\">\n        <strong>Positive Words</strong>\n        <ul>\n            <li class=\"{{msg.testing ? 'Up' : ''}} {{x}}\" ng-repeat=\"x in msg.sentiment.positive\">{{x}}</li>\n        </ul>\n    </div>\n    <div id=\"bad_words\">\n        <strong>Negative Words</strong>\n        <ul>\n            <li class=\"{{msg.testing ? 'Down' : ''}} {{x}}\" ng-repeat=\"x in msg.sentiment.negative\">{{x}}</li>\n        </ul>\n    </div>\n</div>\n",
+        "format": "<style>\n    .nr-dashboard-theme {\n        font-family: arial !important;\n    }\n    .nr-dashboard-button .md-button {\n        width: 100px;\n        margin: 0 auto;\n    }\n    md-select-value {\n        color: red !important;\n        border-color: initial !important;\n    }\n    .debug_class {\n        color: red;\n    }\n    .warn_class {\n        color: orange;\n    }\n    #Greenface_Labs_Debug {\n        {{msg.debug_style}};\n    }\n    #Greenface_Labs_Debug .nr-dashboard-cardtitle {\n        margin-bottom: 50px;\n    }\n    #Greenface_Labs_Debug md-card {\n        background-color: #ccc8c8 !important;\n        border-radius: 15px;\n        padding: 25px;\n    }\n    #Greenface_Labs_Debug md-card > div {\n        margin-bottom: 15px;\n    }\n    .hide {\n        display: none;\n    }\n    .debug_class span {\n        color: black;\n    }\n    #device_div span {\n        float: right;\n    }\n    #device_div, #sentiment_div {\n        display: grid;\n        grid-template-columns: auto auto;\n        grid-gap: 20px;\n        text-align: left;\n        border: 1px dotted;\n        padding: 5px;\n    }\n    #sentiment_div>div {\n        /*width: 100%;*/\n    }\n    #sentiment_div li {\n        /*color: black;*/\n    }\n    #sentiment_div ul {\n        list-style-type: none;\n        list-style-position: outside;\n        /*text-align: center;*/\n        padding:0;\n    }\n</style>\n\n<div id=\"debug_cmd_name\" class=\"debug_class\" ng-bind-html=\"msg.cmd_name\"></div>\n<div class=\"debug_class\" ng-bind-html=\"msg.sentiment_score\"></div>\n<!--<div class=\"debug_class\" ng-bind-html=\"msg.send_status\"></div>-->\n\n<div id=\"device_div\" class=\"debug_class\">\n    <div id=\"device_0\">\n        <strong>Device 0</strong>\n        <div class=\"debug_class\" ng-bind-html=\"msg.dev0.endpoint\"></div>\n        <div class=\"debug_class\" ng-bind-html=\"msg.dev0.fxn\"></div>\n        <div class=\"debug_class\" ng-bind-html=\"msg.dev0.query\"></div>\n    </div>\n    <div id=\"device_1\">\n        <strong>Device 1</strong>\n        <div class=\"debug_class\" ng-bind-html=\"msg.dev1.endpoint\"></div>\n        <div class=\"debug_class\" ng-bind-html=\"msg.dev1.fxn\"></div>\n        <div class=\"debug_class\" ng-bind-html=\"msg.dev1.query\"></div>\n    </div>\n</div>\n\n<div id=\"sentiment_div\" class=\"debug_class {{msg.testing}}\">\n    <div id=\"good_words\">\n        <strong>Positive Words</strong>\n        <ul>\n            <li class=\"{{msg.testing ? 'Up' : ''}} {{x}}\" ng-repeat=\"x in msg.sentiment.positive\">{{x}}</li>\n        </ul>\n    </div>\n    <div id=\"bad_words\">\n        <strong>Negative Words</strong>\n        <ul>\n            <li class=\"{{msg.testing ? 'Down' : ''}} {{x}}\" ng-repeat=\"x in msg.sentiment.negative\">{{x}}</li>\n        </ul>\n    </div>\n</div>\n",
         "storeOutMessages": true,
         "fwdInMessages": true,
         "resendOnRefresh": true,
@@ -2165,8 +2165,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 330,
-        "y": 420,
+        "x": 830,
+        "y": 500,
         "wires": []
     },
     {
@@ -2328,8 +2328,8 @@
         "payload": "",
         "topic": "payload",
         "topicType": "msg",
-        "x": 220,
-        "y": 360,
+        "x": 180,
+        "y": 460,
         "wires": [
             [
                 "97658eafb9548970"
@@ -2347,8 +2347,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 360,
-        "y": 360,
+        "x": 340,
+        "y": 460,
         "wires": [
             [
                 "db38738f211fe984"
@@ -2379,8 +2379,8 @@
         "name": "",
         "group": "ebd8e8684f7f7eda",
         "order": 2,
-        "width": 0,
-        "height": 0,
+        "width": "0",
+        "height": "0",
         "passthru": false,
         "label": "AGAIN",
         "tooltip": "",
@@ -2391,8 +2391,8 @@
         "payloadType": "flow",
         "topic": "topic",
         "topicType": "msg",
-        "x": 80,
-        "y": 360,
+        "x": 160,
+        "y": 340,
         "wires": [
             [
                 "1d15b77c07524f3d"
@@ -2407,12 +2407,11 @@
         "property": "payload",
         "action": "str",
         "pretty": false,
-        "x": 150,
-        "y": 420,
+        "x": 170,
+        "y": 400,
         "wires": [
             [
-                "5946ec28ecf168be",
-                "418a7db7e361ee58"
+                "5946ec28ecf168be"
             ]
         ]
     }
