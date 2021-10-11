@@ -309,7 +309,7 @@
         ],
         "out": [
             {
-                "x": 1060,
+                "x": 1140,
                 "y": 200,
                 "wires": [
                     {
@@ -585,8 +585,8 @@
         "z": "ef4cb095a7656cc5",
         "name": "Oumuamua",
         "info": "# Spankulator Command Processor\nThe SCP runs scripts that control The Spankulator.\nThe scripts are found in either a MongoDB Atlas or in a JSON formatted text file.\nEach script contains an array of objects in the format:\n{\n    name: String,\n    commands: Array of Strings,\n    delay: msecs to delay after script is run\n}\n * The commands are sent to the Spankulator via HTTP to the endpoint specified in the Spankulator's WiFi settings.\n * Commands are sent one-by-one by the **HTTP Sender** node that waits for the Spankulator's response before sending the next command.\n * Edit the **Start** node's payload parameter to enter the name of the script that is to be executed. eg. {\"name\":\"Up\"}\n * This payload is used by the **Get Data** node which delivers the script data to the **Set Commands** node.\n * A warning will be issued to the debug panel if the script is not found.\n * If the script is found, **Set Commands** sets the flow variables _commands_ and _delay_ to the data found in the script. The payload is ignored beyond this point.\n * The **HTTP Sender** node uses flow variables to parse and send the commands.",
-        "x": 170,
-        "y": 700,
+        "x": 1010,
+        "y": 600,
         "wires": []
     },
     {
@@ -1746,7 +1746,9 @@
         "x": 350,
         "y": 620,
         "wires": [
-            []
+            [
+                "5946ec28ecf168be"
+            ]
         ]
     },
     {
@@ -1867,17 +1869,19 @@
         "id": "909347dd458280d9",
         "type": "function",
         "z": "11a5884a1e26f777",
-        "name": "Get Init Commands",
-        "func": "// get init commands sent to Get Script to store for later\n// Get Script will not execute an Init\nmsg.data_source = global.get(\"settings\").data_source\nmsg.payload={name: \"Init\"}\nmsg.cmd_name=msg.payload.name\nmsg.query=msg.payload\nmsg.initializing=true // this tells Get Script to store init commands\nreturn msg\n// node.send(msg)",
+        "name": "Build Command Options",
+        "func": "const scripts = global.get(\"info\").scripts\nmsg.options=[]\nscripts.forEach(function(currentValue, index, arr) {\n    const name = currentValue.name\n    let obj = {}\n    obj[name] = { \"name\" : \"${name}\" }\n    msg.options.push(name)\n})\nreturn msg\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 910,
+        "x": 930,
         "y": 200,
         "wires": [
-            []
+            [
+                "21f6e88fbb40fadc"
+            ]
         ]
     },
     {
@@ -1954,7 +1958,7 @@
         "topic": "",
         "payloadType": "date",
         "x": 190,
-        "y": 560,
+        "y": 700,
         "wires": [
             [
                 "ccd7c905b12a3a3e"
@@ -1973,7 +1977,7 @@
         "finalize": "",
         "libs": [],
         "x": 340,
-        "y": 560,
+        "y": 700,
         "wires": [
             [
                 "5dcf2412633e21e2"
@@ -2290,7 +2294,7 @@
         "type": "function",
         "z": "ef4cb095a7656cc5",
         "name": "",
-        "func": "msg.tweet={ text: \"\", user: {} }\n// flow.set(\"latest_select\",msg.payload)\nreturn msg;",
+        "func": "msg.tweet={ text: \"\", user: {} }\nmsg.payload = { \"name\" : msg.payload }\n// flow.set(\"latest_select\",msg.payload)\nnode.warn(flow.get(\"latest_select\"))\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -2344,23 +2348,7 @@
         "y": 340,
         "wires": [
             [
-                "1d15b77c07524f3d"
-            ]
-        ]
-    },
-    {
-        "id": "1d15b77c07524f3d",
-        "type": "json",
-        "z": "ef4cb095a7656cc5",
-        "name": "",
-        "property": "payload",
-        "action": "str",
-        "pretty": false,
-        "x": 170,
-        "y": 400,
-        "wires": [
-            [
-                "5946ec28ecf168be"
+                "419727bd6b7eae5c"
             ]
         ]
     },
@@ -2408,6 +2396,42 @@
         "y": 640,
         "wires": [
             []
+        ]
+    },
+    {
+        "id": "21f6e88fbb40fadc",
+        "type": "debug",
+        "z": "11a5884a1e26f777",
+        "name": "Command Options",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1180,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "419727bd6b7eae5c",
+        "type": "function",
+        "z": "ef4cb095a7656cc5",
+        "name": "",
+        "func": "msg.payload = msg.payload.name\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 160,
+        "y": 400,
+        "wires": [
+            [
+                "5946ec28ecf168be"
+            ]
         ]
     }
 ]
