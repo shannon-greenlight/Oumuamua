@@ -10,7 +10,7 @@
         "id": "d0adabbc334b3094",
         "type": "tab",
         "label": "Three JS Sandbox",
-        "disabled": false,
+        "disabled": true,
         "info": ""
     },
     {
@@ -341,6 +341,24 @@
         }
     },
     {
+        "id": "7de09d5372187b67",
+        "type": "subflow",
+        "name": "Subflow 5",
+        "info": "",
+        "in": [
+            {
+                "x": 780,
+                "y": 200,
+                "wires": [
+                    {
+                        "id": "8cdc268559c567bd"
+                    }
+                ]
+            }
+        ],
+        "out": []
+    },
+    {
         "id": "4f82a66a.93b828",
         "type": "mqtt-broker",
         "name": "",
@@ -604,8 +622,8 @@
         "z": "ef4cb095a7656cc5",
         "name": "Oumuamua",
         "info": "# Spankulator Command Processor\nThe SCP runs scripts that control The Spankulator.\nThe scripts are found in either a MongoDB Atlas or in a JSON formatted text file.\nEach script contains an array of objects in the format:\n{\n    name: String,\n    commands: Array of Strings,\n    delay: msecs to delay after script is run\n}\n * The commands are sent to the Spankulator via HTTP to the endpoint specified in the Spankulator's WiFi settings.\n * Commands are sent one-by-one by the **HTTP Sender** node that waits for the Spankulator's response before sending the next command.\n * Edit the **Start** node's payload parameter to enter the name of the script that is to be executed. eg. {\"name\":\"Up\"}\n * This payload is used by the **Get Data** node which delivers the script data to the **Set Commands** node.\n * A warning will be issued to the debug panel if the script is not found.\n * If the script is found, **Set Commands** sets the flow variables _commands_ and _delay_ to the data found in the script. The payload is ignored beyond this point.\n * The **HTTP Sender** node uses flow variables to parse and send the commands.",
-        "x": 1010,
-        "y": 600,
+        "x": 550,
+        "y": 40,
         "wires": []
     },
     {
@@ -2050,7 +2068,9 @@
         "y": 220,
         "wires": [
             [
-                "fc0850422bf0b673"
+                "fc0850422bf0b673",
+                "418a7db7e361ee58",
+                "5e9e5405b8b86233"
             ],
             [
                 "071bbc2a667242ad"
@@ -2081,7 +2101,7 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "x": 1270,
-        "y": 100,
+        "y": 120,
         "wires": [
             []
         ]
@@ -2135,8 +2155,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 990,
-        "y": 500,
+        "x": 1250,
+        "y": 20,
         "wires": []
     },
     {
@@ -2429,7 +2449,7 @@
         "fieldType": "msg",
         "format": "handlebars",
         "syntax": "mustache",
-        "template": "<html>\n<head>\n\n    <title>Test</title>\n\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    \n\t\t<style>\n\t\t\tbody { \n\t\t\t\tmargin: 0;\n\t\t\t\tbackground-image: url('http://localhost/three/img/stars.gif');\n\t\t\t}\n\t\t</style>\n    <script src=\"http://localhost/three/js/three.js\"></script>\n</head>\n<body>\n    \n</body>\n<script>\nvar server = window.location.href.split(\"http://\")[1].split(\"/\")[0]\nconsole.log(\"Page location is \" + server)\n\nvar recv_socket = new  WebSocket(\"ws://\" + server + \"/ws/receive\");\nvar send_socket = new  WebSocket(\"ws://\" + server + \"/ws/publish\");\n\nvar cubeRotationSpeed = 0.02;\nlet cubeColor = \"blue\"\nvar recv_socketOpened = false\n\nrecv_socket.onopen = function() {\n    recv_socketOpened = true\n  var message = {\n    'payload': 'Client connected'\n  };\n  recv_socket.send(JSON.stringify(message));\n};\n\nsend_socket.onopen = function() {\n  var message = {\n    'payload': 'Client connected'\n  };\n  recv_socket.send(JSON.stringify(message));\n};\n\nsend_socket.onclose = function(){\n  console.log('Connection closed');\n};\n\nsend_socket.onerror = function(error) {\n  console.log('Error detected: ' + JSON.stringify(error));\n};\n\nsend_socket.onmessage = function(e) {\n  var server_message = e.data;\n  responseObject = JSON.parse(server_message);\n\n  //alert(JSON.stringify(responseObject));\n  //Do the required stuff\n  console.log(responseObject.payload)\n  if (responseObject.payload.cubeRotationSpeed){\n      cubeRotationSpeed = responseObject.payload.cubeRotationSpeed\n  }else if(responseObject.payload.cubeColor){\n      cubeColor = responseObject.payload.cubeColor\n  }\n}\n\nconst scene = new THREE.Scene();\nconst camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );\n\ncamera.position.z = 5;\n\n//camera.translateY(3);\n\nconst renderer = new THREE.WebGLRenderer({ alpha: true });\nrenderer.setSize( window.innerWidth, window.innerHeight );\ndocument.body.appendChild( renderer.domElement );\n\nrenderer.shadowMap.enabled = true;\nrenderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap\n\n//Create a SpotLight and turn on shadows for the light\nconst light = new THREE.SpotLight( 0xffffff );\nlight.castShadow = true; // default false\nlight.position.set(-1, 2, 4);\nscene.add( light );\n\nconst light2 = new THREE.SpotLight( 0xff00ff );\nlight2.castShadow = true; // default false\nlight2.position.set(5, -2, 4);\nscene.add( light2 );\n\n//Set up shadow properties for the light\nlight.shadow.mapSize.width = 512; // default\nlight.shadow.mapSize.height = 512; // default\nlight.shadow.camera.near = 0.5; // default\nlight.shadow.camera.far = 500; // default\nlight.shadow.focus = 1; // default\n\n//light.translateY(-3)\n\n\n\nconst geometry = new THREE.BoxGeometry(2,4,.3,4,8,4);\n//const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );\n//const material = new THREE.MeshPhongMaterial({color: 0x44aa88});  // greenish blue\n\nconst XZmaterial = new THREE.LineBasicMaterial( {\n\tcolor: 0xff0000,\n\tlinewidth: 1,\n\tlinecap: 'round', //ignored by WebGLRenderer\n\tlinejoin:  'round' //ignored by WebGLRenderer\n} );\n\n\n// basic monochromatic energy preservation\nconst diffuseColor = new THREE.Color().setHSL( 1, 0.5, .5 * 0.5 + 0.1 ).multiplyScalar( 1 - .5 * 0.2 );\n\nconst XXXmaterial = new THREE.MeshToonMaterial( {\n\tcolor: diffuseColor\n} );\n\nconst loader = new THREE.TextureLoader();\nlet cube,material;\nloader.load('https://pbs.twimg.com/media/FCojQCFX0AUrXPS.jpg' , function(texture)\n{\n\tmaterial = new THREE.MeshBasicMaterial( { map: texture } );\n\tconsole.log(material);\n\tcube = new THREE.Mesh( geometry, material );\n\tcube.castShadow = true; //default is false\n\tcube.receiveShadow = false; //default\n\tscene.add( cube );\n\tanimate();\n},\tfunction ( err ) {\n\t\tconsole.error( 'An error happened.' );\n\t}\n);\n\n// const texture = new THREE.TextureLoader().load( 'img/maxresdefault.jpg' );\n// const material = new THREE.MeshBasicMaterial( { map: texture } );\n\n\nconst planet_geometry = new THREE.SphereGeometry();\n//const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );\nconst planet_material = new THREE.MeshPhongMaterial({color: 0x88aaee});  // yellow\nconst planet = new THREE.Mesh( planet_geometry, planet_material );\nplanet.castShadow = false; //default is false\nplanet.receiveShadow = false; //default\nplanet.position.x=15;\nplanet.position.y=2;\nplanet.position.z=-25.5;\nscene.add( planet );\n\n//const helper = new THREE.CameraHelper( light2.shadow.camera );\n//scene.add( helper );\n\n//Load background texture\nloader.load('http://localhost/three/img/space.jpg' , function(texture)\n{\n //scene.background = texture;  \n});\n\n\nconst animate = function () {\n\trequestAnimationFrame( animate );\n\n\tcube.rotation.x += cubeRotationSpeed;\n\tcube.rotation.y += 0.001;\n\tcube.rotation.z += 0.006;\n\t\n\tcube.position.x += 0.01;\n\t//console.log(cube.position.x);\n\tif(cube.position.x>16) {\n\t    cube.position.x=-16;\n        if (recv_socketOpened){\n            recv_socket.send(\"ping\");\n        }\n\t}\n\t\n\n\trenderer.render( scene, camera );\n};\n\n\n</script>\n</html>\n\n",
+        "template": "<html>\n<head>\n\n    <title>Test</title>\n\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    \n\t\t<style>\n\t\t\tbody { \n\t\t\t\tmargin: 0;\n\t\t\t\tbackground-image: url('http://localhost/three/img/stars.gif');\n\t\t\t}\n\t\t</style>\n    <script src=\"http://localhost/three/js/three.js\"></script>\n</head>\n<body>\n    \n</body>\n<script>\nvar server = window.location.href.split(\"http://\")[1].split(\"/\")[0]\nconsole.log(\"Page location is \" + server)\n\nvar recv_socket = new  WebSocket(\"ws://\" + server + \"/ws/receive\");\nvar send_socket = new  WebSocket(\"ws://\" + server + \"/ws/publish\");\n\nvar cubeRotationSpeed = 0.02;\nlet cubeColor = \"blue\"\nvar recv_socketOpened = false\n\nrecv_socket.onopen = function() {\n    recv_socketOpened = true\n  var message = {\n    'payload': 'Client connected'\n  };\n  recv_socket.send(JSON.stringify(message));\n};\n\nsend_socket.onopen = function() {\n  var message = {\n    'payload': 'Client connected'\n  };\n  recv_socket.send(JSON.stringify(message));\n};\n\nsend_socket.onclose = function(){\n  console.log('Connection closed');\n};\n\nsend_socket.onerror = function(error) {\n  console.log('Error detected: ' + JSON.stringify(error));\n};\n\nsend_socket.onmessage = function(e) {\n  var server_message = e.data;\n  responseObject = JSON.parse(server_message);\n\n  //alert(JSON.stringify(responseObject));\n  //Do the required stuff\n  console.log(responseObject.payload)\n  if(responseObject.payload.img) {\n    cube.material.map = new THREE.TextureLoader().load( responseObject.payload.img );\n    cube.material.needsUpdate = true;\n  } else if (responseObject.payload.cubeRotationSpeed){\n      cubeRotationSpeed = responseObject.payload.cubeRotationSpeed\n  } else if(responseObject.payload.cubeColor){\n      cubeColor = responseObject.payload.cubeColor\n  }\n}\n\nconst scene = new THREE.Scene();\nconst camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );\n\ncamera.position.z = 5;\n\n//camera.translateY(3);\n\nconst renderer = new THREE.WebGLRenderer({ alpha: true });\nrenderer.setSize( window.innerWidth, window.innerHeight );\ndocument.body.appendChild( renderer.domElement );\n\nrenderer.shadowMap.enabled = true;\nrenderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap\n\n//Create a SpotLight and turn on shadows for the light\nconst light = new THREE.SpotLight( 0xffffff );\nlight.castShadow = true; // default false\nlight.position.set(-1, 2, 4);\nscene.add( light );\n\nconst light2 = new THREE.SpotLight( 0xff00ff );\nlight2.castShadow = true; // default false\nlight2.position.set(5, -2, 4);\nscene.add( light2 );\n\n//Set up shadow properties for the light\nlight.shadow.mapSize.width = 512; // default\nlight.shadow.mapSize.height = 512; // default\nlight.shadow.camera.near = 0.5; // default\nlight.shadow.camera.far = 500; // default\nlight.shadow.focus = 1; // default\n\n//light.translateY(-3)\n\n\n\nconst geometry = new THREE.BoxGeometry(2,4,.3,4,8,4);\n//const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );\n//const material = new THREE.MeshPhongMaterial({color: 0x44aa88});  // greenish blue\n\nconst XZmaterial = new THREE.LineBasicMaterial( {\n\tcolor: 0xff0000,\n\tlinewidth: 1,\n\tlinecap: 'round', //ignored by WebGLRenderer\n\tlinejoin:  'round' //ignored by WebGLRenderer\n} );\n\n\n// basic monochromatic energy preservation\nconst diffuseColor = new THREE.Color().setHSL( 1, 0.5, .5 * 0.5 + 0.1 ).multiplyScalar( 1 - .5 * 0.2 );\n\nconst XXXmaterial = new THREE.MeshToonMaterial( {\n\tcolor: diffuseColor\n} );\n\nconst loader = new THREE.TextureLoader();\nlet cube,material;\nloader.load('https://pbs.twimg.com/media/FCojQCFX0AUrXPS.jpg' , function(texture)\n{\n\tmaterial = new THREE.MeshBasicMaterial( { map: texture } );\n\tconsole.log(material);\n\tcube = new THREE.Mesh( geometry, material );\n\tcube.castShadow = true; //default is false\n\tcube.receiveShadow = false; //default\n\tscene.add( cube );\n\tanimate();\n},\tfunction ( err ) {\n\t\tconsole.error( 'An error happened.' );\n\t}\n);\n\n// const texture = new THREE.TextureLoader().load( 'img/maxresdefault.jpg' );\n// const material = new THREE.MeshBasicMaterial( { map: texture } );\n\n\nconst planet_geometry = new THREE.SphereGeometry();\n//const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );\nconst planet_material = new THREE.MeshPhongMaterial({color: 0x88aaee});  // yellow\nconst planet = new THREE.Mesh( planet_geometry, planet_material );\nplanet.castShadow = false; //default is false\nplanet.receiveShadow = false; //default\nplanet.position.x=15;\nplanet.position.y=2;\nplanet.position.z=-25.5;\nscene.add( planet );\n\n//const helper = new THREE.CameraHelper( light2.shadow.camera );\n//scene.add( helper );\n\n//Load background texture\nloader.load('http://localhost/three/img/space.jpg' , function(texture)\n{\n //scene.background = texture;  \n});\n\n\nconst animate = function () {\n\trequestAnimationFrame( animate );\n\n\tcube.rotation.x += cubeRotationSpeed;\n\tcube.rotation.y += 0.001;\n\tcube.rotation.z += 0.006;\n\t\n\tcube.position.x += 0.025;\n\t//console.log(cube.position.x);\n\tif(cube.position.x>16) {\n\t    cube.position.x=-16;\n        if (recv_socketOpened){\n            recv_socket.send(\"ping\");\n        }\n\t}\n\t\n\n\trenderer.render( scene, camera );\n};\n\n\n</script>\n</html>\n\n",
         "output": "str",
         "x": 410,
         "y": 220,
@@ -2449,70 +2469,6 @@
         "x": 940,
         "y": 340,
         "wires": []
-    },
-    {
-        "id": "1f953c53.234544",
-        "type": "inject",
-        "z": "d0adabbc334b3094",
-        "name": "Spin slow",
-        "props": [
-            {
-                "p": "payload",
-                "v": "{\"cubeRotationSpeed\":0.02}",
-                "vt": "json"
-            },
-            {
-                "p": "topic",
-                "v": "",
-                "vt": "string"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "{\"cubeRotationSpeed\":0.02}",
-        "payloadType": "json",
-        "x": 545,
-        "y": 340,
-        "wires": [
-            [
-                "f8262338.541b2"
-            ]
-        ]
-    },
-    {
-        "id": "ae4b9f83.855ed",
-        "type": "inject",
-        "z": "d0adabbc334b3094",
-        "name": "Spin fast",
-        "props": [
-            {
-                "p": "payload",
-                "v": "{\"cubeRotationSpeed\":0.1}",
-                "vt": "json"
-            },
-            {
-                "p": "topic",
-                "v": "",
-                "vt": "string"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "{\"cubeRotationSpeed\":0.1}",
-        "payloadType": "json",
-        "x": 545,
-        "y": 385,
-        "wires": [
-            [
-                "f8262338.541b2"
-            ]
-        ]
     },
     {
         "id": "f195cd.89a76a3",
@@ -2650,20 +2606,252 @@
         "wires": []
     },
     {
-        "id": "6ec48164b14a747e",
-        "type": "template",
+        "id": "caf09d8d1302411b",
+        "type": "inject",
         "z": "d0adabbc334b3094",
+        "name": "Image",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"img\":\"http://pbs.twimg.com/media/E_GBCEnX0AIoPk-.jpg\"}",
+        "payloadType": "json",
+        "x": 650,
+        "y": 340,
+        "wires": [
+            [
+                "f8262338.541b2"
+            ]
+        ]
+    },
+    {
+        "id": "3efaa39dc6bc9672",
+        "type": "http in",
+        "z": "7de09d5372187b67",
+        "name": "",
+        "url": "/cube",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 200,
+        "y": 80,
+        "wires": [
+            [
+                "3c54ed58e107c78b"
+            ]
+        ]
+    },
+    {
+        "id": "3457eaf67a8873ba",
+        "type": "http response",
+        "z": "7de09d5372187b67",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 745,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "3c54ed58e107c78b",
+        "type": "template",
+        "z": "7de09d5372187b67",
         "name": "three.js",
         "field": "payload",
         "fieldType": "msg",
         "format": "handlebars",
         "syntax": "mustache",
-        "template": "<html>\n<head>\n\n    <title>Test</title>\n\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    \n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.min.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.module.js\"></script>\n    \n<script>\nvar server = window.location.href.split(\"http://\")[1].split(\"/\")[0]\nconsole.log(\"Page location is \" + server)\n\nvar socket1 = new  WebSocket(\"ws://\" + server + \"/ws/receive\");\nvar socket2 = new  WebSocket(\"ws://\" + server + \"/ws/publish\");\nvar cubeRotationSpeed = 0.02;\nlet cubeColor = \"blue\"\nvar socket1Opened = false\n\nsocket1.onopen = function() {\n    socket1Opened = true\n  var message = {\n    'payload': 'Client connected'\n  };\n  socket1.send(JSON.stringify(message));\n};\n\nsocket2.onopen = function() {\n  var message = {\n    'payload': 'Client connected'\n  };\n  socket1.send(JSON.stringify(message));\n};\n\nsocket2.onclose = function(){\n  console.log('Connection closed');\n};\n\nsocket2.onerror = function(error) {\n  console.log('Error detected: ' + JSON.stringify(error));\n};\n\nsocket2.onmessage = function(e) {\n  var server_message = e.data;\n  responseObject = JSON.parse(server_message);\n\n  //alert(JSON.stringify(responseObject));\n  //Do the required stuff\n  console.log(responseObject.payload)\n  if (responseObject.payload.cubeRotationSpeed){\n      cubeRotationSpeed = responseObject.payload.cubeRotationSpeed\n  }else if(responseObject.payload.cubeColor){\n      cubeColor = responseObject.payload.cubeColor\n  }\n}\n\nvar scene = new THREE.Scene();\n\n// Make highly-transparent plane\nvar fadeMaterial = new THREE.MeshBasicMaterial({\n    color: 0x000000,\n    transparent: true,\n    opacity: 0.02\n});\nvar fadePlane = new THREE.PlaneBufferGeometry(1, 1);\nvar fadeMesh = new THREE.Mesh(fadePlane, fadeMaterial);\n\n// Create Object3D to hold camera and transparent plane\nvar camGroup = new THREE.Object3D();\nvar camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);\ncamGroup.add(camera);\ncamGroup.add(fadeMesh);\n\n// Put plane in front of camera\nfadeMesh.position.z = -0.1;\n\n// Make plane render before particles\nfadeMesh.renderOrder = -1;\n\n// Add camGroup to scene\nscene.add(camGroup);\n\n\nrenderer = new THREE.WebGLRenderer( { preserveDrawingBuffer: true, antialias: true } );\nrenderer.autoClearColor = false;\nrenderer.setSize(window.innerWidth, window.innerHeight);\n\ndocument.addEventListener('DOMContentLoaded', function () {   \n    document.body.appendChild(renderer.domElement);\n});\n\nvar geometry = new THREE.BoxGeometry(1,1,1);\n//var color = new THREE.Color(0xff0000)\nvar material = new THREE.MeshBasicMaterial({color: \"blue\"});\nvar cube = new THREE.Mesh(geometry, material);\nscene.add(cube);\n\ncube.position.z = -5;\n\nvar step = .03;\nfunction animate(){\n\n    cube.rotation.x += cubeRotationSpeed;\n    cube.rotation.y += 0.02;\n    cube.position.x += step;\n    cube.material.color = new THREE.Color(cubeColor);\n    if(Math.abs(cube.position.x) > 5.0)\n    {\n        step = -step;\n        if (socket1Opened){\n            socket1.send(\"ping\");\n        }\n    }\n    renderer.render(scene, camera);\n\n    requestAnimationFrame(animate);\n}\n\nanimate();\n\n</script>\n\n\n",
+        "template": "<html>\n<head>\n\n    <title>Test</title>\n\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    \n\t\t<style>\n\t\t\tbody { \n\t\t\t\tmargin: 0;\n\t\t\t\tbackground-image: url('http://localhost/three/img/stars.gif');\n\t\t\t}\n\t\t</style>\n    <script src=\"http://localhost/three/js/three.js\"></script>\n</head>\n<body>\n    \n</body>\n<script>\nvar server = window.location.href.split(\"http://\")[1].split(\"/\")[0]\nconsole.log(\"Page location is \" + server)\n\nvar recv_socket = new  WebSocket(\"ws://\" + server + \"/ws/receive\");\nvar send_socket = new  WebSocket(\"ws://\" + server + \"/ws/publish\");\n\nvar cubeRotationSpeed = 0.02;\nlet cubeColor = \"blue\"\nvar recv_socketOpened = false\n\nrecv_socket.onopen = function() {\n    recv_socketOpened = true\n  var message = {\n    'payload': 'Client connected'\n  };\n  recv_socket.send(JSON.stringify(message));\n};\n\nsend_socket.onopen = function() {\n  var message = {\n    'payload': 'Client connected'\n  };\n  recv_socket.send(JSON.stringify(message));\n};\n\nsend_socket.onclose = function(){\n  console.log('Connection closed');\n};\n\nsend_socket.onerror = function(error) {\n  console.log('Error detected: ' + JSON.stringify(error));\n};\n\nsend_socket.onmessage = function(e) {\n  var server_message = e.data;\n  responseObject = JSON.parse(server_message);\n\n  //alert(JSON.stringify(responseObject));\n  //Do the required stuff\n  console.log(responseObject.payload)\n  if(responseObject.img) {\n    cube.material.map = new THREE.TextureLoader().load( responseObject.img );\n    cube.material.needsUpdate = true;\n  } else if (responseObject.payload.cubeRotationSpeed){\n      cubeRotationSpeed = responseObject.payload.cubeRotationSpeed\n  } else if(responseObject.payload.cubeColor){\n      cubeColor = responseObject.payload.cubeColor\n  }\n}\n\nconst scene = new THREE.Scene();\nconst camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );\n\ncamera.position.z = 5;\n\n//camera.translateY(3);\n\nconst renderer = new THREE.WebGLRenderer({ alpha: true });\nrenderer.setSize( window.innerWidth, window.innerHeight );\ndocument.body.appendChild( renderer.domElement );\n\nrenderer.shadowMap.enabled = true;\nrenderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap\n\n//Create a SpotLight and turn on shadows for the light\nconst light = new THREE.SpotLight( 0xffffff );\nlight.castShadow = true; // default false\nlight.position.set(-1, 2, 4);\nscene.add( light );\n\nconst light2 = new THREE.SpotLight( 0xff00ff );\nlight2.castShadow = true; // default false\nlight2.position.set(5, -2, 4);\nscene.add( light2 );\n\n//Set up shadow properties for the light\nlight.shadow.mapSize.width = 512; // default\nlight.shadow.mapSize.height = 512; // default\nlight.shadow.camera.near = 0.5; // default\nlight.shadow.camera.far = 500; // default\nlight.shadow.focus = 1; // default\n\n//light.translateY(-3)\n\n\n\nconst geometry = new THREE.BoxGeometry(2,4,.3,4,8,4);\n//const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );\n//const material = new THREE.MeshPhongMaterial({color: 0x44aa88});  // greenish blue\n\nconst XZmaterial = new THREE.LineBasicMaterial( {\n\tcolor: 0xff0000,\n\tlinewidth: 1,\n\tlinecap: 'round', //ignored by WebGLRenderer\n\tlinejoin:  'round' //ignored by WebGLRenderer\n} );\n\n\n// basic monochromatic energy preservation\nconst diffuseColor = new THREE.Color().setHSL( 1, 0.5, .5 * 0.5 + 0.1 ).multiplyScalar( 1 - .5 * 0.2 );\n\nconst XXXmaterial = new THREE.MeshToonMaterial( {\n\tcolor: diffuseColor\n} );\n\nconst loader = new THREE.TextureLoader();\nlet cube,material;\nloader.load('https://pbs.twimg.com/media/FCojQCFX0AUrXPS.jpg' , function(texture)\n{\n\tmaterial = new THREE.MeshBasicMaterial( { map: texture } );\n\tconsole.log(material);\n\tcube = new THREE.Mesh( geometry, material );\n\tcube.castShadow = true; //default is false\n\tcube.receiveShadow = false; //default\n\tscene.add( cube );\n\tanimate();\n},\tfunction ( err ) {\n\t\tconsole.error( 'An error happened.' );\n\t}\n);\n\n// const texture = new THREE.TextureLoader().load( 'img/maxresdefault.jpg' );\n// const material = new THREE.MeshBasicMaterial( { map: texture } );\n\n\nconst planet_geometry = new THREE.SphereGeometry();\n//const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );\nconst planet_material = new THREE.MeshPhongMaterial({color: 0x88aaee});  // yellow\nconst planet = new THREE.Mesh( planet_geometry, planet_material );\nplanet.castShadow = false; //default is false\nplanet.receiveShadow = false; //default\nplanet.position.x=15;\nplanet.position.y=2;\nplanet.position.z=-25.5;\nscene.add( planet );\n\n//const helper = new THREE.CameraHelper( light2.shadow.camera );\n//scene.add( helper );\n\n//Load background texture\nloader.load('http://localhost/three/img/space.jpg' , function(texture)\n{\n //scene.background = texture;  \n});\n\n\nconst animate = function () {\n\trequestAnimationFrame( animate );\n\n\tcube.rotation.x += cubeRotationSpeed;\n\tcube.rotation.y += 0.001;\n\tcube.rotation.z += 0.006;\n\t\n\tcube.position.x += 0.01;\n\t//console.log(cube.position.x);\n\tif(cube.position.x>16) {\n\t    cube.position.x=-16;\n        if (recv_socketOpened){\n            recv_socket.send(\"ping\");\n        }\n\t}\n\t\n\n\trenderer.render( scene, camera );\n};\n\n\n</script>\n</html>\n\n",
         "output": "str",
-        "x": 200,
-        "y": 640,
+        "x": 410,
+        "y": 80,
+        "wires": [
+            [
+                "81724fc4bcae0282"
+            ]
+        ]
+    },
+    {
+        "id": "8cdc268559c567bd",
+        "type": "websocket out",
+        "z": "7de09d5372187b67",
+        "name": "",
+        "server": "c6bb1eb5.edd3d",
+        "client": "",
+        "x": 940,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "81724fc4bcae0282",
+        "type": "change",
+        "z": "7de09d5372187b67",
+        "name": "Set Headers",
+        "rules": [
+            {
+                "t": "set",
+                "p": "headers",
+                "pt": "msg",
+                "to": "{}",
+                "tot": "json"
+            },
+            {
+                "t": "set",
+                "p": "headers.content-type",
+                "pt": "msg",
+                "to": "text/html",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "headers.Access-Control-Allow-Origin",
+                "pt": "msg",
+                "to": "*",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 570,
+        "y": 80,
+        "wires": [
+            [
+                "3457eaf67a8873ba"
+            ]
+        ]
+    },
+    {
+        "id": "815162d38732c460",
+        "type": "change",
+        "z": "7de09d5372187b67",
+        "name": "",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "_session",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 735,
+        "y": 140,
+        "wires": [
+            [
+                "8cdc268559c567bd"
+            ]
+        ]
+    },
+    {
+        "id": "2b5a6c86de235af1",
+        "type": "websocket in",
+        "z": "7de09d5372187b67",
+        "name": "",
+        "server": "a5db9e65.7dd36",
+        "client": "",
+        "x": 220,
+        "y": 140,
+        "wires": [
+            [
+                "1c3e15d042436a39"
+            ]
+        ]
+    },
+    {
+        "id": "1c3e15d042436a39",
+        "type": "switch",
+        "z": "7de09d5372187b67",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "ping",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 385,
+        "y": 140,
+        "wires": [
+            [
+                "db925c33d75933cb"
+            ]
+        ]
+    },
+    {
+        "id": "db925c33d75933cb",
+        "type": "function",
+        "z": "7de09d5372187b67",
+        "name": "change color",
+        "func": "let colors = [\"white\",\"red\",0x00ff00,0x0000ff] //both hex or string are fine\nmsg.payload =  {\"cubeColor\": colors[Math.floor(Math.random()*colors.length)]}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 140,
+        "wires": [
+            [
+                "815162d38732c460"
+            ]
+        ]
+    },
+    {
+        "id": "1241c69fe0581892",
+        "type": "inject",
+        "z": "7de09d5372187b67",
+        "name": "Image",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"img\":\"http://pbs.twimg.com/media/E_GBCEnX0AIoPk-.jpg\"}",
+        "payloadType": "json",
+        "x": 210,
+        "y": 440,
         "wires": [
             []
         ]
+    },
+    {
+        "id": "5e9e5405b8b86233",
+        "type": "subflow:7de09d5372187b67",
+        "z": "ef4cb095a7656cc5",
+        "name": "3D Scene",
+        "env": [],
+        "x": 1260,
+        "y": 60,
+        "wires": []
     }
 ]
