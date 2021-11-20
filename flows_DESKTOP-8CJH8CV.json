@@ -390,7 +390,7 @@
         "topology": "dnscluster",
         "connectOptions": "",
         "port": "27017",
-        "db": "spank_scripts2",
+        "db": "Omuamua",
         "name": ""
     },
     {
@@ -602,7 +602,8 @@
         "y": 220,
         "wires": [
             [
-                "ab3d064cfcdb6315"
+                "ab3d064cfcdb6315",
+                "7c418a96356519c4"
             ]
         ]
     },
@@ -635,7 +636,7 @@
         "type": "function",
         "z": "90cfb10a56fd7196",
         "name": "Process MSG",
-        "func": "function make_unique(currentValue, index, arr){\n    return arr.indexOf(currentValue)===index\n}\n\nif(msg.sentiment) {\n    msg.sentiment.positive = msg.sentiment.positive.filter(make_unique)\n    msg.sentiment.negative = msg.sentiment.negative.filter(make_unique)\n}\nmsg.data_source = global.get(\"settings\").data_source\nmsg.cmd_name=msg.payload.name\nmsg.query=msg.payload\nflow.set(\"$parent.latest_select\",msg.payload)\nreturn msg;",
+        "func": "function make_unique(currentValue, index, arr){\n    return arr.indexOf(currentValue)===index\n}\n\nif(msg.sentiment) {\n    msg.sentiment.positive = msg.sentiment.positive.filter(make_unique)\n    msg.sentiment.negative = msg.sentiment.negative.filter(make_unique)\n}\nconst twitter_scanner = global.get(\"twitter_scanner\")\nmsg.search_terms=twitter_scanner.search.get()\nmsg.data_source = global.get(\"settings\").data_source\nmsg.cmd_name=msg.payload.name\nmsg.query=msg.payload\nflow.set(\"$parent.latest_select\",msg.payload)\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -2073,7 +2074,6 @@
         "wires": [
             [
                 "fc0850422bf0b673",
-                "418a7db7e361ee58",
                 "5e9e5405b8b86233"
             ],
             [
@@ -2119,7 +2119,7 @@
         "voice": "Microsoft Mark - English (United States)",
         "always": true,
         "x": 1270,
-        "y": 200,
+        "y": 180,
         "wires": []
     },
     {
@@ -2131,7 +2131,7 @@
         "voice": "Microsoft Zira - English (United States)",
         "always": "",
         "x": 1260,
-        "y": 260,
+        "y": 240,
         "wires": []
     },
     {
@@ -2143,7 +2143,7 @@
         "voice": "Microsoft Mark - English (United States)",
         "always": "",
         "x": 1270,
-        "y": 320,
+        "y": 300,
         "wires": []
     },
     {
@@ -2847,6 +2847,41 @@
         "wires": [
             [
                 "7cc11906534b4543"
+            ]
+        ]
+    },
+    {
+        "id": "d63b0a5be79f97c8",
+        "type": "mongodb out",
+        "z": "ef4cb095a7656cc5",
+        "mongodb": "54588401fea63e01",
+        "name": "Save MSG",
+        "collection": "messages",
+        "payonly": false,
+        "upsert": false,
+        "multi": false,
+        "operation": "store",
+        "x": 1090,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "7c418a96356519c4",
+        "type": "function",
+        "z": "ef4cb095a7656cc5",
+        "name": "",
+        "func": "if(msg.topic===\"control\" && msg.cmd_name!==\"Init\") {\n    return msg;\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 120,
+        "wires": [
+            [
+                "418a7db7e361ee58",
+                "d63b0a5be79f97c8"
             ]
         ]
     }
