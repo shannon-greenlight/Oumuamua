@@ -784,7 +784,7 @@
         "props": [
             {
                 "p": "twitter_search",
-                "v": "art,painting,museum,artist,painter",
+                "v": "girl",
                 "vt": "str"
             }
         ],
@@ -793,7 +793,6 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payloadType": "str",
         "x": 170,
         "y": 80,
         "wires": [
@@ -2917,10 +2916,11 @@
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "false",
+        "complete": "true",
+        "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 930,
+        "x": 910,
         "y": 100,
         "wires": []
     },
@@ -2943,9 +2943,9 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 290,
+        "payload": "{\"search_term\":\"art,painting,museum,artist,painter\"}",
+        "payloadType": "str",
+        "x": 280,
         "y": 100,
         "wires": [
             [
@@ -2958,7 +2958,7 @@
         "type": "function",
         "z": "08d39d48f2233c7a",
         "name": "",
-        "func": "let spectrum=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]\nconst spectrum_len=spectrum.length\n// spectrum.length=spectrum_len\nnode.warn(\"Howdy: \"+spectrum_len)\n\nspectrum.forEach(function(value, index, array) {\n    const val=index-10\n    const sentiment=val<0 ? \"Down\" : \"Up\"\n    const cmd_name = val==0 ? \"Default\" : `${sentiment} ${Math.abs(val)}`\n    node.warn(cmd_name)\n    const check_cmd_name = function (msg) {\n      return msg.cmd_name === cmd_name;\n    }\n    \n    array[index] = msg.payload.find(check_cmd_name)\n\n})\nmsg.payload = spectrum\nreturn msg;",
+        "func": "let spectrum=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]\nconst spectrum_len=spectrum.length\nlet analysis = []\n// spectrum.length=spectrum_len\nnode.warn(\"Howdy: \"+spectrum_len)\n\nspectrum.forEach(function(value, index, array) {\n    const val=index-10\n    const sentiment=val<0 ? \"Down\" : \"Up\"\n    const cmd_name = val==0 ? \"Default\" : `${sentiment} ${Math.abs(val)}`\n    node.warn(cmd_name)\n    const check_cmd_name = function (item) {\n      return item.cmd_name === cmd_name;\n    }\n    \n    array[index] = msg.payload.filter(check_cmd_name)\n    analysis.push({ cmd_name: cmd_name, length: array[index].length })\n})\n\nmsg.analysis=analysis\nmsg.payload = spectrum\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
