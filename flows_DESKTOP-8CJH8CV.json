@@ -556,13 +556,13 @@
     {
         "id": "c6bb1eb5.edd3d",
         "type": "websocket-listener",
-        "path": "/ws/publish",
+        "path": "/ws/publish_chart",
         "wholemsg": "true"
     },
     {
         "id": "a5db9e65.7dd36",
         "type": "websocket-listener",
-        "path": "/ws/receive",
+        "path": "/ws/receive_chart",
         "wholemsg": "true"
     },
     {
@@ -960,7 +960,7 @@
         "topic": "control",
         "payload": "reset",
         "payloadType": "str",
-        "x": 610,
+        "x": 590,
         "y": 320,
         "wires": [
             [
@@ -1189,7 +1189,7 @@
         "func": "// see On Start",
         "outputs": 1,
         "noerr": 0,
-        "initialize": "// Code added here will be run once\n// whenever the node is started.\nconst Settings = {\n    \"debug\": true,\n    \"data_source\" : \"file\",\n    \"filename\" : \"C:\\\\Users\\\\shann\\\\.node-red\\\\projects\\\\Oumuamua\\\\assets\\\\simple.json\",\n    \"old_filename\" : \"C:\\\\Users\\\\Shann\\\\Dropbox\\\\moog\\\\spankulator\\\\node-red\\\\docs\\\\sentiment_4.json\",\n    \"speech_volume\" : 95,\n    \"view_time\": 16000,\n    \"silent_time\": 5000,\n    \"require_image\": true,\n    \"minimum_sentiment\": 7,\n    \"dev0\" : {\n        url: \"192.168.0.108\",\n        enabled: true\n    },\n    \"dev1\" : {\n        url: \"192.168.0.109\",\n        enabled: true\n    },\n    \"get_delay\" : function(time) {\n        const view_time = global.get(\"settings\")[time]\n        return view_time + Math.floor(Math.random() * view_time)\n    }\n}\nglobal.set(\"settings\",Settings)\n\nconst lipsum = {\n    text: \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempor rhoncus odio, vitae fringilla neque lobortis non. Nullam in nunc at nisi ornare suscipit. Morbi congue volutpat augue, vitae tristique risus fringilla ac. Duis massa ante, blandit in commodo eget, auctor in libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean consectetur augue urna, id laoreet lorem gravida id. Aenean nec ante quam. Curabitur sed dolor metus. Morbi porttitor tortor id libero eleifend, in dignissim magna congue. Nam sapien felis, dictum id feugiat eu, sagittis at dolor. Nulla facilisi. Maecenas bibendum odio eu est molestie varius. Maecenas suscipit elit quam. Etiam aliquam leo turpis, at semper tellus volutpat sed. Nulla vitae sollicitudin turpis, ac congue elit.\",\n    tweet: \"RT @Upsydaizy28: A full bag of beans and bolts. 💞💕💝💖 https://t.co/Hk5fXJ1HDP RT @lanadelslay77: I’m the type of girl who would kill you and then make you pancakes 😊 https://t.co/33aLZZnRwB RT @MidnaAsh: Would you let this bat girl drain your blood? https://t.co/OtOh14r2VA\",\n    get: function(num_words,typ) {\n        if(!typ) typ=\"tweet\"\n        const parts = this[typ].split(\" \")\n        return parts.slice(0,num_words-1).join(\" \")\n    },\n    get_chars: function(num_chars,typ) {\n        if(!typ) typ=\"tweet\"\n        return this[typ].substr(0,num_chars)\n    }\n}\nglobal.set(\"lipsum\",lipsum)\n\nconst twitter_scanner={\n    search: {\n        search_string: \"money\",\n        search_parts: [],\n        get: function() {\n            return this.search_string;\n        },\n        set: function(msg) {\n            if(msg.twitter_search>\"\") {\n                this.search_string=msg.twitter_search\n                this.search_parts=this.search_string.split(\",\")\n            }\n        }\n    },\n    gate: {\n        enabled: false,\n        get: function() { return this.enabled },\n        set: function(f) { this.enabled=f!=0 },\n        toggle: function() {\n            this.enabled = !this.enabled\n            return this.get()\n        }\n    },\n    recent_tweets : {\n        max_tweets: 75,\n        tweets: [],\n        add_tweet: function(tweet) {\n            if(this.tweets.indexOf(tweet)>-1) {\n                console.log(\"Duplicate tweet. Dropping: \"+tweet)\n                return false\n            } else {\n                this.tweets.push(tweet)\n                if(this.tweets.length>this.max_tweets) {\n                    this.tweets.shift()\n                }\n                return true\n            }\n        },\n        reset: function() {\n            this.tweets=[]\n        },\n        debug: function() {\n            console.log(this.tweets)\n        }\n    }\n}\nglobal.set(\"twitter_scanner\",twitter_scanner)\n\nconst queue = {\n    len: 0,\n    status: \"\",\n    queuing: false\n}\nglobal.set(\"queue\",queue)\n\nconst talker = {\n    status: { text: \"unset\"}\n}\nglobal.set(\"talker\",talker)\n\nconst find_script = function(search_term) {\n    // looks through all scripts to find script specd by msg.query.name\n    let scripts = global.get(\"info\").scripts\n    return scripts.find(function(script){\n        return script.name == search_term;\n    })\n}\nglobal.set(\"find_script\",find_script)\n\nconst info = {\n    scripts: {},\n    talk_start_time: 0,\n    cmd_name: \"\"\n}\nglobal.set(\"info\",info)\n\nconst read_scripts = function(node) {\n    let msg = { \n        data_source: Settings.data_source,\n        filename: Settings.filename\n    }\n    node.send(msg)\n}\nglobal.set(\"read_scripts\",read_scripts)\n\nread_scripts(node)\n// let msg = { \n//     data_source: Settings.data_source,\n//     filename: Settings.filename\n// }\n// node.send(msg)\n/*\nMongo DB node must be configured manually!\n*/",
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\nconst Settings = {\n    \"debug\": true,\n    \"data_source\" : \"file\",\n    \"filename\" : \"C:\\\\Users\\\\shann\\\\.node-red\\\\projects\\\\Oumuamua\\\\assets\\\\simple.json\",\n    \"old_filename\" : \"C:\\\\Users\\\\Shann\\\\Dropbox\\\\moog\\\\spankulator\\\\node-red\\\\docs\\\\sentiment_4.json\",\n    \"speech_volume\" : 95,\n    \"view_time\": 16000,\n    \"silent_time\": 5000,\n    \"require_image\": true,\n    \"minimum_sentiment\": 0,\n    \"dev0\" : {\n        url: \"192.168.0.108\",\n        enabled: true\n    },\n    \"dev1\" : {\n        url: \"192.168.0.109\",\n        enabled: true\n    },\n    \"get_delay\" : function(time) {\n        const view_time = global.get(\"settings\")[time]\n        return view_time + Math.floor(Math.random() * view_time)\n    }\n}\nglobal.set(\"settings\",Settings)\n\nconst lipsum = {\n    text: \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempor rhoncus odio, vitae fringilla neque lobortis non. Nullam in nunc at nisi ornare suscipit. Morbi congue volutpat augue, vitae tristique risus fringilla ac. Duis massa ante, blandit in commodo eget, auctor in libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean consectetur augue urna, id laoreet lorem gravida id. Aenean nec ante quam. Curabitur sed dolor metus. Morbi porttitor tortor id libero eleifend, in dignissim magna congue. Nam sapien felis, dictum id feugiat eu, sagittis at dolor. Nulla facilisi. Maecenas bibendum odio eu est molestie varius. Maecenas suscipit elit quam. Etiam aliquam leo turpis, at semper tellus volutpat sed. Nulla vitae sollicitudin turpis, ac congue elit.\",\n    tweet: \"RT @Upsydaizy28: A full bag of beans and bolts. 💞💕💝💖 https://t.co/Hk5fXJ1HDP RT @lanadelslay77: I’m the type of girl who would kill you and then make you pancakes 😊 https://t.co/33aLZZnRwB RT @MidnaAsh: Would you let this bat girl drain your blood? https://t.co/OtOh14r2VA\",\n    get: function(num_words,typ) {\n        if(!typ) typ=\"tweet\"\n        const parts = this[typ].split(\" \")\n        return parts.slice(0,num_words-1).join(\" \")\n    },\n    get_chars: function(num_chars,typ) {\n        if(!typ) typ=\"tweet\"\n        return this[typ].substr(0,num_chars)\n    }\n}\nglobal.set(\"lipsum\",lipsum)\n\nconst twitter_scanner={\n    search: {\n        search_string: \"money\",\n        search_parts: [],\n        get: function() {\n            return this.search_string;\n        },\n        set: function(msg) {\n            if(msg.twitter_search>\"\") {\n                this.search_string=msg.twitter_search\n                this.search_parts=this.search_string.split(\",\")\n            }\n        }\n    },\n    gate: {\n        enabled: false,\n        get: function() { return this.enabled },\n        set: function(f) { this.enabled=f!=0 },\n        toggle: function() {\n            this.enabled = !this.enabled\n            return this.get()\n        }\n    },\n    recent_tweets : {\n        max_tweets: 75,\n        tweets: [],\n        add_tweet: function(tweet) {\n            if(this.tweets.indexOf(tweet)>-1) {\n                console.log(\"Duplicate tweet. Dropping: \"+tweet)\n                return false\n            } else {\n                this.tweets.push(tweet)\n                if(this.tweets.length>this.max_tweets) {\n                    this.tweets.shift()\n                }\n                return true\n            }\n        },\n        reset: function() {\n            this.tweets=[]\n        },\n        debug: function() {\n            console.log(this.tweets)\n        }\n    }\n}\nglobal.set(\"twitter_scanner\",twitter_scanner)\n\nconst queue = {\n    len: 0,\n    status: \"\",\n    queuing: false\n}\nglobal.set(\"queue\",queue)\n\nconst talker = {\n    status: { text: \"unset\"}\n}\nglobal.set(\"talker\",talker)\n\nconst find_script = function(search_term) {\n    // looks through all scripts to find script specd by msg.query.name\n    let scripts = global.get(\"info\").scripts\n    return scripts.find(function(script){\n        return script.name == search_term;\n    })\n}\nglobal.set(\"find_script\",find_script)\n\nconst info = {\n    scripts: {},\n    talk_start_time: 0,\n    cmd_name: \"\"\n}\nglobal.set(\"info\",info)\n\nconst read_scripts = function(node) {\n    let msg = { \n        data_source: Settings.data_source,\n        filename: Settings.filename\n    }\n    node.send(msg)\n}\nglobal.set(\"read_scripts\",read_scripts)\n\nread_scripts(node)\n// let msg = { \n//     data_source: Settings.data_source,\n//     filename: Settings.filename\n// }\n// node.send(msg)\n/*\nMongo DB node must be configured manually!\n*/",
         "finalize": "",
         "libs": [],
         "x": 160,
@@ -2698,7 +2698,7 @@
         "name": "",
         "server": "c6bb1eb5.edd3d",
         "client": "",
-        "x": 940,
+        "x": 960,
         "y": 200,
         "wires": []
     },
@@ -2958,7 +2958,7 @@
         "type": "function",
         "z": "08d39d48f2233c7a",
         "name": "",
-        "func": "let spectrum=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]\nconst spectrum_len=spectrum.length\nlet analysis = []\n// spectrum.length=spectrum_len\nnode.warn(\"Howdy: \"+spectrum_len)\n\nspectrum.forEach(function(value, index, array) {\n    const val=index-10\n    const sentiment=val<0 ? \"Down\" : \"Up\"\n    const cmd_name = val==0 ? \"Default\" : `${sentiment} ${Math.abs(val)}`\n    node.warn(cmd_name)\n    const check_cmd_name = function (item) {\n      return item.cmd_name === cmd_name;\n    }\n    \n    array[index] = msg.payload.filter(check_cmd_name)\n    analysis.push({ cmd_name: cmd_name, length: array[index].length })\n})\n\nmsg.analysis=analysis\nmsg.payload = spectrum\nreturn msg;",
+        "func": "let spectrum=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]\nconst spectrum_len=spectrum.length\nlet analysis = []\n// spectrum.length=spectrum_len\nnode.warn(\"Howdy: \"+spectrum_len)\n\nspectrum.forEach(function(value, index, array) {\n    const val=index-10\n    const sentiment=val<0 ? \"Down\" : \"Up\"\n    const cmd_name = val==0 ? \"Default\" : `${sentiment} ${Math.abs(val)}`\n    node.warn(cmd_name)\n    const check_cmd_name = function (item) {\n      return item.cmd_name === cmd_name;\n    }\n    \n    array[index] = msg.payload.filter(check_cmd_name)\n  //analysis.push({ cmd_name: cmd_name, length: array[index].length })\n  analysis.push(array[index].length)\n})\n\nmsg.analysis=analysis\nmsg.payload = spectrum\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -2968,7 +2968,158 @@
         "y": 100,
         "wires": [
             [
-                "0994add790edb8b1"
+                "0994add790edb8b1",
+                "1fe65c9faa30403f"
+            ]
+        ]
+    },
+    {
+        "id": "74b8216ef66e8fa3",
+        "type": "template",
+        "z": "08d39d48f2233c7a",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<html>\n<head>\n\n\t<title>Omuamua Data</title>\n\n\t<meta charset=\"utf-8\">\n\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\n\t<style>\n\t\t/*@import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Eater&family=Frijole&family=Rubik+Beastly&family=Sigmar+One&family=Amita:wght@700&family=Black+Ops+One&family=Bungee+Inline&family=Chewy&family=Courier+Prime:wght@700&family=Creepster&family=Emilys+Candy&family=Freckle+Face&family=Lakki+Reddy&family=Metal+Mania&family=Mystery+Quest&family=New+Rocker&family=Oleo+Script&family=Rock+Salt&family=Rye&family=Shrikhand&family=UnifrakturCook:wght@700&display=swap');*/\n        /*@import url('https://greenfacelabs.com/three/css/omuamua.css');*/\n        /*@import url('https://greenfacelabs.com/three/css/demo.css');*/\n\t</style>\n\n    <script type=\"text/javascript\" src=\"https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.js\"></script>\n    <script src=\"https://greenfacelabs.com/three/js/d3_chart.js\"></script>\n</head>\n<body>\n<div id=\"main\">\n    <svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" height=\"1\">\n        <defs>\n            <linearGradient id=\"grad1\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"0%\">\n                <stop offset=\"0%\" style=\"stop-color:lightblue;stop-opacity:1\"/>\n                <stop offset=\"100%\" style=\"stop-color:steelblue;stop-opacity:1\"/>\n            </linearGradient>\n            <radialGradient id=\"rgrad0\" cx=\"50%\" cy=\"50%\" r=\"50%\" fx=\"50%\" fy=\"50%\">\n                <stop offset=\"0%\" style=\"stop-color:lightblue; stop-opacity:0\"/>\n                <stop offset=\"100%\" style=\"stop-color:steelblue;stop-opacity:1\"/>\n            </radialGradient>\n            <radialGradient id=\"rgrad1\" cx=\"50%\" cy=\"50%\" r=\"50%\" fx=\"50%\" fy=\"50%\">\n                <stop offset=\"0%\" style=\"stop-color:lightgreen;stop-opacity:0\"/>\n                <stop offset=\"100%\" style=\"stop-color:darkgreen;stop-opacity:1\"/>\n            </radialGradient>\n        </defs>\n    </svg>\n    <div id=\"chart\" class=\"chart\"><h2 id=\"sub_title\">Sentiment</h2></div>\n    <div class=\"clear\">&nbsp;</div>\n</div>\n</body>\n<script>\n        const dbugger = {\n            debug_on : false,\n            \"print\" : function(s,force) {\n                if(this.debug_on || force) {\n                    console.log(s);\n                }\n            }\n        };\n\n    const server = window.location.href.split(\"http://\")[1].split(\"/\")[0]\n    console.log(\"Page location is \" + server)\n\n    var recv_socket = new  WebSocket(\"ws://\" + server + \"/ws/receive_chart\");\n    var send_socket = new  WebSocket(\"ws://\" + server + \"/ws/publish_chart\");\n\n    var recv_socketOpened = false\n\n    recv_socket.onopen = function() {\n        recv_socketOpened = true\n        var message = {\n            'payload': 'Client connected'\n        };\n        recv_socket.send(JSON.stringify(message));\n    };\n\n    send_socket.onopen = function() {\n        var message = {\n            'payload': 'Client connected'\n        };\n        recv_socket.send(JSON.stringify(message));\n    };\n\n    send_socket.onclose = function(){\n        console.log('Connection closed');\n    };\n\n    send_socket.onerror = function(error) {\n        console.log('Error detected: ' + JSON.stringify(error));\n    };\n\n    send_socket.onmessage = function(e) {\n        let server_message = e.data;\n        let responseObject = JSON.parse(server_message);\n        //msg_handler(responseObject)\n        console.log(responseObject)\n        d3_chart.the_data = responseObject.payload\n        createChart()\n    }\n\n    let d3_chart = new D3_chart();\n    // d3_chart.wid = $(\"body\").width() - 20;\n    d3_chart.wid = document.body.clientWidth - 20;\n    d3_chart.left_col_width = 200;\n    //d3_chart.the_data = {{payload.analysys}};\n\n    let report_num = '1'\n\n    d3_chart.w = d3_chart.wid;\n\n    function createChart() {\n        switch (report_num) {\n            case '1':\n                d3_chart.createBarChart();\n                break;\n            case '2':\n                d3_chart.createPieChart();\n                //$(\"svg g.arc\").tooltip();\n                break;\n            default:\n                alert(\"No report specified!\");\n        }\n    }\n\n    function reCreateChart() {\n        d3.select(\"#chart svg\").remove();\n        createChart();\n    }\n\n    //createChart()\n\n</script>\n</html>\n\n",
+        "output": "str",
+        "x": 920,
+        "y": 260,
+        "wires": [
+            [
+                "0869e2fddd3a7c98"
+            ]
+        ]
+    },
+    {
+        "id": "6be62d510ff34a39",
+        "type": "websocket out",
+        "z": "08d39d48f2233c7a",
+        "name": "",
+        "server": "c6bb1eb5.edd3d",
+        "client": "",
+        "x": 1140,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "de36e8abe39cfdd2",
+        "type": "http in",
+        "z": "08d39d48f2233c7a",
+        "name": "",
+        "url": "/chart",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 740,
+        "y": 260,
+        "wires": [
+            [
+                "74b8216ef66e8fa3"
+            ]
+        ]
+    },
+    {
+        "id": "c5ceb09f1a3a6470",
+        "type": "http response",
+        "z": "08d39d48f2233c7a",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1270,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "0869e2fddd3a7c98",
+        "type": "change",
+        "z": "08d39d48f2233c7a",
+        "name": "Set Headers",
+        "rules": [
+            {
+                "t": "set",
+                "p": "headers",
+                "pt": "msg",
+                "to": "{}",
+                "tot": "json"
+            },
+            {
+                "t": "set",
+                "p": "headers.content-type",
+                "pt": "msg",
+                "to": "text/html",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "headers.Access-Control-Allow-Origin",
+                "pt": "msg",
+                "to": "*",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1095,
+        "y": 260,
+        "wires": [
+            [
+                "c5ceb09f1a3a6470"
+            ]
+        ]
+    },
+    {
+        "id": "0c6296821a84cac4",
+        "type": "websocket in",
+        "z": "08d39d48f2233c7a",
+        "name": "",
+        "server": "a5db9e65.7dd36",
+        "client": "",
+        "x": 780,
+        "y": 360,
+        "wires": [
+            [
+                "580e4f9d514c7c1a"
+            ]
+        ]
+    },
+    {
+        "id": "580e4f9d514c7c1a",
+        "type": "debug",
+        "z": "08d39d48f2233c7a",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 990,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "1fe65c9faa30403f",
+        "type": "function",
+        "z": "08d39d48f2233c7a",
+        "name": "Prep Chart Data",
+        "func": "let chart_data = {}\nchart_data.data = msg.analysis\nchart_data.legends = []\nchart_data.titles = []\nchart_data.data.forEach(function(element,index) {\n    let this_name = index<10 ? \"Down \" : \"Up \"\n    this_name += Math.abs(index-10).toString()\n    chart_data.legends[index]={name: this_name, id: \"element_\"+index}\n    chart_data.titles[index]=\"Hi there\"\n});\nmsg.payload = chart_data\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 940,
+        "y": 180,
+        "wires": [
+            [
+                "6be62d510ff34a39"
             ]
         ]
     }
