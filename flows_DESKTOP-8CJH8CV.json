@@ -2703,8 +2703,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 840,
-        "y": 440,
+        "x": 1060,
+        "y": 300,
         "wires": []
     },
     {
@@ -2765,10 +2765,10 @@
         "fieldType": "msg",
         "format": "handlebars",
         "syntax": "mustache",
-        "template": "<html>\n<head>\n\n\t<title>Omuamua Data</title>\n\n\t<meta charset=\"utf-8\">\n\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\n\t<style>\n\t\t/*@import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Eater&family=Frijole&family=Rubik+Beastly&family=Sigmar+One&family=Amita:wght@700&family=Black+Ops+One&family=Bungee+Inline&family=Chewy&family=Courier+Prime:wght@700&family=Creepster&family=Emilys+Candy&family=Freckle+Face&family=Lakki+Reddy&family=Metal+Mania&family=Mystery+Quest&family=New+Rocker&family=Oleo+Script&family=Rock+Salt&family=Rye&family=Shrikhand&family=UnifrakturCook:wght@700&display=swap');*/\n        /*@import url('https://greenfacelabs.com/three/css/omuamua.css');*/\n        /*@import url('https://greenfacelabs.com/three/css/demo.css');*/\n\n            h2 {\n                text-align: left;\n                padding-right: 40px;\n                font-size: 1.3em;\n                padding-left: 5px;                \n            }\n\n            .clear {\n                clear: both;\n                height: 0px;\n                padding: 0 !important;\n                margin-bottom: 1em !important;\n            }\n\n            .chart div {\n                font: 10px sans-serif;\n                background-color: steelblue;\n                text-align: right;\n                padding: 3px;\n                margin: 1px;\n                color: white;\n            }\n\n            .chart rect {\n                stroke: white;\n                fill: url(#grad1); /* fill: steelblue; */\n            }\n\n            .bar_data {\n                font-size: .75em;\n            }\n\n            .slice path {\n                stroke: #68a;\n            }\n\n            .bar {\n                font-size: 12px;\n                stroke-width: .3;\n            }\n\n            .arc text {\n                font: 10px sans-serif;\n                text-anchor: middle;\n            }\n\n            .arc path {\n                stroke: #fff;\n            }\n            #main {\n                background-color: #aaa;\n                font-family: arial;\n            }\n\n            #chart_controls {\n                display: none;\n            }\n            \n            #chart_controls, #data_controls {\n                float: left;\n                margin-left: 5px;\n                margin-right: 1em;\n            }\n\n\t</style>\n\n    <script type=\"text/javascript\" src=\"https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.js\"></script>\n    <script src=\"https://greenfacelabs.com/three/js/d3_chart.js\"></script>\n</head>\n<body>\n<div id=\"main\">\n    <svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" height=\"1\">\n        <defs>\n            <linearGradient id=\"grad1\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"0%\">\n                <stop offset=\"0%\" style=\"stop-color:lightblue;stop-opacity:1\"/>\n                <stop offset=\"100%\" style=\"stop-color:steelblue;stop-opacity:1\"/>\n            </linearGradient>\n            <radialGradient id=\"rgrad0\" cx=\"50%\" cy=\"50%\" r=\"50%\" fx=\"50%\" fy=\"50%\">\n                <stop offset=\"0%\" style=\"stop-color:lightblue; stop-opacity:0\"/>\n                <stop offset=\"100%\" style=\"stop-color:steelblue;stop-opacity:1\"/>\n            </radialGradient>\n            <radialGradient id=\"rgrad1\" cx=\"50%\" cy=\"50%\" r=\"50%\" fx=\"50%\" fy=\"50%\">\n                <stop offset=\"0%\" style=\"stop-color:lightgreen;stop-opacity:0\"/>\n                <stop offset=\"100%\" style=\"stop-color:darkgreen;stop-opacity:1\"/>\n            </radialGradient>\n        </defs>\n    </svg>\n    <div id=\"chart\" class=\"chart\"><h2 id=\"sub_title\">Sentiment</h2>\n        <div id=\"data_controls\">\n            <label for=\"select_search_terms\">Select Search Terms:</label>\n            <select id=\"select_search_terms\" onchange=\"do_select_search_terms(this.value)\"><option>all</option></select>\n        </div>\n        <div id=\"chart_controls\">\n            <label for=\"select_chart_type\">Select Chart Type:</label>\n            <select id=\"select_chart_type\" onchange=\"do_select(this.value)\"><option>bar</option><option>pie</option></select>\n        </div>\n        <div class=\"clear\">&nbsp;</div>\n    </div>\n    {{!-- <button onclick=\"howdy()\">Howdy!</button> --}}\n</div>\n</body>\n<script>\n        const dbugger = {\n            debug_on : true,\n            \"print\" : function(s,force) {\n                if(this.debug_on || force) {\n                    console.log(s);\n                }\n            }\n        };\n\n    const server = window.location.href.split(\"http://\")[1].split(\"/\")[0]\n    console.log(\"Page location is \" + server)\n\n    var recv_socket = new  WebSocket(\"ws://\" + server + \"/ws/receive_chart\");\n    var send_socket = new  WebSocket(\"ws://\" + server + \"/ws/publish_chart\");\n\n    var recv_socketOpened = false\n\n    recv_socket.onopen = function() {\n        recv_socketOpened = true\n        var message = {\n            'payload': 'Client connected'\n        };\n        // recv_socket.send(JSON.stringify(message));\n        recv_socket.send('Receive Client connected');\n    };\n\n    function howdy() {\n        dbugger.print(\"Hello?\",true)\n        var message = {\n            'payload': 'Hello World!'\n        };\n        recv_socket.send(JSON.stringify(message));\n    }\n\n    send_socket.onopen = function() {\n        var message = {\n            'payload': 'Send Client connected'\n        };\n        recv_socket.send(JSON.stringify(message));\n    };\n\n    send_socket.onclose = function(){\n        console.log('Connection closed');\n    };\n\n    send_socket.onerror = function(error) {\n        console.log('Error detected: ' + JSON.stringify(error));\n    };\n\n    let the_data\n\n    send_socket.onmessage = function(e) {\n        let server_message = e.data;\n        let responseObject = JSON.parse(server_message);\n        //msg_handler(responseObject)\n        console.log(responseObject)\n        the_data = d3_chart.the_data = responseObject\n        createChart()\n        document.getElementById(\"chart_controls\").style.display=\"block\"\n    }\n\n    let d3_chart = new D3_chart();\n    // d3_chart.wid = $(\"body\").width() - 20;\n    d3_chart.wid = document.body.clientWidth - 20;\n    d3_chart.left_col_width = 200;\n\n    let report_type = 'bar'\n\n    d3_chart.w = d3_chart.wid;\n\n    function createChart() {\n        switch (report_type) {\n            case 'bar':\n                d3_chart.createBarChart();\n                break;\n            case 'pie':\n                d3_chart.createPieChart();\n                //$(\"svg g.arc\").tooltip();\n                break;\n            default:\n                alert(\"No report specified!\");\n        }\n    }\n\n    function reCreateChart() {\n        d3.select(\"#chart svg\").remove();\n        //d3_chart.the_data = the_data\n        createChart();\n    }\n\n    function do_select(val) {\n        console.log(val)\n        report_type=val\n        reCreateChart()\n    }\n\n    //createChart()\n\n</script>\n</html>\n\n",
+        "template": "<html>\n<head>\n\n\t<title>Omuamua Data</title>\n\n\t<meta charset=\"utf-8\">\n\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\n\t<style>\n\t\t/*@import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Eater&family=Frijole&family=Rubik+Beastly&family=Sigmar+One&family=Amita:wght@700&family=Black+Ops+One&family=Bungee+Inline&family=Chewy&family=Courier+Prime:wght@700&family=Creepster&family=Emilys+Candy&family=Freckle+Face&family=Lakki+Reddy&family=Metal+Mania&family=Mystery+Quest&family=New+Rocker&family=Oleo+Script&family=Rock+Salt&family=Rye&family=Shrikhand&family=UnifrakturCook:wght@700&display=swap');*/\n        /*@import url('https://greenfacelabs.com/three/css/omuamua.css');*/\n        /*@import url('https://greenfacelabs.com/three/css/demo.css');*/\n\n            h2 {\n                text-align: left;\n                padding-right: 40px;\n                font-size: 1.3em;\n                padding-left: 5px;                \n            }\n\n            .clear {\n                clear: both;\n                height: 0px;\n                padding: 0 !important;\n                margin-bottom: 1em !important;\n            }\n\n            .chart div {\n                font: 10px sans-serif;\n                background-color: steelblue;\n                text-align: right;\n                padding: 3px;\n                margin: 1px;\n                color: white;\n            }\n\n            .chart rect {\n                stroke: white;\n                fill: url(#grad1); /* fill: steelblue; */\n            }\n\n            .bar_data {\n                font-size: .75em;\n            }\n\n            .slice path {\n                stroke: #68a;\n            }\n\n            .bar {\n                font-size: 12px;\n                stroke-width: .3;\n            }\n\n            .arc text {\n                font: 10px sans-serif;\n                text-anchor: middle;\n            }\n\n            .arc path {\n                stroke: #fff;\n            }\n            #main {\n                background-color: #aaa;\n                font-family: arial;\n            }\n\n            #chart_controls {\n                display: none;\n            }\n            \n            #chart_controls, #data_controls {\n                float: left;\n                margin-left: 5px;\n                margin-right: 1em;\n            }\n\n\t</style>\n\n    <script type=\"text/javascript\" src=\"https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.js\"></script>\n    <script src=\"https://greenfacelabs.com/three/js/d3_chart.js\"></script>\n</head>\n<body>\n<div id=\"main\">\n    <svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" height=\"1\">\n        <defs>\n            <linearGradient id=\"grad1\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"0%\">\n                <stop offset=\"0%\" style=\"stop-color:lightblue;stop-opacity:1\"/>\n                <stop offset=\"100%\" style=\"stop-color:steelblue;stop-opacity:1\"/>\n            </linearGradient>\n            <radialGradient id=\"rgrad0\" cx=\"50%\" cy=\"50%\" r=\"50%\" fx=\"50%\" fy=\"50%\">\n                <stop offset=\"0%\" style=\"stop-color:lightblue; stop-opacity:0\"/>\n                <stop offset=\"100%\" style=\"stop-color:steelblue;stop-opacity:1\"/>\n            </radialGradient>\n            <radialGradient id=\"rgrad1\" cx=\"50%\" cy=\"50%\" r=\"50%\" fx=\"50%\" fy=\"50%\">\n                <stop offset=\"0%\" style=\"stop-color:lightgreen;stop-opacity:0\"/>\n                <stop offset=\"100%\" style=\"stop-color:darkgreen;stop-opacity:1\"/>\n            </radialGradient>\n        </defs>\n    </svg>\n    <div id=\"chart\" class=\"chart\"><h2 id=\"sub_title\">Sentiment</h2>\n        <div id=\"data_controls\">\n            <label for=\"select_search_terms\">Select Search Terms:</label>\n            <select id=\"select_search_terms\" onchange=\"do_select_search_terms(this.value)\"><option>all</option></select>\n        </div>\n        <div id=\"chart_controls\">\n            <label for=\"select_chart_type\">Select Chart Type:</label>\n            <select id=\"select_chart_type\" onchange=\"do_select(this.value)\"><option>bar</option><option>pie</option></select>\n        </div>\n        <div class=\"clear\">&nbsp;</div>\n    </div>\n    {{!-- <button onclick=\"howdy()\">Howdy!</button> --}}\n</div>\n</body>\n<script>\n        const dbugger = {\n            debug_on : true,\n            \"print\" : function(s,force) {\n                if(this.debug_on || force) {\n                    console.log(s);\n                }\n            }\n        };\n\n    const server = window.location.href.split(\"http://\")[1].split(\"/\")[0]\n    console.log(\"Page location is \" + server)\n\n    var recv_socket = new  WebSocket(\"ws://\" + server + \"/ws/receive_chart\");\n    var send_socket = new  WebSocket(\"ws://\" + server + \"/ws/publish_chart\");\n\n    var recv_socketOpened = false\n\n    recv_socket.onopen = function() {\n        recv_socketOpened = true\n        var message = {\n            'payload': 'Client connected'\n        };\n        // recv_socket.send(JSON.stringify(message));\n        recv_socket.send('Receive Client connected');\n    };\n\n    function howdy() {\n        dbugger.print(\"Hello?\",true)\n        var message = {\n            'payload': 'Hello World!'\n        };\n        recv_socket.send(JSON.stringify(message));\n    }\n\n    send_socket.onopen = function() {\n        var message = {\n            'payload': 'Send Client connected'\n        };\n        recv_socket.send(JSON.stringify(message));\n    };\n\n    send_socket.onclose = function(){\n        console.log('Connection closed');\n    };\n\n    send_socket.onerror = function(error) {\n        console.log('Error detected: ' + JSON.stringify(error));\n    };\n\n    let the_data\n\n    send_socket.onmessage = function(e) {\n        let server_message = e.data;\n        let responseObject = JSON.parse(server_message);\n        //msg_handler(responseObject)\n        console.log(responseObject)\n        switch(responseObject.topic) {\n            case \"chart_data\":\n                the_data = d3_chart.the_data = responseObject.chart_data\n                createChart()\n                document.getElementById(\"chart_controls\").style.display=\"block\"\n                break;\n            case \"search_terms\":\n                responseObject.search_terms.forEach(function(value,index,arr) {\n                    console.log(`Value: ${value}`)\n                })\n                break;\n            default:\n                console.log(\"Unknown Topic: \"+responseObject.topic)\n        }\n    }\n\n    let d3_chart = new D3_chart();\n    // d3_chart.wid = $(\"body\").width() - 20;\n    d3_chart.wid = document.body.clientWidth - 20;\n    d3_chart.left_col_width = 200;\n\n    let report_type = 'bar'\n\n    d3_chart.w = d3_chart.wid;\n\n    function createChart() {\n        switch (report_type) {\n            case 'bar':\n                d3_chart.createBarChart();\n                break;\n            case 'pie':\n                d3_chart.createPieChart();\n                //$(\"svg g.arc\").tooltip();\n                break;\n            default:\n                alert(\"No report specified!\");\n        }\n    }\n\n    function reCreateChart() {\n        d3.select(\"#chart svg\").remove();\n        //d3_chart.the_data = the_data\n        createChart();\n    }\n\n    function do_select(val) {\n        console.log(val)\n        report_type=val\n        reCreateChart()\n    }\n\n    //createChart()\n\n</script>\n</html>\n\n",
         "output": "str",
-        "x": 820,
-        "y": 260,
+        "x": 280,
+        "y": 480,
         "wires": [
             [
                 "0869e2fddd3a7c98"
@@ -2784,8 +2784,8 @@
         "method": "get",
         "upload": false,
         "swaggerDoc": "",
-        "x": 580,
-        "y": 260,
+        "x": 120,
+        "y": 480,
         "wires": [
             [
                 "74b8216ef66e8fa3"
@@ -2799,8 +2799,8 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 1170,
-        "y": 260,
+        "x": 610,
+        "y": 480,
         "wires": []
     },
     {
@@ -2836,8 +2836,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 995,
-        "y": 260,
+        "x": 450,
+        "y": 480,
         "wires": [
             [
                 "c5ceb09f1a3a6470"
@@ -2866,7 +2866,7 @@
         "type": "function",
         "z": "08d39d48f2233c7a",
         "name": "Prep Chart Data",
-        "func": "let chart_data = {}\nchart_data.data = msg.analysis\nchart_data.legends = []\nchart_data.titles = []\nchart_data.data.forEach(function(element,index) {\n    let this_name = index<10 ? \"Down \" : \"Up \"\n    this_name += Math.abs(index-10).toString()\n    if(index===10) this_name=\"Default\"\n    chart_data.legends[index]={name: this_name, id: \"element_\"+index}\n    chart_data.titles[index]=\"Hi there\"\n});\nmsg.payload = chart_data\nreturn msg;",
+        "func": "let chart_data = {}\nchart_data.data = msg.analysis\nchart_data.legends = []\nchart_data.titles = []\nchart_data.data.forEach(function(element,index) {\n    let this_name = index<10 ? \"Down \" : \"Up \"\n    this_name += Math.abs(index-10).toString()\n    if(index===10) this_name=\"Default\"\n    chart_data.legends[index]={name: this_name, id: \"element_\"+index}\n    chart_data.titles[index]=\"Hi there\"\n});\n// msg.payload = chart_data\nmsg.payload = {\n    chart_data: chart_data,\n    topic: \"chart_data\"\n}\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -2908,8 +2908,8 @@
         "topic": "",
         "payload": "[{\"$match\":{\"search_terms\":\"girl\"}},{\"$match\":{\"cmd_sentiment\":\"Up\"}},{\"$project\":{\"img\":1}},{\"$sort\":{\"cmd_name\":1}}]",
         "payloadType": "json",
-        "x": 120,
-        "y": 440,
+        "x": 140,
+        "y": 300,
         "wires": [
             [
                 "f57dacee767ef9eb"
@@ -2924,11 +2924,11 @@
         "name": "Aggregate",
         "collection": "messages",
         "operation": "aggregate",
-        "x": 590,
-        "y": 440,
+        "x": 610,
+        "y": 300,
         "wires": [
             [
-                "0994add790edb8b1"
+                "1402cd1d4667a457"
             ]
         ]
     },
@@ -2953,8 +2953,8 @@
         "topic": "",
         "payload": "[{\"$group\":{\"_id\":null,\"uniqueValues\":{\"$addToSet\":\"$search_terms\"}}}]",
         "payloadType": "json",
-        "x": 120,
-        "y": 520,
+        "x": 140,
+        "y": 380,
         "wires": [
             [
                 "f57dacee767ef9eb",
@@ -2975,8 +2975,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 560,
-        "y": 520,
+        "x": 580,
+        "y": 380,
         "wires": []
     },
     {
@@ -2986,8 +2986,8 @@
         "name": "",
         "server": "eca071f0d6730181",
         "client": "",
-        "x": 150,
-        "y": 360,
+        "x": 170,
+        "y": 220,
         "wires": [
             [
                 "d1f5e09ebae45f5e"
@@ -3005,12 +3005,32 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 340,
-        "y": 360,
+        "x": 360,
+        "y": 220,
         "wires": [
             [
                 "14bf8087deefbab9",
                 "f57dacee767ef9eb"
+            ]
+        ]
+    },
+    {
+        "id": "1402cd1d4667a457",
+        "type": "function",
+        "z": "08d39d48f2233c7a",
+        "name": "",
+        "func": "msg.payload = {\n    search_terms: msg.payload[0].uniqueValues,\n    topic: \"search_terms\"\n}\n\n// msg.payload = msg.payload[0].uniqueValues\n// msg.topic=\"search_terms\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 820,
+        "y": 300,
+        "wires": [
+            [
+                "0994add790edb8b1",
+                "4402dbc5cfe0b23e"
             ]
         ]
     }
