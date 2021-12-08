@@ -799,7 +799,7 @@
         "props": [
             {
                 "p": "twitter_search",
-                "v": "supreme court,roe,abortion",
+                "v": "omicron,jab,virus,pandemic",
                 "vt": "str"
             }
         ],
@@ -988,7 +988,7 @@
         "type": "function",
         "z": "a0954fe29f87ceff",
         "name": "Queue Ctrl",
-        "func": "const queue = global.get(\"queue\")\nif(msg.topic==\"control\") {\n    // might be a reset\n    queue.queuing=false\n    global.get(\"twitter_scanner\").recent_tweets.reset()\n    global.get(\"info\").cmd_nname=\"\"\n    return msg\n} else {\n    let qmsg = \"open\"\n    if(queue.queuing) {\n        qmsg=\"queue\"\n    }\n    let ctrlmsg = {\n        payload: qmsg,\n        topic: \"control\"\n    }\n    node.send(ctrlmsg)\n    queue.queuing=true\n    return msg;\n}",
+        "func": "const queue = global.get(\"queue\")\nif(msg.topic==\"control\") {\n    // might be a reset\n    queue.queuing=false\n    global.get(\"twitter_scanner\").recent_tweets.reset()\n    global.get(\"info\").cmd_name=\"\"\n    return msg\n} else {\n    let qmsg = \"open\"\n    if(queue.queuing) {\n        qmsg=\"queue\"\n    }\n    let ctrlmsg = {\n        payload: qmsg,\n        topic: \"control\"\n    }\n    node.send(ctrlmsg)\n    queue.queuing=true\n    return msg;\n}",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -2474,7 +2474,7 @@
         "fieldType": "msg",
         "format": "handlebars",
         "syntax": "mustache",
-        "template": "<html>\n<head>\n\n\t<title>Omuamua</title>\n\n\t<meta charset=\"utf-8\">\n\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\n\t<style>\n\t\t@import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Eater&family=Frijole&family=Rubik+Beastly&family=Sigmar+One&family=Amita:wght@700&family=Black+Ops+One&family=Bungee+Inline&family=Chewy&family=Courier+Prime:wght@700&family=Creepster&family=Emilys+Candy&family=Freckle+Face&family=Lakki+Reddy&family=Metal+Mania&family=Mystery+Quest&family=New+Rocker&family=Oleo+Script&family=Rock+Salt&family=Rye&family=Shrikhand&family=UnifrakturCook:wght@700&display=swap');\n        @import url('https://greenfacelabs.com/three/css/omuamua.css');\n        /*@import url('https://greenfacelabs.com/three/css/demo.css');*/\n\t</style>\n\n    <script src=\"https://greenfacelabs.com/three/js/three.js\"></script>\n    <script src=\"https://greenfacelabs.com/three/js/starfield.js\"></script>\n</head>\n<body>\n<canvas id=\"the_canvas\"></canvas>\n<div id=\"flat_div\">\n\t<div id=\"tweet\" class=\"Init\">\n\t\t<div id=\"tweet_text\" ng-bind-html=\"msg.tweet.text\" >Howdy!</div>\n\t</div>\n\n\t<div id=\"user\">\n\t\t<img id=\"user_img\" />\n\t\t<div id=\"user_location\"></div>\n\t\t<div id=\"user_name\"></div>\n\t</div>\n</div>\n{{!--<div id=\"audio\">--}}\n{{!--    <button id=\"go_button\">GO</button>--}}\n{{!--    <audio id=\"audio_controls\" controls>--}}\n{{!--        <source src=\"audio/all21.mp3\" type=\"audio/mpeg\">--}}\n{{!--        Your browser does not support the audio element.--}}\n{{!--    </audio>--}}\n{{!--</div>--}}\n\n</body>\n{{!--<script src=\"https://greenfacelabs.com/three/js/demo.js\"></script>--}}\n<script src=\"https://greenfacelabs.com/three/js/omuamua.js\"></script>\n</html>\n\n",
+        "template": "<html>\n<head>\n\n\t<title>Omuamua</title>\n\n\t<meta charset=\"utf-8\">\n\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\n\t<style>\n\t\t@import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Eater&family=Frijole&family=Rubik+Beastly&family=Sigmar+One&family=Amita:wght@700&family=Black+Ops+One&family=Bungee+Inline&family=Chewy&family=Courier+Prime:wght@700&family=Creepster&family=Emilys+Candy&family=Freckle+Face&family=Lakki+Reddy&family=Metal+Mania&family=Mystery+Quest&family=New+Rocker&family=Oleo+Script&family=Rock+Salt&family=Rye&family=Shrikhand&family=UnifrakturCook:wght@700&display=swap');\n        @import url('https://greenfacelabs.com/three/css/omuamua.css');\n        /*@import url('https://greenfacelabs.com/three/css/demo.css');*/\n\t</style>\n\n    <script src=\"https://greenfacelabs.com/three/js/three.js\"></script>\n    <script src=\"https://greenfacelabs.com/three/js/dat.gui.module.js\"></script>\n    <script src=\"https://greenfacelabs.com/three/js/starfield.js\"></script>\n</head>\n<body>\n<canvas id=\"the_canvas\"></canvas>\n<div id=\"flat_div\">\n\t<div id=\"tweet\" class=\"Init\">\n\t\t<div id=\"tweet_text\" ng-bind-html=\"msg.tweet.text\" >Howdy!</div>\n\t</div>\n\n\t<div id=\"user\">\n\t\t<img id=\"user_img\" />\n\t\t<div id=\"user_location\"></div>\n\t\t<div id=\"user_name\"></div>\n\t</div>\n</div>\n{{!--<div id=\"audio\">--}}\n{{!--    <button id=\"go_button\">GO</button>--}}\n{{!--    <audio id=\"audio_controls\" controls>--}}\n{{!--        <source src=\"audio/all21.mp3\" type=\"audio/mpeg\">--}}\n{{!--        Your browser does not support the audio element.--}}\n{{!--    </audio>--}}\n{{!--</div>--}}\n\n</body>\n{{!--<script src=\"https://greenfacelabs.com/three/js/demo.js\"></script>--}}\n<script src=\"https://greenfacelabs.com/three/js/omuamua.js\"></script>\n</html>\n\n",
         "output": "str",
         "x": 380,
         "y": 80,
@@ -3125,7 +3125,7 @@
         "type": "function",
         "z": "7de09d5372187b67",
         "name": "",
-        "func": "const status = global.get(\"status\")\nstatus[msg.status.source.type] = msg.status.text\nmsg.status.text = status.sockets_connected(node) ? \"connected\" : \"not connected\"\n//msg.status.text = msg.status.source.type + \" connected\"\nreturn msg;",
+        "func": "const status = global.get(\"status\")\nstatus[msg.status.source.type] = msg.status.text\nmsg.status.text = status.sockets_connected(node) ? \"connected\" : \"not connected\"\nmsg.status.fill = status.sockets_connected(node) ? \"green\" : \"yellow\"\n//msg.status.text = msg.status.source.type + \" connected\"\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
