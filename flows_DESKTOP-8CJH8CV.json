@@ -832,7 +832,7 @@
         "props": [
             {
                 "p": "twitter_search",
-                "v": "omicron,jab,virus,pandemic",
+                "v": "girl",
                 "vt": "str"
             }
         ],
@@ -909,7 +909,7 @@
         "type": "function",
         "z": "a0954fe29f87ceff",
         "name": "Next Script",
-        "func": "let chk_talker_status=function(){\n    let d2 = new Date();\n    const now = d2.getTime();\n    const elapsed = (now - global.get(\"info\").talk_start_time)/1000\n    //node.warn(`Elapsed time: ${elapsed}`)\n    const talker_status = global.get(\"talker\").status.text\n    if(elapsed>60 || (talker_status!=\"playing\" && msg.cmd_name!=\"Init\")) {\n        msg.topic=\"initializing\"\n        msg.payload={name: \"Init\"}\n        msg.cmd_name=\"Init\"\n        msg.commands=global.get(\"find_script\")(\"Init\").commands\n        msg.counter=0\n        \n        msg.tweet={}\n        msg.user={}\n        msg.location={}\n        node.send(msg)\n        \n    } else {\n        setTimeout(chk_talker_status,500)\n    }\n}\n\nconst queue = global.get(\"queue\")\nif(msg.cmd_name==\"Init\") {\n    // we're done get next message in queue\n    if(queue.len==0) {\n        queue.queuing=false\n    }\n    msg.payload=\"trigger\"\n    return msg;\n} else {\n    let d = new Date();\n    global.get(\"info\").talk_start_time = d.getTime();\n    chk_talker_status()    \n}\n\n",
+        "func": "let chk_talker_status=function(){\n    const info = global.get(\"info\")\n    let d2 = new Date();\n    const now = d2.getTime();\n    const elapsed = (now - info.talk_start_time)/1000\n    //node.warn(`Elapsed time: ${elapsed}`)\n    const talker_status = global.get(\"talker\").status.text\n    const animation_done = info.animation_done\n    if(elapsed>60 || (animation_done && talker_status!=\"playing\" && msg.cmd_name!=\"Init\")) {\n        global.get(\"send_init\")(msg,node)\n        // msg.topic=\"initializing\"\n        // msg.payload={name: \"Init\"}\n        // msg.cmd_name=\"Init\"\n        // msg.commands=global.get(\"find_script\")(\"Init\").commands\n        // msg.counter=0\n        \n        // msg.tweet={}\n        // msg.user={}\n        // msg.location={}\n        // node.send(msg)\n        \n    } else {\n        setTimeout(chk_talker_status,500)\n    }\n}\n\nconst queue = global.get(\"queue\")\nif(msg.cmd_name==\"Init\") {\n    // we're done get next message in queue\n    if(queue.len==0) {\n        queue.queuing=false\n    }\n    msg.payload=\"trigger\"\n    return msg;\n} else {\n    let d = new Date();\n    global.get(\"info\").talk_start_time = d.getTime();\n    chk_talker_status()    \n}\n\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1237,7 +1237,7 @@
         "func": "// see On Start",
         "outputs": 1,
         "noerr": 0,
-        "initialize": "// Code added here will be run once\n// whenever the node is started.\nconst Settings = {\n    \"debug\": true,\n    \"data_source\" : \"file\",\n    \"filename\" : \"C:\\\\Users\\\\shann\\\\.node-red\\\\projects\\\\Oumuamua\\\\assets\\\\simple.json\",\n    \"old_filename\" : \"C:\\\\Users\\\\Shann\\\\Dropbox\\\\moog\\\\spankulator\\\\node-red\\\\docs\\\\sentiment_4.json\",\n    \"speech_volume\" : 95,\n    \"view_time\": 16000,\n    \"silent_time\": 5000,\n    \"require_image\": true,\n    \"minimum_sentiment\": 1,\n    \"dev0\" : {\n        url: \"192.168.0.108\",\n        enabled: true\n    },\n    \"dev1\" : {\n        url: \"192.168.0.109\",\n        enabled: true\n    },\n    \"get_delay\" : function(time) {\n        const view_time = global.get(\"settings\")[time]\n        return view_time + Math.floor(Math.random() * view_time)\n    }\n}\nglobal.set(\"settings\",Settings)\n\nconst lipsum = {\n    text: \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempor rhoncus odio, vitae fringilla neque lobortis non. Nullam in nunc at nisi ornare suscipit. Morbi congue volutpat augue, vitae tristique risus fringilla ac. Duis massa ante, blandit in commodo eget, auctor in libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean consectetur augue urna, id laoreet lorem gravida id. Aenean nec ante quam. Curabitur sed dolor metus. Morbi porttitor tortor id libero eleifend, in dignissim magna congue. Nam sapien felis, dictum id feugiat eu, sagittis at dolor. Nulla facilisi. Maecenas bibendum odio eu est molestie varius. Maecenas suscipit elit quam. Etiam aliquam leo turpis, at semper tellus volutpat sed. Nulla vitae sollicitudin turpis, ac congue elit.\",\n    tweet: \"RT @Upsydaizy28: A full bag of beans and bolts. 💞💕💝💖 https://t.co/Hk5fXJ1HDP RT @lanadelslay77: I’m the type of girl who would kill you and then make you pancakes 😊 https://t.co/33aLZZnRwB RT @MidnaAsh: Would you let this bat girl drain your blood? https://t.co/OtOh14r2VA\",\n    get: function(num_words,typ) {\n        if(!typ) typ=\"tweet\"\n        const parts = this[typ].split(\" \")\n        return parts.slice(0,num_words-1).join(\" \")\n    },\n    get_chars: function(num_chars,typ) {\n        if(!typ) typ=\"tweet\"\n        return this[typ].substr(0,num_chars)\n    }\n}\nglobal.set(\"lipsum\",lipsum)\n\nconst twitter_scanner={\n    overrides: { \n        \"greenface\": 5,\n        \"💖\": 5,\n        \"😂\": 5,\n        \"🤬\" : -5,\n        \"💀\" : -4,\n        \"💩\" : -2,\n        \"☠\" : -3,\n        \"😡\" : -3\n    },\n    search: {\n        search_string: \"money\",\n        search_parts: [],\n        get: function() {\n            return this.search_string;\n        },\n        set: function(msg) {\n            if(msg.twitter_search>\"\") {\n                this.search_string=msg.twitter_search\n                this.search_parts=this.search_string.split(\",\")\n            }\n        }\n    },\n    gate: {\n        enabled: false,\n        get: function() { return this.enabled },\n        set: function(f) { this.enabled=f!=0 },\n        toggle: function() {\n            this.enabled = !this.enabled\n            return this.get()\n        }\n    },\n    recent_tweets : {\n        max_tweets: 75,\n        tweets: [],\n        add_tweet: function(tweet) {\n            if(this.tweets.indexOf(tweet)>-1) {\n                console.log(\"Duplicate tweet. Dropping: \"+tweet)\n                return false\n            } else {\n                this.tweets.push(tweet)\n                if(this.tweets.length>this.max_tweets) {\n                    this.tweets.shift()\n                }\n                return true\n            }\n        },\n        reset: function() {\n            this.tweets=[]\n        },\n        debug: function() {\n            console.log(this.tweets)\n        }\n    }\n}\nglobal.set(\"twitter_scanner\",twitter_scanner)\n\nconst queue = {\n    len: 0,\n    status: \"\",\n    queuing: false\n}\nglobal.set(\"queue\",queue)\n\nconst talker = {\n    status: { text: \"unset\"}\n}\nglobal.set(\"talker\",talker)\n\nconst find_script = function(search_term) {\n    // looks through all scripts to find script specd by msg.query.name\n    let scripts = global.get(\"info\").scripts\n    return scripts.find(function(script){\n        return script.name == search_term;\n    })\n}\nglobal.set(\"find_script\",find_script)\n\nconst info = {\n    scripts: {},\n    talk_start_time: 0,\n    cmd_name: \"\"\n}\nglobal.set(\"info\",info)\n\nconst read_scripts = function(node) {\n    let msg = { \n        data_source: Settings.data_source,\n        filename: Settings.filename\n    }\n    node.send(msg)\n}\nglobal.set(\"read_scripts\",read_scripts)\n\nread_scripts(node)\n\nconst status = {\n    \"websocket in\": \"unconnected\",\n    \"websocket out\": \"unconnected\",\n    \"sockets_connected\": function(node) {\n        node.warn(this[\"websocket in\"])\n        return this[\"websocket in\"] === \"connected 1\" && this[\"websocket out\"] === \"connected 1\"\n    }\n}\nglobal.set(\"status\", status)\n\nlet demo = {\n    canned_tweets: [],\n    audio_start_times: [],\n    audio_end_times: []\n}\nglobal.set(\"demo\", demo)\n\n\n// let msg = {\n//     data_source: Settings.data_source,\n//     filename: Settings.filename\n// }\n// node.send(msg)\n/*\nMongo DB node must be configured manually!\n*/",
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\nconst Settings = {\n    \"debug\": true,\n    \"data_source\" : \"file\",\n    \"filename\" : \"C:\\\\Users\\\\shann\\\\.node-red\\\\projects\\\\Oumuamua\\\\assets\\\\simple.json\",\n    \"old_filename\" : \"C:\\\\Users\\\\Shann\\\\Dropbox\\\\moog\\\\spankulator\\\\node-red\\\\docs\\\\sentiment_4.json\",\n    \"speech_volume\" : 95,\n    \"view_time\": 16000,\n    \"silent_time\": 5000,\n    \"require_image\": true,\n    \"minimum_sentiment\": 1,\n    \"dev0\" : {\n        url: \"192.168.0.108\",\n        enabled: true\n    },\n    \"dev1\" : {\n        url: \"192.168.0.109\",\n        enabled: true\n    },\n    \"get_delay\" : function(time) {\n        const view_time = global.get(\"settings\")[time]\n        return view_time + Math.floor(Math.random() * view_time)\n    }\n}\nglobal.set(\"settings\",Settings)\n\nconst lipsum = {\n    text: \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempor rhoncus odio, vitae fringilla neque lobortis non. Nullam in nunc at nisi ornare suscipit. Morbi congue volutpat augue, vitae tristique risus fringilla ac. Duis massa ante, blandit in commodo eget, auctor in libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean consectetur augue urna, id laoreet lorem gravida id. Aenean nec ante quam. Curabitur sed dolor metus. Morbi porttitor tortor id libero eleifend, in dignissim magna congue. Nam sapien felis, dictum id feugiat eu, sagittis at dolor. Nulla facilisi. Maecenas bibendum odio eu est molestie varius. Maecenas suscipit elit quam. Etiam aliquam leo turpis, at semper tellus volutpat sed. Nulla vitae sollicitudin turpis, ac congue elit.\",\n    tweet: \"RT @Upsydaizy28: A full bag of beans and bolts. 💞💕💝💖 https://t.co/Hk5fXJ1HDP RT @lanadelslay77: I’m the type of girl who would kill you and then make you pancakes 😊 https://t.co/33aLZZnRwB RT @MidnaAsh: Would you let this bat girl drain your blood? https://t.co/OtOh14r2VA\",\n    get: function(num_words,typ) {\n        if(!typ) typ=\"tweet\"\n        const parts = this[typ].split(\" \")\n        return parts.slice(0,num_words-1).join(\" \")\n    },\n    get_chars: function(num_chars,typ) {\n        if(!typ) typ=\"tweet\"\n        return this[typ].substr(0,num_chars)\n    }\n}\nglobal.set(\"lipsum\",lipsum)\n\nconst twitter_scanner={\n    overrides: { \n        \"greenface\": 5,\n        \"💖\": 5,\n        \"😂\": 5,\n        \"🤬\" : -5,\n        \"💀\" : -4,\n        \"💩\" : -2,\n        \"☠\" : -3,\n        \"😡\" : -3\n    },\n    search: {\n        search_string: \"money\",\n        search_parts: [],\n        get: function() {\n            return this.search_string;\n        },\n        set: function(msg) {\n            if(msg.twitter_search>\"\") {\n                this.search_string=msg.twitter_search\n                this.search_parts=this.search_string.split(\",\")\n            }\n        }\n    },\n    gate: {\n        enabled: false,\n        get: function() { return this.enabled },\n        set: function(f) { this.enabled=f!=0 },\n        toggle: function() {\n            this.enabled = !this.enabled\n            return this.get()\n        }\n    },\n    recent_tweets : {\n        max_tweets: 75,\n        tweets: [],\n        add_tweet: function(tweet) {\n            if(this.tweets.indexOf(tweet)>-1) {\n                console.log(\"Duplicate tweet. Dropping: \"+tweet)\n                return false\n            } else {\n                this.tweets.push(tweet)\n                if(this.tweets.length>this.max_tweets) {\n                    this.tweets.shift()\n                }\n                return true\n            }\n        },\n        reset: function() {\n            this.tweets=[]\n        },\n        debug: function() {\n            console.log(this.tweets)\n        }\n    }\n}\nglobal.set(\"twitter_scanner\",twitter_scanner)\n\nconst queue = {\n    len: 0,\n    status: \"\",\n    queuing: false\n}\nglobal.set(\"queue\",queue)\n\nconst talker = {\n    status: { text: \"unset\"}\n}\nglobal.set(\"talker\",talker)\n\nconst send_init = function(msg,node) {\n    // let msg = {}\n    msg.topic = \"initializing\"\n    msg.payload = { name: \"Init\" }\n    msg.cmd_name = \"Init\"\n    msg.commands = global.get(\"find_script\")(\"Init\").commands\n    msg.counter = 0\n\n    msg.tweet={}\n    msg.user={}\n    msg.location={}\n    node.send(msg)\n}\nglobal.set(\"send_init\", send_init)\n\nconst find_script = function(search_term) {\n    // looks through all scripts to find script specd by msg.query.name\n    let scripts = global.get(\"info\").scripts\n    return scripts.find(function(script){\n        return script.name == search_term;\n    })\n}\nglobal.set(\"find_script\",find_script)\n\nconst info = {\n    scripts: {},\n    talk_start_time: 0,\n    cmd_name: \"\",\n    animation_done: false\n}\nglobal.set(\"info\",info)\n\nconst read_scripts = function(node) {\n    let msg = { \n        data_source: Settings.data_source,\n        filename: Settings.filename\n    }\n    node.send(msg)\n}\nglobal.set(\"read_scripts\",read_scripts)\n\nread_scripts(node)\n\nconst status = {\n    \"websocket in\": \"unconnected\",\n    \"websocket out\": \"unconnected\",\n    \"sockets_connected\": function(node) {\n        node.warn(this[\"websocket in\"])\n        return this[\"websocket in\"] === \"connected 1\" && this[\"websocket out\"] === \"connected 1\"\n    }\n}\nglobal.set(\"status\", status)\n\nconst cmd_names = [\n    \"Down 10\",\n    \"Down 9\",\n    \"Down 8\",\n    \"Down 7\",\n    \"Down 6\",\n    \"Down 5\",\n    \"Down 4\",\n    \"Down 3\",\n    \"Down 2\",\n    \"Down 1\",\n    \"Default\",\n    \"Up 1\",\n    \"Up 2\",\n    \"Up 3\",\n    \"Up 4\",\n    \"Up 5\",\n    \"Up 6\",\n    \"Up 7\",\n    \"Up 8\",\n    \"Up 9\",\n    \"Up 10\"\n]\n\nlet demo = {\n    canned_tweets: [],\n    audio_start_times: [],\n    audio_end_times: [],\n    cmd_names: cmd_names\n}\nglobal.set(\"demo\", demo)\n\n\n// let msg = {\n//     data_source: Settings.data_source,\n//     filename: Settings.filename\n// }\n// node.send(msg)\n/*\nMongo DB node must be configured manually!\n*/",
         "finalize": "",
         "libs": [],
         "x": 160,
@@ -1273,7 +1273,7 @@
         "type": "function",
         "z": "b77158335238532e",
         "name": "Process tweet",
-        "func": "if(msg.topic==\"control\") {\n    if(msg.tweet) {\n        if(msg.tweet.extended_tweet) {\n            msg.tweet.text = msg.tweet.extended_tweet.full_text\n        }\n        //msg.tweet.text=msg.tweet.text.replace(/http(\\S+)/g,\"\")\n    }\n    return msg;\n}\n\n",
+        "func": "if(msg.topic==\"control\") {\n    global.get(\"info\").animation_done=false\n    if(msg.tweet) {\n        if(msg.tweet.extended_tweet) {\n            msg.tweet.text = msg.tweet.extended_tweet.full_text\n        }\n        //msg.tweet.text=msg.tweet.text.replace(/http(\\S+)/g,\"\")\n    }\n    return msg;\n}\n\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1481,7 +1481,8 @@
         "y": 120,
         "wires": [
             [
-                "5bca6b83bff576dc"
+                "5bca6b83bff576dc",
+                "f6b0e71050799ee2"
             ]
         ]
     },
@@ -2505,7 +2506,7 @@
         "fieldType": "msg",
         "format": "handlebars",
         "syntax": "mustache",
-        "template": "<html>\n<head>\n\n\t<title>Omuamua</title>\n\n\t<meta charset=\"utf-8\">\n\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\n\t<style>\n\t\t@import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Eater&family=Frijole&family=Rubik+Beastly&family=Sigmar+One&family=Amita:wght@700&family=Black+Ops+One&family=Bungee+Inline&family=Chewy&family=Courier+Prime:wght@700&family=Creepster&family=Emilys+Candy&family=Freckle+Face&family=Lakki+Reddy&family=Metal+Mania&family=Mystery+Quest&family=New+Rocker&family=Oleo+Script&family=Rock+Salt&family=Rye&family=Shrikhand&family=UnifrakturCook:wght@700&display=swap');\n        @import url('https://greenfacelabs.com/three/css/omuamua.css');\n        /*@import url('https://greenfacelabs.com/three/css/demo.css');*/\n\t</style>\n\n    <script src=\"https://greenfacelabs.com/three/js/three.js\"></script>\n    <script src=\"https://greenfacelabs.com/three/js/dat.gui.module.js\"></script>\n    <script src=\"https://greenfacelabs.com/three/js/starfield.js\"></script>\n</head>\n<body>\n<canvas id=\"the_canvas\"></canvas>\n<div id=\"flat_div\">\n\t<div id=\"tweet\" class=\"Init\">\n\t\t<div id=\"tweet_text\" ng-bind-html=\"msg.tweet.text\" >Howdy!</div>\n\t</div>\n\n\t<div id=\"user\">\n\t\t<img id=\"user_img\" />\n\t\t<div id=\"user_location\"></div>\n\t\t<div id=\"user_name\"></div>\n\t</div>\n</div>\n{{!--<div id=\"audio\">--}}\n{{!--    <button id=\"go_button\">GO</button>--}}\n{{!--    <audio id=\"audio_controls\" controls>--}}\n{{!--        <source src=\"audio/all21.mp3\" type=\"audio/mpeg\">--}}\n{{!--        Your browser does not support the audio element.--}}\n{{!--    </audio>--}}\n{{!--</div>--}}\n\n</body>\n{{!--<script src=\"https://greenfacelabs.com/three/js/demo.js\"></script>--}}\n<script src=\"https://greenfacelabs.com/three/js/omuamua.js\"></script>\n</html>\n\n",
+        "template": "<html>\n<head>\n\n\t<title>Omuamua</title>\n\n\t<meta charset=\"utf-8\">\n\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\n\t<style>\n\t\t@import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Eater&family=Frijole&family=Rubik+Beastly&family=Sigmar+One&family=Amita:wght@700&family=Black+Ops+One&family=Bungee+Inline&family=Chewy&family=Courier+Prime:wght@700&family=Creepster&family=Emilys+Candy&family=Freckle+Face&family=Lakki+Reddy&family=Metal+Mania&family=Mystery+Quest&family=New+Rocker&family=Oleo+Script&family=Rock+Salt&family=Rye&family=Shrikhand&family=UnifrakturCook:wght@700&display=swap');\n        @import url('https://greenfacelabs.com/three/css/omuamua.css');\n\t</style>\n\n    <script src=\"https://greenfacelabs.com/three/js/three.js\"></script>\n    <script src=\"https://greenfacelabs.com/three/js/dat.gui.module.js\"></script>\n    <script src=\"https://greenfacelabs.com/three/js/starfield.js\"></script>\n</head>\n<body>\n<canvas id=\"the_canvas\"></canvas>\n<div id=\"flat_div\">\n\t<div id=\"tweet\" class=\"Init\">\n\t\t<div id=\"tweet_text\" ng-bind-html=\"msg.tweet.text\" >Howdy!</div>\n\t</div>\n\n\t<div id=\"user\">\n\t\t<img id=\"user_img\" />\n\t\t<div id=\"user_location\"></div>\n\t\t<div id=\"user_name\"></div>\n        <div id=\"cmd_name\"></div>\n\t</div>\n</div>\n\n</body>\n<script src=\"https://greenfacelabs.com/three/js/omuamua.js\"></script>\n</html>\n\n",
         "output": "str",
         "x": 380,
         "y": 80,
@@ -2588,7 +2589,8 @@
         "y": 140,
         "wires": [
             [
-                "8cdc268559c567bd"
+                "8cdc268559c567bd",
+                "bb92c012eabd9f7f"
             ]
         ]
     },
@@ -2624,7 +2626,7 @@
         "checkall": "true",
         "repair": false,
         "outputs": 1,
-        "x": 385,
+        "x": 330,
         "y": 140,
         "wires": [
             [
@@ -2636,14 +2638,14 @@
         "id": "db925c33d75933cb",
         "type": "function",
         "z": "7de09d5372187b67",
-        "name": "change color",
-        "func": "let colors = [\"white\",\"red\",0x00ff00,0x0000ff] //both hex or string are fine\nmsg.payload =  {\"cubeColor\": colors[Math.floor(Math.random()*colors.length)]}\nreturn msg;",
+        "name": "Animation Done",
+        "func": "global.get(\"info\").animation_done=true\nmsg.topic =\"animation_done\"\nreturn msg\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 540,
+        "x": 520,
         "y": 140,
         "wires": [
             [
@@ -3125,12 +3127,11 @@
             "8cdc268559c567bd",
             "2b5a6c86de235af1"
         ],
-        "x": 120,
+        "x": 140,
         "y": 220,
         "wires": [
             [
-                "3c73ab739fb4802a",
-                "32f239937eb3baa0"
+                "3c73ab739fb4802a"
             ]
         ]
     },
@@ -3147,8 +3148,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 360,
-        "y": 320,
+        "x": 330,
+        "y": 280,
         "wires": []
     },
     {
@@ -3162,7 +3163,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 300,
+        "x": 320,
         "y": 220,
         "wires": [
             []
@@ -3253,7 +3254,7 @@
         "type": "function",
         "z": "ef4cb095a7656cc5",
         "name": "",
-        "func": "const demo = global.get(\"demo\")\nconst len = demo.canned_tweets.length\nfor (let i = 0;i<len;i++) demo.canned_tweets.pop()\nmsg.payload.cmd_name=\"Down 10\"\nmsg.index=0\nmsg.limit=1\nmsg.search_terms=msg.payload.search_terms\nreturn msg;",
+        "func": "const demo = global.get(\"demo\")\nconst len = demo.canned_tweets.length\nfor (let i = 0;i<len;i++) demo.canned_tweets.pop()\nmsg.index=0\nmsg.payload.cmd_name=demo.cmd_names[msg.index]\nmsg.limit=1\nmsg.search_terms=msg.payload.search_terms\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -3272,7 +3273,7 @@
         "type": "function",
         "z": "ef4cb095a7656cc5",
         "name": "",
-        "func": "const cmd_names = [\n    \"Down 10\",\n    \"Down 9\",\n    \"Down 8\",\n    \"Down 7\",\n    \"Down 6\",\n    \"Down 5\",\n    \"Down 4\",\n    \"Down 3\",\n    \"Down 2\",\n    \"Down 1\",\n    \"Default\",\n    \"Up 1\",\n    \"Up 2\",\n    \"Up 3\",\n    \"Up 4\",\n    \"Up 5\",\n    \"Up 6\",\n    \"Up 7\",\n    \"Up 8\",\n    \"Up 9\",\n    \"Up 10\"\n]\n\nconst canned_tweets = global.get(\"demo\").canned_tweets\ncanned_tweets.push(msg.payload)\n\nlet index = Math.max(0, Math.min(cmd_names.length - 1, msg.index))\nindex++\nif (index < cmd_names.length) {\n    msg.payload={}\n    msg.payload.cmd_name = cmd_names[index]\n    msg.payload.search_terms=msg.search_terms\n    msg.limit = 1\n    msg.index=index\n    return msg;\n} else {\n    node.warn(canned_tweets)\n}\n",
+        "func": "// const cmd_names = [\n//     \"Down 10\",\n//     \"Down 9\",\n//     \"Down 8\",\n//     \"Down 7\",\n//     \"Down 6\",\n//     \"Down 5\",\n//     \"Down 4\",\n//     \"Down 3\",\n//     \"Down 2\",\n//     \"Down 1\",\n//     \"Default\",\n//     \"Up 1\",\n//     \"Up 2\",\n//     \"Up 3\",\n//     \"Up 4\",\n//     \"Up 5\",\n//     \"Up 6\",\n//     \"Up 7\",\n//     \"Up 8\",\n//     \"Up 9\",\n//     \"Up 10\"\n// ]\n\nconst cmd_names = global.get(\"demo\").cmd_names\nconst canned_tweets = global.get(\"demo\").canned_tweets\ncanned_tweets.push(msg.payload)\n\nlet index = Math.max(0, Math.min(cmd_names.length - 1, msg.index))\nindex++\nif (index < cmd_names.length) {\n    msg.payload={}\n    msg.payload.cmd_name = cmd_names[index]\n    msg.payload.search_terms=msg.search_terms\n    msg.limit = 1\n    msg.index=index\n    return msg;\n} else {\n    node.warn(canned_tweets)\n}\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -3313,7 +3314,6 @@
         "y": 160,
         "wires": [
             [
-                "8641269599fcbf60",
                 "6b769294dec11207"
             ]
         ]
@@ -3387,7 +3387,7 @@
         "type": "function",
         "z": "ef4cb095a7656cc5",
         "name": "",
-        "func": "const demo = global.get(\"demo\")\nlet lines = msg.payload.split(\"\\r\")\nlines.pop()\n// node.warn(lines)\nfor(let i=1;i<lines.length;i++) {\n    // node.warn(lines[i])\n    const vals = lines[i].split(\"\t\")\n    // node.warn(vals[0])\n    demo.audio_start_times.push(vals[0])\n    demo.audio_end_times.push(vals[1])\n}\nnode.warn(demo)\nreturn msg;",
+        "func": "const demo = global.get(\"demo\")\nmsg.payload=msg.payload.replace(/\\\\n/i,\"\")\nlet lines = msg.payload.split(\"\\r\")\nlines.pop()\n// node.warn(lines)\nfor(let i=1;i<lines.length;i++) {\n    node.warn(lines[i])\n    const vals = lines[i].split(\"\t\")\n    // node.warn(vals[0])\n    demo.audio_start_times.push(vals[0])\n    demo.audio_end_times.push(vals[1])\n}\nnode.warn(demo)\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -3400,5 +3400,22 @@
                 "592ac7abe8669b82"
             ]
         ]
+    },
+    {
+        "id": "bb92c012eabd9f7f",
+        "type": "debug",
+        "z": "7de09d5372187b67",
+        "name": "Scene Output",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1070,
+        "y": 140,
+        "wires": []
     }
 ]
