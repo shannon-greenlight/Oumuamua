@@ -406,6 +406,42 @@
         "color": "#DDAA99"
     },
     {
+        "id": "cdb4daf53ca56e43",
+        "type": "subflow",
+        "name": "Subflow 5",
+        "info": "",
+        "in": [
+            {
+                "x": 20,
+                "y": 180,
+                "wires": [
+                    {
+                        "id": "b87ff1cefe802088"
+                    }
+                ]
+            }
+        ],
+        "out": []
+    },
+    {
+        "id": "87a261cf36e11270",
+        "type": "subflow",
+        "name": "Subflow 6",
+        "info": "",
+        "in": [
+            {
+                "x": 60,
+                "y": 80,
+                "wires": [
+                    {
+                        "id": "592dc1768bae835e"
+                    }
+                ]
+            }
+        ],
+        "out": []
+    },
+    {
         "id": "4f82a66a.93b828",
         "type": "mqtt-broker",
         "name": "",
@@ -1240,8 +1276,8 @@
         "initialize": "// Code added here will be run once\n// whenever the node is started.\nconst Settings = {\n    \"debug\": true,\n    \"data_source\" : \"file\",\n    \"filename\" : \"C:\\\\Users\\\\shann\\\\.node-red\\\\projects\\\\Oumuamua\\\\assets\\\\simple.json\",\n    \"old_filename\" : \"C:\\\\Users\\\\Shann\\\\Dropbox\\\\moog\\\\spankulator\\\\node-red\\\\docs\\\\sentiment_4.json\",\n    \"speech_volume\" : 95,\n    \"view_time\": 16000,\n    \"silent_time\": 5000,\n    \"require_image\": true,\n    \"minimum_sentiment\": 1,\n    \"dev0\" : {\n        url: \"192.168.0.108\",\n        enabled: true\n    },\n    \"dev1\" : {\n        url: \"192.168.0.109\",\n        enabled: true\n    },\n    \"get_delay\" : function(time) {\n        const view_time = global.get(\"settings\")[time]\n        return view_time + Math.floor(Math.random() * view_time)\n    }\n}\nglobal.set(\"settings\",Settings)\n\nconst lipsum = {\n    text: \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempor rhoncus odio, vitae fringilla neque lobortis non. Nullam in nunc at nisi ornare suscipit. Morbi congue volutpat augue, vitae tristique risus fringilla ac. Duis massa ante, blandit in commodo eget, auctor in libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean consectetur augue urna, id laoreet lorem gravida id. Aenean nec ante quam. Curabitur sed dolor metus. Morbi porttitor tortor id libero eleifend, in dignissim magna congue. Nam sapien felis, dictum id feugiat eu, sagittis at dolor. Nulla facilisi. Maecenas bibendum odio eu est molestie varius. Maecenas suscipit elit quam. Etiam aliquam leo turpis, at semper tellus volutpat sed. Nulla vitae sollicitudin turpis, ac congue elit.\",\n    tweet: \"RT @Upsydaizy28: A full bag of beans and bolts. 💞💕💝💖 https://t.co/Hk5fXJ1HDP RT @lanadelslay77: I’m the type of girl who would kill you and then make you pancakes 😊 https://t.co/33aLZZnRwB RT @MidnaAsh: Would you let this bat girl drain your blood? https://t.co/OtOh14r2VA\",\n    get: function(num_words,typ) {\n        if(!typ) typ=\"tweet\"\n        const parts = this[typ].split(\" \")\n        return parts.slice(0,num_words-1).join(\" \")\n    },\n    get_chars: function(num_chars,typ) {\n        if(!typ) typ=\"tweet\"\n        return this[typ].substr(0,num_chars)\n    }\n}\nglobal.set(\"lipsum\",lipsum)\n\nconst twitter_scanner={\n    overrides: { \n        \"greenface\": 5,\n        \"💖\": 5,\n        \"😂\": 5,\n        \"🤬\" : -5,\n        \"💀\" : -4,\n        \"💩\" : -2,\n        \"☠\" : -3,\n        \"😡\" : -3\n    },\n    search: {\n        search_string: \"money\",\n        search_parts: [],\n        get: function() {\n            return this.search_string;\n        },\n        set: function(msg) {\n            if(msg.twitter_search>\"\") {\n                this.search_string=msg.twitter_search\n                this.search_parts=this.search_string.split(\",\")\n            }\n        }\n    },\n    gate: {\n        enabled: false,\n        get: function() { return this.enabled },\n        set: function(f) { this.enabled=f!=0 },\n        toggle: function() {\n            this.enabled = !this.enabled\n            return this.get()\n        }\n    },\n    recent_tweets : {\n        max_tweets: 75,\n        tweets: [],\n        add_tweet: function(tweet) {\n            if(this.tweets.indexOf(tweet)>-1) {\n                console.log(\"Duplicate tweet. Dropping: \"+tweet)\n                return false\n            } else {\n                this.tweets.push(tweet)\n                if(this.tweets.length>this.max_tweets) {\n                    this.tweets.shift()\n                }\n                return true\n            }\n        },\n        reset: function() {\n            this.tweets=[]\n        },\n        debug: function() {\n            console.log(this.tweets)\n        }\n    }\n}\nglobal.set(\"twitter_scanner\",twitter_scanner)\n\nconst queue = {\n    len: 0,\n    status: \"\",\n    queuing: false\n}\nglobal.set(\"queue\",queue)\n\nconst talker = {\n    status: { text: \"unset\"}\n}\nglobal.set(\"talker\",talker)\n\nconst send_init = function(msg,node) {\n    // let msg = {}\n    msg.topic = \"initializing\"\n    msg.payload = { name: \"Init\" }\n    msg.cmd_name = \"Init\"\n    msg.commands = global.get(\"find_script\")(\"Init\").commands\n    msg.counter = 0\n\n    msg.tweet={}\n    msg.user={}\n    msg.location={}\n    node.send(msg)\n}\nglobal.set(\"send_init\", send_init)\n\nconst find_script = function(search_term) {\n    // looks through all scripts to find script specd by msg.query.name\n    let scripts = global.get(\"info\").scripts\n    return scripts.find(function(script){\n        return script.name == search_term;\n    })\n}\nglobal.set(\"find_script\",find_script)\n\nconst info = {\n    scripts: {},\n    talk_start_time: 0,\n    cmd_name: \"\",\n    animation_done: false\n}\nglobal.set(\"info\",info)\n\nconst read_scripts = function(node) {\n    let msg = { \n        data_source: Settings.data_source,\n        filename: Settings.filename\n    }\n    node.send(msg)\n}\nglobal.set(\"read_scripts\",read_scripts)\n\nread_scripts(node)\n\nconst status = {\n    \"websocket in\": \"unconnected\",\n    \"websocket out\": \"unconnected\",\n    \"sockets_connected\": function(node) {\n        node.warn(this[\"websocket in\"])\n        return this[\"websocket in\"] === \"connected 1\" && this[\"websocket out\"] === \"connected 1\"\n    }\n}\nglobal.set(\"status\", status)\n\nconst msg_manager = {\n    pending: false,\n    timeout: null,\n    count: 0,\n    tries: 0,\n    msg: {},\n    node: {},\n    pend: function (msg, node) {\n        this.msg=msg\n        this.node=node\n        this.pending=true\n        this.count=0\n        node.send(msg)\n        this.chk_pend()\n    },\n    chk_pend: function() {\n        if(this.pending && this.count++ < 1000) {\n            this.timeout = setTimeout(this.chk_pend,100)\n        } else {\n            if (this.count >= 1000) {\n                // try sending msg again if we've tried less than 5 times\n                if (this.tries++ < 5) {\n                    node.warn(\"Sending msg again. 🤔\")\n                    this.pend(this.msg, this.node)\n                } else {\n                    node.warn(\"Synth doesn't want to talk! I give up 🤬🤬🤬\")\n                }\n            } else {\n                // looks like we're done no need to check again\n            }\n        }\n    }\n}\nglobal.set(\"msg_manager\", msg_manager)\n\nconst cmd_names = [\n    \"Down 10\",\n    \"Down 9\",\n    \"Down 8\",\n    \"Down 7\",\n    \"Down 6\",\n    \"Down 5\",\n    \"Down 4\",\n    \"Down 3\",\n    \"Down 2\",\n    \"Down 1\",\n    \"Default\",\n    \"Up 1\",\n    \"Up 2\",\n    \"Up 3\",\n    \"Up 4\",\n    \"Up 5\",\n    \"Up 6\",\n    \"Up 7\",\n    \"Up 8\",\n    \"Up 9\",\n    \"Up 10\"\n]\n\nlet demo = {\n    canned_tweets: [],\n    audio_start_times: [],\n    audio_end_times: [],\n    cmd_names: cmd_names\n}\nglobal.set(\"demo\", demo)\n\n\n// let msg = {\n//     data_source: Settings.data_source,\n//     filename: Settings.filename\n// }\n// node.send(msg)\n/*\nMongo DB node must be configured manually!\n*/",
         "finalize": "",
         "libs": [],
-        "x": 160,
-        "y": 620,
+        "x": 140,
+        "y": 540,
         "wires": [
             [
                 "5dcf2412633e21e2"
@@ -1691,7 +1727,7 @@
         "id": "3ef298db31890e5d",
         "type": "inject",
         "z": "ef4cb095a7656cc5",
-        "name": "Play All",
+        "name": "Play Canned",
         "props": [
             {
                 "p": "payload"
@@ -1704,7 +1740,7 @@
         "topic": "",
         "payload": "trigger",
         "payloadType": "str",
-        "x": 170,
+        "x": 190,
         "y": 160,
         "wires": [
             [
@@ -1839,8 +1875,8 @@
         "z": "ef4cb095a7656cc5",
         "name": "Init Scripts",
         "env": [],
-        "x": 350,
-        "y": 620,
+        "x": 330,
+        "y": 540,
         "wires": [
             [
                 "5946ec28ecf168be"
@@ -2052,8 +2088,8 @@
         "onceDelay": 0.1,
         "topic": "",
         "payloadType": "date",
-        "x": 190,
-        "y": 700,
+        "x": 170,
+        "y": 620,
         "wires": [
             [
                 "ccd7c905b12a3a3e"
@@ -2071,8 +2107,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 340,
-        "y": 700,
+        "x": 320,
+        "y": 620,
         "wires": [
             [
                 "5dcf2412633e21e2"
@@ -3188,13 +3224,13 @@
     {
         "id": "ccbdc18db06c0b46",
         "type": "mongodb in",
-        "z": "ef4cb095a7656cc5",
+        "z": "cdb4daf53ca56e43",
         "mongodb": "54588401fea63e01",
         "name": "Get Canned Tweets",
         "collection": "messages",
         "operation": "find",
-        "x": 530,
-        "y": 780,
+        "x": 410,
+        "y": 180,
         "wires": [
             [
                 "8258307a398401da",
@@ -3223,18 +3259,18 @@
         "topic": "",
         "payload": "{\"search_terms\":\"vaccine,covid,mandate,virus\",\"cmd_name\":\"Up 2\"}",
         "payloadType": "json",
-        "x": 160,
-        "y": 780,
+        "x": 150,
+        "y": 680,
         "wires": [
             [
-                "b87ff1cefe802088"
+                "c93d9c6ce0ca407b"
             ]
         ]
     },
     {
         "id": "571c3fdb5ab3a1b8",
         "type": "debug",
-        "z": "ef4cb095a7656cc5",
+        "z": "cdb4daf53ca56e43",
         "name": "Canned Tweets",
         "active": false,
         "tosidebar": true,
@@ -3244,23 +3280,23 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 740,
-        "y": 680,
+        "x": 640,
+        "y": 80,
         "wires": []
     },
     {
         "id": "b87ff1cefe802088",
         "type": "function",
-        "z": "ef4cb095a7656cc5",
-        "name": "",
+        "z": "cdb4daf53ca56e43",
+        "name": "Request Canned",
         "func": "const demo = global.get(\"demo\")\nconst len = demo.canned_tweets.length\nfor (let i = 0;i<len;i++) demo.canned_tweets.pop()\nmsg.index=0\nmsg.payload.cmd_name=demo.cmd_names[msg.index]\nmsg.limit=1\nmsg.search_terms=msg.payload.search_terms\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 330,
-        "y": 780,
+        "x": 190,
+        "y": 180,
         "wires": [
             [
                 "ccbdc18db06c0b46"
@@ -3270,16 +3306,16 @@
     {
         "id": "8258307a398401da",
         "type": "function",
-        "z": "ef4cb095a7656cc5",
-        "name": "",
+        "z": "cdb4daf53ca56e43",
+        "name": "Put Canned",
         "func": "// const cmd_names = [\n//     \"Down 10\",\n//     \"Down 9\",\n//     \"Down 8\",\n//     \"Down 7\",\n//     \"Down 6\",\n//     \"Down 5\",\n//     \"Down 4\",\n//     \"Down 3\",\n//     \"Down 2\",\n//     \"Down 1\",\n//     \"Default\",\n//     \"Up 1\",\n//     \"Up 2\",\n//     \"Up 3\",\n//     \"Up 4\",\n//     \"Up 5\",\n//     \"Up 6\",\n//     \"Up 7\",\n//     \"Up 8\",\n//     \"Up 9\",\n//     \"Up 10\"\n// ]\n\nconst cmd_names = global.get(\"demo\").cmd_names\nconst canned_tweets = global.get(\"demo\").canned_tweets\ncanned_tweets.push(msg.payload)\n\nlet index = Math.max(0, Math.min(cmd_names.length - 1, msg.index))\nindex++\nif (index < cmd_names.length) {\n    msg.payload={}\n    msg.payload.cmd_name = cmd_names[index]\n    msg.payload.search_terms=msg.search_terms\n    msg.limit = 1\n    msg.index=index\n    return msg;\n} else {\n    node.warn(canned_tweets)\n}\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 740,
-        "y": 780,
+        "x": 630,
+        "y": 180,
         "wires": [
             [
                 "ccbdc18db06c0b46"
@@ -3287,29 +3323,17 @@
         ]
     },
     {
-        "id": "78b3cda7697a8361",
-        "type": "subflow:5b568921c3aca099",
-        "z": "ef4cb095a7656cc5",
-        "name": "Play All",
-        "env": [],
-        "x": 1040,
-        "y": 560,
-        "wires": [
-            []
-        ]
-    },
-    {
         "id": "51aec576d6d9dfff",
         "type": "function",
         "z": "ef4cb095a7656cc5",
-        "name": "",
+        "name": "Get Canned",
         "func": "const canned_tweets = global.get(\"canned_tweets\")\nnode.warn(canned_tweets.length)\ncanned_tweets.forEach(function(element) {\n    let el=element[0]\n    msg.topic=`tweets/${el.tweet.user.screen_name}`\n    msg.payload = {\"name\":el.cmd_name}\n    msg.lang=el.lang\n    msg.tweet=el.tweet\n    msg._msgid = el._msgid\n    msg.overrides=el.overrides\n    msg.sentiment=el.sentiment\n    msg.source=el.source\n    if (el.location) msg.location=el.location\n\n    msg.rerun=true\n    \n    node.send(msg);\n});\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 320,
+        "x": 370,
         "y": 160,
         "wires": [
             [
@@ -3320,16 +3344,16 @@
     {
         "id": "3c9bab85f07a925c",
         "type": "file in",
-        "z": "ef4cb095a7656cc5",
-        "name": "Get File Data",
+        "z": "87a261cf36e11270",
+        "name": "Get Audio Data",
         "filename": "C:\\Users\\shann\\.node-red\\projects\\Oumuamua\\assets\\vaccine21.txt",
         "format": "utf8",
         "chunk": false,
         "sendError": false,
         "encoding": "none",
         "allProps": false,
-        "x": 350,
-        "y": 900,
+        "x": 360,
+        "y": 80,
         "wires": [
             [
                 "14299f3a3d406c6e"
@@ -3343,13 +3367,7 @@
         "name": "",
         "props": [
             {
-                "p": "filename",
-                "v": "\"C:\\Users\\shann\\.node-red\\projects\\Oumuamua\\assets\\vaccine21.txt\"",
-                "vt": "str"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
+                "p": "payload"
             }
         ],
         "repeat": "",
@@ -3357,18 +3375,19 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "x": 160,
-        "y": 900,
+        "payloadType": "str",
+        "x": 150,
+        "y": 760,
         "wires": [
             [
-                "3c9bab85f07a925c"
+                "1a947195a0409138"
             ]
         ]
     },
     {
         "id": "592ac7abe8669b82",
         "type": "debug",
-        "z": "ef4cb095a7656cc5",
+        "z": "87a261cf36e11270",
         "name": "",
         "active": true,
         "tosidebar": true,
@@ -3377,26 +3396,26 @@
         "complete": "false",
         "statusVal": "",
         "statusType": "auto",
-        "x": 790,
-        "y": 900,
+        "x": 930,
+        "y": 80,
         "wires": []
     },
     {
         "id": "14299f3a3d406c6e",
         "type": "function",
-        "z": "ef4cb095a7656cc5",
-        "name": "",
-        "func": "const demo = global.get(\"demo\")\nmsg.payload=msg.payload.replace(/\\\\n/i,\"\")\nlet lines = msg.payload.split(\"\\r\")\nlines.pop()\n// node.warn(lines)\nfor(let i=1;i<lines.length;i++) {\n    node.warn(lines[i])\n    const vals = lines[i].split(\"\t\")\n    // node.warn(vals[0])\n    demo.audio_start_times.push(vals[0])\n    demo.audio_end_times.push(vals[1])\n}\nnode.warn(demo)\nreturn msg;",
+        "z": "87a261cf36e11270",
+        "name": "Store Audio Times",
+        "func": "// this generates a list used only by the demo\n// run this after recording Play Canned\n// and making the input file of start and stop times.\nconst demo = global.get(\"demo\")\nmsg.payload=msg.payload.replace(/\\\\n/i,\"\")\nlet lines = msg.payload.split(\"\\r\")\nlines.pop()\n// node.warn(lines)\nfor(let i=1;i<lines.length;i++) {\n    node.warn(lines[i])\n    const vals = lines[i].split(\"\t\")\n    // node.warn(vals[0])\n    demo.audio_start_times.push(vals[0])\n    demo.audio_end_times.push(vals[1])\n}\n\n// copy node.warn data into demo data file\nnode.warn(demo)\nmsg.payload = \"const demo_data = \"\nmsg.payload += JSON.stringify(demo)\nmsg.payload += \"\\n\"\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 540,
-        "y": 900,
+        "x": 570,
+        "y": 80,
         "wires": [
             [
-                "592ac7abe8669b82"
+                "8afe6012506d23d7"
             ]
         ]
     },
@@ -3415,6 +3434,63 @@
         "statusType": "auto",
         "x": 1070,
         "y": 140,
+        "wires": []
+    },
+    {
+        "id": "c93d9c6ce0ca407b",
+        "type": "subflow:cdb4daf53ca56e43",
+        "z": "ef4cb095a7656cc5",
+        "name": "Get Canned Tweets",
+        "env": [],
+        "x": 330,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "8afe6012506d23d7",
+        "type": "file",
+        "z": "87a261cf36e11270",
+        "name": "Save Demo File",
+        "filename": "C:\\Users\\shann\\Dropbox\\My Web Sites\\GreenfaceLabs\\htdocs\\three\\js\\demo_data.js",
+        "appendNewline": false,
+        "createDir": false,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 760,
+        "y": 80,
+        "wires": [
+            [
+                "592ac7abe8669b82"
+            ]
+        ]
+    },
+    {
+        "id": "592dc1768bae835e",
+        "type": "function",
+        "z": "87a261cf36e11270",
+        "name": "",
+        "func": "// read audio start/end times file\nmsg.filename = \"C:\\Users\\shann\\.node-red\\projects\\Oumuamua\\assets\\vaccine21.txt\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 200,
+        "y": 80,
+        "wires": [
+            [
+                "3c9bab85f07a925c"
+            ]
+        ]
+    },
+    {
+        "id": "1a947195a0409138",
+        "type": "subflow:87a261cf36e11270",
+        "z": "ef4cb095a7656cc5",
+        "name": "Make Demo Data File",
+        "env": [],
+        "x": 340,
+        "y": 760,
         "wires": []
     }
 ]
